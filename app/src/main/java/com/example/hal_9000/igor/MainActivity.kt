@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupMenu()
-        val listaDeCategorias: ArrayList<Categoria> = montarListaDeOpcoes(this)
+//        val listaDeCategorias: ArrayList<Categoria> = montarListaDeOpcoes(this)
 
 //        expandableListView.setAdapter()
         setupFragment(savedInstanceState)

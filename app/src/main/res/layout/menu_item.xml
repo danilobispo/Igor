@@ -1,20 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.LinearLayoutCompat
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content"
+    android:background="@color/colorPrimaryDark">
     <ImageView
         android:id="@+id/iconeListaMenu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:src="@drawable/aventuras_icone"/>
+
     <TextView
         android:id="@+id/textoListaMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Aventuras"
-        android:fontFamily="@font/FiraSans-Regular"
-        />
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/firasans_regular"
+        android:text="@string/str_aventuras"
+        app:layout_constraintStart_toEndOf="@+id/iconeListaMenu"
+        app:layout_constraintTop_toTopOf="parent"
+        android:textColor="@color/redPink"/>
 
-</android.support.v7.widget.LinearLayoutCompat>
+</android.support.constraint.ConstraintLayout>
