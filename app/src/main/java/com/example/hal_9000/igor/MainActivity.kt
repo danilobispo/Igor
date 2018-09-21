@@ -10,6 +10,7 @@ import android.support.v7.widget.Toolbar
 import android.view.View
 import com.example.hal_9000.igor.model.Categoria
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.appbar_layout.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -18,7 +19,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupMenu()
-//        val listaDeCategorias: ArrayList<Categoria> = montarListaDeOpcoes(this)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeButtonEnabled(true)
+        val listaDeCategorias: ArrayList<Categoria> = montarListaDeOpcoes(this)
 
 //        expandableListView.setAdapter()
         setupFragment(savedInstanceState)
@@ -49,6 +52,26 @@ class MainActivity : AppCompatActivity() {
         listCategoria.add(Categoria(
                 "Aventuras",
                 ContextCompat.getDrawable(context, R.drawable.aventuras_icone),
+                null))
+
+        listCategoria.add(Categoria(
+                "Livros",
+                ContextCompat.getDrawable(context, R.drawable.livros_icone),
+                null))
+
+        listCategoria.add(Categoria(
+                "Conta",
+                ContextCompat.getDrawable(context, R.drawable.conta_icone),
+                null))
+
+        listCategoria.add(Categoria(
+                "Notificações",
+                ContextCompat.getDrawable(context, R.drawable.notificacoes_icone),
+                null))
+
+        listCategoria.add(Categoria(
+                "Configurações",
+                ContextCompat.getDrawable(context, R.drawable.configuracoes_icone),
                 null))
 
         return listCategoria
