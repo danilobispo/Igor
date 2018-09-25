@@ -6,4 +6,8 @@
     <string name="open_drawer">Abrir Drawer</string>
     <string name="close_drawer">Fechar Drawer</string>
     <string name="str_aventuras">Aventuras</string>
+    <string name="str_livros">Livros</string>
+    <string name="str_conta">Conta</string>
+    <string name="str_configuracoes">Configurações</string>
+    <string name="str_notificacoes">Notificações</string>
 </resources>
