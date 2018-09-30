@@ -1,21 +1,18 @@
 package com.example.hal_9000.igor
 
-import android.content.Context
-import android.support.v7.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.v4.content.ContextCompat
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.widget.Toolbar
-import android.view.Menu
-import com.example.hal_9000.igor.model.Categoria
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.appbar_layout.*
 import android.support.v4.app.Fragment
-import android.util.Log
+import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import com.example.hal_9000.igor.R.id.*
 import com.example.hal_9000.igor.fragment.*
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.appbar_layout.*
 
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -51,6 +48,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             item_configuracoes -> {
                 trocarDeFragment(ConfiguracoesFragment())
+                return true
+            }
+            item_logout -> {
+                val mAuth = FirebaseAuth.getInstance()
+                if (mAuth!!.currentUser != null) {
+                    mAuth.signOut()
+                    startActivity(Intent(this, LoginActivity::class.java))
+                    finish()
+                }
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
