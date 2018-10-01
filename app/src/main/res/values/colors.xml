@@ -4,5 +4,7 @@
     <color name="colorPrimaryDark">#221133</color>
     <color name="colorAccent">#F6D282</color>
 
-    <color name="redPink">#FE3C56</color>
+    <color name="nav_item">#FE3C56</color>
+    <color name="nav_item_selected">#FFE4B5</color>
+
 </resources>

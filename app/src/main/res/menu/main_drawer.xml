@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/list_menu"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/list_menu"
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
@@ -10,33 +10,32 @@
             android:id="@+id/item_aventuras"
             android:icon="@null"
             android:title="@null"
-            app:showAsAction="ifRoom"
-            app:actionLayout="@layout/action_layout_aventuras" />
+            app:actionLayout="@layout/action_layout_aventuras"
+            app:showAsAction="ifRoom" />
         <item
             android:id="@+id/item_livros"
             android:icon="@null"
             android:title="@null"
-            app:showAsAction="ifRoom"
-            app:actionLayout="@layout/action_layout_livros" />
+            app:actionLayout="@layout/action_layout_livros"
+            app:showAsAction="ifRoom" />
         <item
             android:id="@+id/item_conta"
             android:icon="@null"
             android:title="@null"
-            app:showAsAction="ifRoom"
-            app:actionLayout="@layout/action_layout_conta" />
+            app:actionLayout="@layout/action_layout_conta"
+            app:showAsAction="ifRoom" />
         <item
             android:id="@+id/item_notificacoes"
             android:icon="@null"
             android:title="@null"
-            app:showAsAction="ifRoom"
-            app:actionLayout="@layout/action_layout_notificacoes" />
-
+            app:actionLayout="@layout/action_layout_notificacoes"
+            app:showAsAction="ifRoom" />
         <item
             android:id="@+id/item_configuracoes"
             android:icon="@null"
             android:title="@null"
-            app:showAsAction="ifRoom"
-            app:actionLayout="@layout/action_layout_config" />
+            app:actionLayout="@layout/action_layout_config"
+            app:showAsAction="ifRoom" />
         <item
             android:id="@+id/item_logout"
             android:icon="@null"

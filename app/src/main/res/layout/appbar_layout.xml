@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="?attr/actionBarSize"
+    android:background="?attr/colorPrimary"
+    android:elevation="4dp"
+    android:theme="@style/ToolbarStyle"
+    app:popupTheme="@style/ActionModeOverflowMenu">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <include android:id="@+id/toolbar"
-            layout="@layout/toolbar_home" />
-    </android.support.design.widget.AppBarLayout>
-
-    <FrameLayout
-        android:id="@+id/content_frame"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:background="@android:color/transparent"
+        android:gravity="center">
 
+        <ImageView
+            android:id="@+id/toolbarIgorLogo"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/igor_logo" />
 
-    <ExpandableListView
-        android:id="@+id/expandableListView"
-        android:layout_width="235dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        android:background="@color/colorPrimaryDark"
-        android:divider="@null"
-        android:dividerHeight="0dp"
-        android:groupIndicator="@null"
-        android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft" />
+    </LinearLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+    <!--<ExpandableListView-->
+    <!--android:id="@+id/expandableListView"-->
+    <!--android:layout_width="235dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_gravity="start"-->
+    <!--android:background="@color/colorPrimaryDark"-->
+    <!--android:divider="@null"-->
+    <!--android:dividerHeight="0dp"-->
+    <!--android:groupIndicator="@null"-->
+    <!--android:indicatorLeft="?android:attr/expandableListPreferredItemIndicatorLeft" />-->
+
+</android.support.v7.widget.Toolbar>
