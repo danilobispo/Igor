@@ -13,7 +13,7 @@
         android:contentDescription="@string/str_logout"
         android:gravity="center_vertical"
         android:src="@drawable/ic_exit"
-        android:tint="@color/drawer_item" />
+        android:tint="@color/nav_item" />
 
     <android.support.v7.widget.AppCompatTextView
         android:layout_width="wrap_content"
@@ -25,6 +25,6 @@
         android:fontFamily="@font/firasans_regular"
         android:gravity="center_vertical"
         android:text="@string/str_logout"
-        android:textColor="@color/drawer_item" />
+        android:textColor="@color/nav_item" />
 
 </LinearLayout>

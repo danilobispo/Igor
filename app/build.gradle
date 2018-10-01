@@ -37,6 +37,7 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     // Firebase
+    implementation 'com.google.firebase:firebase-core:16.0.3'
     implementation 'com.google.firebase:firebase-auth:16.0.3'
     implementation 'com.google.firebase:firebase-firestore:17.1.0'
 }

@@ -5,5 +5,10 @@ import android.support.v4.app.Fragment
 
 class Categoria(
         var nome: String?,
-        var icone: Drawable?,
-        var fragment: Fragment?) {}
+        var selected: Boolean?,
+        var notification: Boolean?)
+
+//class Categoria(
+//        var nome: String?,
+//        var icone: Drawable?,
+//        var fragment: Fragment?) {}
