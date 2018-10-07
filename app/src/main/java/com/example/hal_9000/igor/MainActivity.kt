@@ -16,6 +16,8 @@ import com.example.hal_9000.igor.adapters.ListDrawerAdapter
 import com.example.hal_9000.igor.fragment.AventuraFragment
 import com.example.hal_9000.igor.model.Categoria
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar_layout.*
 
@@ -31,6 +33,12 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         setupMenu()
+
+        val firestore = FirebaseFirestore.getInstance()
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .build()
+        firestore.firestoreSettings = settings
 
         // setupFragment(savedInstanceState)
     }

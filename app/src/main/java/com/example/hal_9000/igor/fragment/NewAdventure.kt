@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.R
+import com.example.hal_9000.igor.model.Aventura
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_new_adventure.*
@@ -89,21 +90,22 @@ class NewAdventure : Fragment() {
 
         mProgressBar!!.visibility = View.VISIBLE
 
-        val image: Int = when {
-            rb1!!.isChecked -> 1
-            rb2!!.isChecked -> 2
-            rb3!!.isChecked -> 3
-            rb4!!.isChecked -> 4
-            else -> 5
+        val theme: String = when {
+            rb2!!.isChecked -> "krevast"
+            rb3!!.isChecked -> "corvali"
+            rb4!!.isChecked -> "heartlands"
+            rb5!!.isChecked -> "coast"
+            else -> "default"
         }
 
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
         val mAuth = FirebaseAuth.getInstance()
 
-        val adventure = HashMap<String, Any>()
-        adventure["title"] = et_title.text.toString()
-        adventure["image"] = image
-        adventure["creator"] = mAuth.currentUser!!.uid
+        val adventure = Aventura()
+        adventure.title = et_title.text.toString()
+        adventure.next_session = ""
+        adventure.theme = theme
+        adventure.creator = mAuth.currentUser!!.uid
 
         db.collection("adventures")
                 .add(adventure)
