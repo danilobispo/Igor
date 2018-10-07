@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/aventuraFragment">
+
+    <fragment
+        android:id="@+id/aventuraFragment"
+        android:name="com.example.hal_9000.igor.fragment.AventuraFragment"
+        android:label="Aventura"
+        tools:layout="@layout/fragment_aventura">
+        <action
+            android:id="@+id/action_aventuraFragment_to_newAdventure"
+            app:destination="@id/newAdventure" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newAdventure"
+        android:name="com.example.hal_9000.igor.fragment.NewAdventure"
+        android:label="NewAdventure"
+        tools:layout="@layout/fragment_new_adventure">
+        <action
+            android:id="@+id/action_newAdventure_to_aventuraFragment"
+            app:destination="@id/aventuraFragment"
+            app:popUpTo="@+id/aventuraFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/livrosFragment"
+        android:name="com.example.hal_9000.igor.fragment.LivrosFragment"
+        android:label="fragment_livros"
+        tools:layout="@layout/fragment_livros" />
+
+    <fragment
+        android:id="@+id/contaFragment"
+        android:name="com.example.hal_9000.igor.fragment.ContaFragment"
+        android:label="fragment_conta"
+        tools:layout="@layout/fragment_conta" />
+
+    <fragment
+        android:id="@+id/notificacoesFragment"
+        android:name="com.example.hal_9000.igor.fragment.NotificacoesFragment"
+        android:label="fragment_notificacoes"
+        tools:layout="@layout/fragment_notificacoes" />
+
+    <fragment
+        android:id="@+id/configuracoesFragment"
+        android:name="com.example.hal_9000.igor.fragment.ConfiguracoesFragment"
+        android:label="fragment_configuracoes"
+        tools:layout="@layout/fragment_configuracoes" />
+
+</navigation>

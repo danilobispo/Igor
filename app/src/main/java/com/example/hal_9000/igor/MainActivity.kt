@@ -2,26 +2,29 @@ package com.example.hal_9000.igor
 
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.ImageView
+import android.widget.ListView
 import android.widget.Toast
-import com.example.hal_9000.igor.R.color.drawer_item
-import com.example.hal_9000.igor.R.id.*
-import com.example.hal_9000.igor.fragment.*
+import androidx.navigation.NavOptions
+import androidx.navigation.Navigation.findNavController
+import com.example.hal_9000.igor.adapters.ListDrawerAdapter
+import com.example.hal_9000.igor.fragment.AventuraFragment
+import com.example.hal_9000.igor.model.Categoria
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar_layout.*
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
+
+    private val listItems = arrayListOf<Categoria>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,62 +32,80 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         setupMenu()
 
-        setupFragment(savedInstanceState)
+        // setupFragment(savedInstanceState)
     }
 
-    fun setupMenu() {
+    private fun setupMenu() {
 
         setSupportActionBar(toolbar)
-
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeButtonEnabled(true)
 
-        // toolbar cast como View
-        val drawerToggle: ActionBarDrawerToggle = object :
-                ActionBarDrawerToggle(this, drawer, toolbar, R.string.open_drawer, R.string.close_drawer) {
-            // TODO: Adicionar algo aqui se quisermos algo mais elaborado no drawer
-            // (Provavelmente a gente não quer)
-        }
+        val drawerToggle = ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.open_drawer, R.string.close_drawer)
 
         drawer.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
 
-        nav_view.setNavigationItemSelectedListener(this)
-    }
+        listItems.add(Categoria("Aventuras", true, false))
+        listItems.add(Categoria("Livros", false, false))
+        listItems.add(Categoria("Conta", false, false))
+        listItems.add(Categoria("Notificações", false, false))
+        listItems.add(Categoria("Configurações", false, false))
+        listItems.add(Categoria("Log Out", false, false))
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val adapter = ListDrawerAdapter(this, listItems)
+        val listView = findViewById<ListView>(R.id.lst_menu_items)
+        listView.adapter = adapter
 
-        when (item.itemId) {
-            item_aventuras -> {
-                trocarDeFragment(AventuraFragment())
-            }
-            item_livros -> {
-                trocarDeFragment(LivrosFragment())
-            }
-            item_conta -> {
-                trocarDeFragment(ContaFragment())
-                val img = findViewById<ImageView>(R.id.conta_img)
-                img.setImageResource(R.drawable.aventuras_icone)
-            }
-            item_notificacoes -> {
-                trocarDeFragment(NotificacoesFragment())
-            }
-            item_configuracoes -> {
-                trocarDeFragment(ConfiguracoesFragment())
-            }
-            item_logout -> {
-                val mAuth = FirebaseAuth.getInstance()
-                if (mAuth!!.currentUser != null) {
-                    mAuth.signOut()
-                    startActivity(Intent(this, LoginActivity::class.java))
-                    finish()
+        listView.setOnItemClickListener { parent, view, position, id ->
+
+            val navController = findNavController(this, R.id.nav_host)
+            val navBuilder = NavOptions.Builder()
+            val navOptions = navBuilder.setPopUpTo(R.id.aventuraFragment, false).build()
+
+            when (position) {
+                0 -> {
+                    navController.navigate(R.id.aventuraFragment, null, navOptions)
+                }
+                1 -> {
+                    navController.navigate(R.id.livrosFragment, null, navOptions)
+                }
+                2 -> {
+                    navController.navigate(R.id.contaFragment, null, navOptions)
+                }
+                3 -> {
+                    navController.navigate(R.id.notificacoesFragment, null, navOptions)
+                }
+                4 -> {
+                    navController.navigate(R.id.configuracoesFragment, null, navOptions)
+                }
+                5 -> {
+                    val mAuth = FirebaseAuth.getInstance()
+                    if (mAuth!!.currentUser != null) {
+                        mAuth.signOut()
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
+                    }
                 }
             }
-            else -> return super.onOptionsItemSelected(item)
-        }
 
-        drawer.closeDrawer(GravityCompat.START)
-        return true
+            listItems[0] = Categoria(listItems[0].nome, false, listItems[0].notification)
+            listItems[1] = Categoria(listItems[1].nome, false, listItems[1].notification)
+            listItems[2] = Categoria(listItems[2].nome, false, listItems[2].notification)
+            listItems[3] = Categoria(listItems[3].nome, false, listItems[3].notification)
+            listItems[4] = Categoria(listItems[4].nome, false, listItems[4].notification)
+            listItems[5] = Categoria(listItems[5].nome, false, listItems[5].notification)
+
+            listItems[position] = Categoria(listItems[position].nome, true, false)
+            adapter.notifyDataSetChanged()
+
+            if (!listItems[0].notification!! && !listItems[1].notification!! && !listItems[2].notification!! && !listItems[3].notification!! && !listItems[4].notification!!)
+                supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
+
+            drawer.closeDrawer(GravityCompat.START)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -104,15 +125,41 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return super.onOptionsItemSelected(item)
     }
 
+    fun setNotificationIndicator(categoria: String) {
+
+        val adapter = ListDrawerAdapter(this, listItems)
+
+        when (categoria) {
+            "Aventuras" -> {
+                listItems[0] = Categoria(listItems[0].nome, listItems[0].selected, true)
+            }
+            "Livros" -> {
+                listItems[1] = Categoria(listItems[1].nome, listItems[1].selected, true)
+            }
+            "Conta" -> {
+                listItems[2] = Categoria(listItems[2].nome, listItems[2].selected, true)
+            }
+            "Notificações" -> {
+                listItems[3] = Categoria(listItems[3].nome, listItems[3].selected, true)
+            }
+            "Configurações" -> {
+                listItems[4] = Categoria(listItems[4].nome, listItems[4].selected, true)
+            }
+            else -> return
+        }
+        adapter.notifyDataSetChanged()
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.nav_menu)
+    }
+
     fun setupFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            this.supportFragmentManager.beginTransaction().replace(R.id.content_frame, HomeFragment())
+            this.supportFragmentManager.beginTransaction().replace(R.id.container, AventuraFragment())
                     .addToBackStack(null).commit()
         }
     }
 
     fun trocarDeFragment(supportFragment: Fragment) {
-        this.supportFragmentManager.beginTransaction().replace(R.id.content_frame, supportFragment)
+        this.supportFragmentManager.beginTransaction().replace(R.id.container, supportFragment)
                 .addToBackStack(null).commit()
     }
 }
