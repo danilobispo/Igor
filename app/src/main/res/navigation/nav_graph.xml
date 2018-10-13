@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/aventuraFragment">
+    app:startDestination="@id/homeFragment">
 
     <fragment
-        android:id="@+id/aventuraFragment"
-        android:name="com.example.hal_9000.igor.fragment.AventuraFragment"
-        android:label="Aventura"
-        tools:layout="@layout/fragment_aventura">
+        android:id="@+id/homeFragment"
+        android:name="com.example.hal_9000.igor.fragment.HomeFragment"
+        android:label="Home"
+        tools:layout="@layout/fragment_home">
         <action
-            android:id="@+id/action_aventuraFragment_to_newAdventure"
+            android:id="@+id/action_homeFragment_to_newAdventure"
             app:destination="@id/newAdventure" />
     </fragment>
 
@@ -21,9 +21,9 @@
         android:label="NewAdventure"
         tools:layout="@layout/fragment_new_adventure">
         <action
-            android:id="@+id/action_newAdventure_to_aventuraFragment"
-            app:destination="@id/aventuraFragment"
-            app:popUpTo="@+id/aventuraFragment" />
+            android:id="@+id/action_newAdventure_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@+id/homeFragment" />
     </fragment>
 
     <fragment

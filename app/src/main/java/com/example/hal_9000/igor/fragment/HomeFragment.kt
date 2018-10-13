@@ -19,12 +19,12 @@ import com.example.hal_9000.igor.adapters.AdventureRecyclerViewAdapter
 import com.example.hal_9000.igor.model.Aventura
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.android.synthetic.main.fragment_aventura.*
+import kotlinx.android.synthetic.main.fragment_home.*
 
 
-class AventuraFragment : Fragment() {
+class HomeFragment : Fragment() {
 
-    private val TAG = "AventuraFragment"
+    private val TAG = "HomeFragment"
 
     private var adapter: AdventureRecyclerViewAdapter? = null
     private var mRecyclerView: RecyclerView? = null
@@ -33,7 +33,7 @@ class AventuraFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_aventura, container, false)
+        val view = inflater.inflate(R.layout.fragment_home, container, false)
 
         Log.d(TAG, "onCreateView: Started")
 
@@ -54,7 +54,7 @@ class AventuraFragment : Fragment() {
 
         val fab = view.findViewById<FloatingActionButton>(R.id.fab_nova_aventura)
         fab.setOnClickListener {
-            findNavController(this).navigate(R.id.action_aventuraFragment_to_newAdventure)
+            findNavController(this).navigate(R.id.action_homeFragment_to_newAdventure)
         }
 
         val fabEditMode = view.findViewById<FloatingActionButton>(R.id.fab_edit_mode)
@@ -199,6 +199,6 @@ class AventuraFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = AventuraFragment()
+        fun newInstance() = HomeFragment()
     }
 }

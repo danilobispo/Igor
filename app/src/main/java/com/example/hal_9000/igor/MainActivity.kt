@@ -13,7 +13,7 @@ import android.widget.Toast
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation.findNavController
 import com.example.hal_9000.igor.adapters.ListDrawerAdapter
-import com.example.hal_9000.igor.fragment.AventuraFragment
+import com.example.hal_9000.igor.fragment.HomeFragment
 import com.example.hal_9000.igor.model.Categoria
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -71,11 +71,11 @@ class MainActivity : AppCompatActivity() {
 
             val navController = findNavController(this, R.id.nav_host)
             val navBuilder = NavOptions.Builder()
-            val navOptions = navBuilder.setPopUpTo(R.id.aventuraFragment, false).build()
+            val navOptions = navBuilder.setPopUpTo(R.id.homeFragment, false).build()
 
             when (position) {
                 0 -> {
-                    navController.navigate(R.id.aventuraFragment, null, navOptions)
+                    navController.navigate(R.id.homeFragment, null, navOptions)
                 }
                 1 -> {
                     navController.navigate(R.id.livrosFragment, null, navOptions)
@@ -161,7 +161,7 @@ class MainActivity : AppCompatActivity() {
 
     fun setupFragment(savedInstanceState: Bundle?) {
         if (savedInstanceState == null) {
-            this.supportFragmentManager.beginTransaction().replace(R.id.container, AventuraFragment())
+            this.supportFragmentManager.beginTransaction().replace(R.id.container, HomeFragment())
                     .addToBackStack(null).commit()
         }
     }

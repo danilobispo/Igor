@@ -121,7 +121,7 @@ class NewAdventure : Fragment() {
     }
 
     private fun exitFragment() {
-        NavHostFragment.findNavController(this).navigate(R.id.action_newAdventure_to_aventuraFragment)
+        NavHostFragment.findNavController(this).navigate(R.id.action_newAdventure_to_homeFragment)
     }
 
     private fun clearOthersRadioButtons(rb: Int) {
