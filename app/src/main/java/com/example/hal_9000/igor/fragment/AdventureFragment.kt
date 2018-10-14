@@ -72,7 +72,11 @@ class AdventureFragment : Fragment() {
         }
 
         val tvAdventureText = view.findViewById<TextView>(R.id.tv_adventure_text)
-        tvAdventureText.text = "Aventura sem descrição"
+
+        if (aventura!!.description.isEmpty())
+            tvAdventureText.text = "Aventura sem descrição"
+        else
+            tvAdventureText.text = aventura!!.description
 
         tvAdventureText.post {
             if (tvAdventureText.lineCount > 6) {

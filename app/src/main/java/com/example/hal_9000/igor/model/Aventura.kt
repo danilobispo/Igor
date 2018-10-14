@@ -5,12 +5,14 @@ import android.os.Parcelable
 
 class Aventura(
         var title: String = "",
-        var next_session: String = "",
+        var description: String = "",
         var theme: String = "",
         var creator: String = "",
+        var next_session: String = "",
         val sessions: ArrayList<Session> = arrayListOf(),
         var deleted: Boolean = false) : Parcelable {
     constructor(parcel: Parcel) : this(
+            parcel.readString(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
@@ -20,9 +22,10 @@ class Aventura(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(title)
-        parcel.writeString(next_session)
+        parcel.writeString(description)
         parcel.writeString(theme)
         parcel.writeString(creator)
+        parcel.writeString(next_session)
         parcel.writeByte(if (deleted) 1 else 0)
     }
 
