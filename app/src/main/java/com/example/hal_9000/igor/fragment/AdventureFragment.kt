@@ -2,6 +2,7 @@ package com.example.hal_9000.igor.fragment
 
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.util.Log
@@ -12,6 +13,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.ListView
 import android.widget.TextView
+import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
 
@@ -57,7 +59,10 @@ class AdventureFragment : Fragment() {
         }
 
         val listView = view.findViewById(R.id.lv_next_sessions) as ListView
-        val values = arrayOf("17/10 Sessão sem título", "18/10 Sessão sem título", "19/10 Sessão sem título", "20/10 Sessão sem título")
+        val values: ArrayList<String> = arrayListOf()
+
+        for (session in aventura!!.sessions)
+            values.add("${session.date} ${session.title}")
 
         val adapter = ArrayAdapter<String>(view.context, R.layout.next_sessions_item, R.id.tv_session, values)
         listView.adapter = adapter
@@ -99,6 +104,15 @@ class AdventureFragment : Fragment() {
             Log.d(TAG, "right")
             ivTabLeft.setImageResource(R.drawable.tab_l2)
             ivTabRight.setImageResource(R.drawable.tab_r1)
+        }
+
+        val fab = view.findViewById<FloatingActionButton>(R.id.fab_new_session)
+        fab.setOnClickListener {
+
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(aventura!!)
+            action.setAventura(aventura!!)
+
+            NavHostFragment.findNavController(this).navigate(action)
         }
 
         return view

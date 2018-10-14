@@ -61,6 +61,22 @@
         <argument
             android:name="aventura"
             app:argType="com.example.hal_9000.igor.model.Aventura" />
+        <action
+            android:id="@+id/action_adventureFragment_to_newSession"
+            app:destination="@id/newSession" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newSession"
+        android:name="com.example.hal_9000.igor.fragment.NewSession"
+        android:label="fragment_new_session"
+        tools:layout="@layout/fragment_new_session" >
+        <argument
+            android:name="aventura"
+            app:argType="com.example.hal_9000.igor.model.Aventura" />
+        <action
+            android:id="@+id/action_newSession_to_adventureFragment"
+            app:destination="@id/adventureFragment" />
     </fragment>
 
 </navigation>

@@ -8,12 +8,14 @@ class Aventura(
         var next_session: String = "",
         var theme: String = "",
         var creator: String = "",
+        val sessions: ArrayList<Session> = arrayListOf(),
         var deleted: Boolean = false) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
+            parcel.createTypedArrayList(Session.CREATOR),
             parcel.readByte() != 0.toByte())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -38,3 +40,4 @@ class Aventura(
         }
     }
 }
+
