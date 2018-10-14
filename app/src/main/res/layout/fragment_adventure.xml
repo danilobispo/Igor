@@ -29,6 +29,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_edit_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:clickable="true"
+        android:src="@drawable/ic_create"
+        android:visibility="invisible"
+        app:backgroundTint="@color/colorAccent"
+        app:fabSize="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:maxImageSize="30dp" />
+
     <android.support.v4.widget.Space
         android:id="@+id/marginSpacer"
         android:layout_width="0dp"
@@ -116,7 +131,7 @@
             android:paddingEnd="30dp">
 
             <TextView
-                android:id="@+id/tv_adventure_text"
+                android:id="@+id/tv_description"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:maxLines="6"
@@ -144,7 +159,6 @@
 
     </android.support.v7.widget.CardView>
 
-
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_new_session"
         android:layout_width="wrap_content"
@@ -153,6 +167,21 @@
         android:layout_marginBottom="20dp"
         android:clickable="true"
         android:src="@drawable/ic_new_session"
+        app:backgroundTint="#00E2BA"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:maxImageSize="30dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_save_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:clickable="true"
+        android:src="@drawable/ic_check"
+        android:visibility="invisible"
         app:backgroundTint="#00E2BA"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"

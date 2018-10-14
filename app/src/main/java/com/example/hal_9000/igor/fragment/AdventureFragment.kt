@@ -7,26 +7,30 @@ import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ImageView
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
+import kotlinx.android.synthetic.main.fragment_adventure.*
 
 
 class AdventureFragment : Fragment() {
 
-    val TAG = "AdventureFragment"
+    private val TAG = "AdventureFragment"
+    private var editMode = false
     var aventura: Aventura? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_adventure, container, false)
+
+        Log.d(TAG, "onCreateView: Started")
+
+        setHasOptionsMenu(true)
 
         aventura = AdventureFragmentArgs.fromBundle(arguments).aventura
 
@@ -69,9 +73,15 @@ class AdventureFragment : Fragment() {
 
         listView.setOnItemClickListener { parent, _, position, _ ->
             Log.d(TAG, "${parent.getItemAtPosition(position)}")
+            if (editMode) {
+                val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(aventura!!)
+                action.setAventura(aventura!!)
+                action.setSession(position)
+                NavHostFragment.findNavController(this).navigate(action)
+            }
         }
 
-        val tvAdventureText = view.findViewById<TextView>(R.id.tv_adventure_text)
+        val tvAdventureText = view.findViewById<TextView>(R.id.tv_description)
 
         if (aventura!!.description.isEmpty())
             tvAdventureText.text = "Aventura sem descrição"
@@ -110,16 +120,70 @@ class AdventureFragment : Fragment() {
             ivTabRight.setImageResource(R.drawable.tab_r1)
         }
 
+        val fabEditMode = view.findViewById<FloatingActionButton>(R.id.fab_edit_mode)
+        fabEditMode.setOnClickListener {
+            setEditModeOff()
+        }
+
+        val fabEditSave = view.findViewById<FloatingActionButton>(R.id.fab_save_edit)
+        fabEditSave.setOnClickListener {
+            setEditModeOff()
+        }
+
         val fab = view.findViewById<FloatingActionButton>(R.id.fab_new_session)
         fab.setOnClickListener {
-
             val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(aventura!!)
             action.setAventura(aventura!!)
-
             NavHostFragment.findNavController(this).navigate(action)
         }
 
         return view
+    }
+
+    private fun setEditModeOn() {
+        Log.d(TAG, "Edit mode on")
+        editMode = true
+
+        fab_new_session.hide()
+        fab_save_edit.show()
+        fab_edit_mode.show()
+
+        tv_adventure_title.setOnClickListener {
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(aventura!!)
+            action.setAventura(aventura!!)
+            NavHostFragment.findNavController(this).navigate(action)
+        }
+
+        tv_description.setOnClickListener {
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(aventura!!)
+            action.setAventura(aventura!!)
+            NavHostFragment.findNavController(this).navigate(action)
+        }
+    }
+
+    private fun setEditModeOff() {
+        Log.d(TAG, "Edit mode off")
+        editMode = false
+
+        fab_new_session.show()
+        fab_save_edit.hide()
+        fab_edit_mode.hide()
+
+        tv_adventure_title.setOnClickListener(null)
+        tv_description.setOnClickListener(null)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_editar -> {
+                Toast.makeText(context, "Editar", Toast.LENGTH_SHORT).show()
+                setEditModeOn()
+            }
+            R.id.menu_ordenar -> {
+                Toast.makeText(context, "Ordenar", Toast.LENGTH_SHORT).show()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object {

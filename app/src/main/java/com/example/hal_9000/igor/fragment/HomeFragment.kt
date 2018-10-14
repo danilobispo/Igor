@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.AdventureRecyclerViewAdapter
@@ -54,7 +55,11 @@ class HomeFragment : Fragment() {
 
         val fab = view.findViewById<FloatingActionButton>(R.id.fab_nova_aventura)
         fab.setOnClickListener {
-            findNavController(this).navigate(R.id.action_homeFragment_to_newAdventure)
+
+            val aventura = Aventura()
+            val action = HomeFragmentDirections.ActionHomeFragmentToNewAdventure(aventura)
+            action.setAventura(aventura)
+            NavHostFragment.findNavController(this).navigate(action)
         }
 
         val fabEditMode = view.findViewById<FloatingActionButton>(R.id.fab_edit_mode)
@@ -149,7 +154,6 @@ class HomeFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_editar -> {
-                Toast.makeText(context, "Editar", Toast.LENGTH_SHORT).show()
                 setEditModeOn()
             }
             R.id.menu_ordenar -> {
@@ -183,9 +187,9 @@ class HomeFragment : Fragment() {
 
     private fun setEditModeOff() {
         Log.d(TAG, "Edit mode off")
+        fab_nova_aventura.show()
         fab_save_edit.hide()
         fab_edit_mode.hide()
-        fab_nova_aventura.show()
         setRecyclerView(false)
     }
 

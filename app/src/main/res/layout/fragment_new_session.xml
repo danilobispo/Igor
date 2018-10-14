@@ -31,7 +31,7 @@
                 android:src="@drawable/ic_close" />
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/tv_header_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="15dp"
@@ -43,7 +43,7 @@
             <android.support.constraint.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/title"
+                android:layout_below="@id/tv_header_title"
                 android:layout_marginTop="25dp"
                 android:orientation="vertical"
                 android:paddingStart="35dp"
@@ -117,21 +117,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/et_summary"
-                    android:layout_centerInParent="true"
-                    android:visibility="invisible" />
-
-                <android.support.constraint.Guideline
-                    android:id="@+id/guideline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_begin="20dp" />
-
-                <android.support.constraint.Barrier
-                    android:id="@+id/barrier"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:barrierDirection="top" />
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="8dp"
+                    android:visibility="invisible"
+                    app:layout_constraintEnd_toStartOf="@+id/btn_finish"
+                    app:layout_constraintStart_toEndOf="@+id/btn_date"
+                    app:layout_constraintTop_toBottomOf="@id/et_summary" />
 
             </android.support.constraint.ConstraintLayout>
 

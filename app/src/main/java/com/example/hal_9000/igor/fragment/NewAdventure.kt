@@ -20,11 +20,18 @@ class NewAdventure : Fragment() {
 
     private val TAG = "NewAdventure"
 
+    private var editMode: Boolean? = null
+
+    private var adventure: Aventura? = null
+
     private var rb1: RadioButton? = null
     private var rb2: RadioButton? = null
     private var rb3: RadioButton? = null
     private var rb4: RadioButton? = null
     private var rb5: RadioButton? = null
+
+    private var etTitle: EditText? = null
+    private var etDescription: EditText? = null
 
     private var mProgressBar: ProgressBar? = null
 
@@ -34,6 +41,8 @@ class NewAdventure : Fragment() {
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_new_adventure, container, false)
+
+        adventure = AdventureFragmentArgs.fromBundle(arguments).aventura
 
         rb1 = view.findViewById(R.id.rb_1)
         rb2 = view.findViewById(R.id.rb_2)
@@ -64,6 +73,18 @@ class NewAdventure : Fragment() {
                 clearOthersRadioButtons(5)
         }
 
+        if (!adventure!!.creator.isEmpty()) {
+            editMode = true
+            val tvHeaderTitle = view.findViewById<TextView>(R.id.tv_header_title)
+            tvHeaderTitle.text = "Editar Aventura"
+
+            etTitle = view.findViewById(R.id.et_title)
+            etDescription = view.findViewById(R.id.et_description)
+            completeFields()
+        } else {
+            editMode = false
+        }
+
         val buttonFinish = view.findViewById<Button>(R.id.btn_finish)
         buttonFinish.setOnClickListener {
             saveAdventure()
@@ -80,6 +101,23 @@ class NewAdventure : Fragment() {
         }
 
         return view
+    }
+
+    private fun completeFields() {
+        if (adventure!!.title.isNotEmpty())
+            etTitle!!.setText(adventure!!.title)
+
+        if (adventure!!.description.isNotEmpty())
+            etDescription!!.setText(adventure!!.description)
+
+        if (adventure!!.theme.isNotEmpty())
+            when (adventure!!.theme) {
+                "krevast" -> rb2!!.isChecked = true
+                "corvali" -> rb3!!.isChecked = true
+                "heartlands" -> rb4!!.isChecked = true
+                "coast" -> rb5!!.isChecked = true
+                "default" -> rb1!!.isChecked = true
+            }
     }
 
     private fun saveAdventure() {
@@ -101,28 +139,61 @@ class NewAdventure : Fragment() {
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
         val mAuth = FirebaseAuth.getInstance()
 
-        val adventure = Aventura()
-        adventure.title = et_title.text.toString()
-        adventure.next_session = ""
-        adventure.theme = theme
-        adventure.deleted = false
-        adventure.creator = mAuth.currentUser!!.uid
+        if (!editMode!!) {
+            adventure = Aventura()
+        }
 
-        db.collection("adventures")
-                .add(adventure)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "Document ${documentReference.id} created successfully")
-                    Toast.makeText(context, "Aventura criada com sucesso!", Toast.LENGTH_SHORT).show()
-                    exitFragment()
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error creating document", e)
-                    mProgressBar!!.visibility = View.INVISIBLE
-                }
+        val originalTitle = adventure!!.title
+
+        adventure!!.title = et_title.text.toString()
+        adventure!!.description = et_description.text.toString()
+        adventure!!.theme = theme
+        adventure!!.creator = mAuth.currentUser!!.uid
+        adventure!!.deleted = false
+
+        if (editMode!!) {
+            db.collection("adventures")
+                    .whereEqualTo("title", originalTitle)
+                    .whereEqualTo("creator", this.adventure!!.creator)
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener { it ->
+                        it.documents[0].reference
+                                .set(this.adventure!!)
+                                .addOnSuccessListener {
+                                    Log.d(TAG, "Document updated successfully")
+                                    Toast.makeText(context, "Aventura modificada com sucesso!", Toast.LENGTH_SHORT).show()
+                                    exitFragment()
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.w(TAG, "Error updating document", e)
+                                    mProgressBar!!.visibility = View.INVISIBLE
+                                }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error querying document", e)
+                        Toast.makeText(context, "Erro ao criar sessão", Toast.LENGTH_SHORT).show()
+                    }
+        } else {
+            db.collection("adventures")
+                    .add(adventure!!)
+                    .addOnSuccessListener { documentReference ->
+                        Log.d(TAG, "Document ${documentReference.id} created successfully")
+                        Toast.makeText(context, "Aventura criada com sucesso!", Toast.LENGTH_SHORT).show()
+                        exitFragment()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error creating document", e)
+                        mProgressBar!!.visibility = View.INVISIBLE
+                    }
+        }
     }
 
     private fun exitFragment() {
-        NavHostFragment.findNavController(this).navigate(R.id.action_newAdventure_to_homeFragment)
+        if (editMode!!)
+            NavHostFragment.findNavController(this).popBackStack(R.id.adventureFragment, false)
+        else
+            NavHostFragment.findNavController(this).navigate(R.id.action_newAdventure_to_homeFragment)
     }
 
     private fun clearOthersRadioButtons(rb: Int) {

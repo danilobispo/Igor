@@ -8,10 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.Toast
+import android.widget.*
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.R
@@ -27,8 +24,16 @@ import kotlin.collections.HashMap
 class NewSession : Fragment() {
 
     private val TAG = "NewSession"
-    private var mProgressBar: ProgressBar? = null
     private var aventura: Aventura? = null
+
+    private var editMode = false
+    private var editPosition: Int? = null
+
+    private var mProgressBar: ProgressBar? = null
+
+    private var etTitle: EditText? = null
+    private var etSummary: EditText? = null
+    private var btnDate: Button? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -36,22 +41,42 @@ class NewSession : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_new_session, container, false)
 
+        etTitle = view.findViewById(R.id.et_title)
+        etSummary = view.findViewById(R.id.et_summary)
+        btnDate = view.findViewById(R.id.btn_date)
+
         aventura = NewSessionArgs.fromBundle(arguments).aventura
+        editPosition = NewSessionArgs.fromBundle(arguments).session
+
+        if (editPosition!! > -1) {
+            editMode = true
+            val tvHeaderTitle = view.findViewById<TextView>(R.id.tv_header_title)
+            tvHeaderTitle.text = "Editar Aventura"
+            completeFields()
+        }
 
         mProgressBar = view.findViewById(R.id.progressBar)
 
-        val buttonDate = view.findViewById<Button>(R.id.btn_date)
-        buttonDate.setOnClickListener {
+        btnDate!!.setOnClickListener {
 
             val c = Calendar.getInstance()
+
+            val mDay: Int
+            val mMonth: Int
             val mYear = c.get(Calendar.YEAR)
-            val mMonth = c.get(Calendar.MONTH)
-            val mDay = c.get(Calendar.DAY_OF_MONTH)
+
+            if (editMode) {
+                mDay = aventura!!.sessions[editPosition!!].date.split("/")[0].toInt()
+                mMonth = aventura!!.sessions[editPosition!!].date.split("/")[1].toInt()
+            } else {
+                mDay = c.get(Calendar.DAY_OF_MONTH)
+                mMonth = c.get(Calendar.MONTH)
+            }
 
             val datePickerDialog = DatePickerDialog(view.context,
                     DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
                         val dateText = dayOfMonth.toString() + "/" + (monthOfYear + 1).toString()
-                        buttonDate.text = dateText
+                        btnDate!!.text = dateText
                     }, mYear, mMonth, mDay)
             datePickerDialog.show()
         }
@@ -72,6 +97,17 @@ class NewSession : Fragment() {
         }
 
         return view
+    }
+
+    private fun completeFields() {
+        if (aventura!!.sessions[editPosition!!].title.isNotEmpty())
+            etTitle!!.setText(aventura!!.sessions[editPosition!!].title)
+
+        if (aventura!!.sessions[editPosition!!].summary.isNotEmpty())
+            etSummary!!.setText(aventura!!.sessions[editPosition!!].summary)
+
+        if (aventura!!.sessions[editPosition!!].date.isNotEmpty())
+            btnDate!!.text = aventura!!.sessions[editPosition!!].date
     }
 
     private fun saveSession() {
@@ -104,29 +140,64 @@ class NewSession : Fragment() {
         sessionHash["summary"] = session.summary
         sessionHash["date"] = session.date
 
-        db.collection("adventures")
-                .whereEqualTo("title", aventura!!.title)
-                .whereEqualTo("creator", aventura!!.creator)
-                .limit(1)
-                .get()
-                .addOnSuccessListener { it ->
-                    it.documents[0].reference
-                            .update("sessions", FieldValue.arrayUnion(sessionHash))
-                            .addOnSuccessListener {
-                                Log.d(TAG, "Document updated successfully")
-                                Toast.makeText(context, "Sessão criada com sucesso!", Toast.LENGTH_SHORT).show()
-                                aventura!!.sessions.add(session)
-                                exitFragment()
-                            }
-                            .addOnFailureListener { e ->
-                                Log.w(TAG, "Error creating document", e)
-                                mProgressBar!!.visibility = View.INVISIBLE
-                            }
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error querying document", e)
-                    Toast.makeText(context, "Erro ao criar sessão", Toast.LENGTH_SHORT).show()
-                }
+        if (editMode!!) {
+
+            val oldSessionHash = HashMap<String, String>()
+            oldSessionHash["title"] = aventura!!.sessions[editPosition!!].title
+            oldSessionHash["summary"] = aventura!!.sessions[editPosition!!].summary
+            oldSessionHash["date"] = aventura!!.sessions[editPosition!!].date
+
+            // TODO: Join calls
+            db.collection("adventures")
+                    .whereEqualTo("title", aventura!!.title)
+                    .whereEqualTo("creator", aventura!!.creator)
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener { it ->
+                        it.documents[0].reference
+                                .update("sessions", FieldValue.arrayUnion(sessionHash))
+                                .addOnSuccessListener { _ ->
+                                    Log.d(TAG, "Document updated successfully")
+                                    Toast.makeText(context, "Sessão criada com sucesso!", Toast.LENGTH_SHORT).show()
+                                    it.documents[0].reference.update("sessions", FieldValue.arrayRemove(oldSessionHash))
+                                    aventura!!.sessions.removeAt(editPosition!!)
+                                    aventura!!.sessions.add(session)
+                                    exitFragment()
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.w(TAG, "Error creating document", e)
+                                    mProgressBar!!.visibility = View.INVISIBLE
+                                }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error querying document", e)
+                        Toast.makeText(context, "Erro ao criar sessão", Toast.LENGTH_SHORT).show()
+                    }
+        } else {
+            db.collection("adventures")
+                    .whereEqualTo("title", aventura!!.title)
+                    .whereEqualTo("creator", aventura!!.creator)
+                    .limit(1)
+                    .get()
+                    .addOnSuccessListener { it ->
+                        it.documents[0].reference
+                                .update("sessions", FieldValue.arrayUnion(sessionHash))
+                                .addOnSuccessListener {
+                                    Log.d(TAG, "Document updated successfully")
+                                    Toast.makeText(context, "Sessão criada com sucesso!", Toast.LENGTH_SHORT).show()
+                                    aventura!!.sessions.add(session)
+                                    exitFragment()
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.w(TAG, "Error creating document", e)
+                                    mProgressBar!!.visibility = View.INVISIBLE
+                                }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error querying document", e)
+                        Toast.makeText(context, "Erro ao criar sessão", Toast.LENGTH_SHORT).show()
+                    }
+        }
     }
 
     private fun exitFragment() {
