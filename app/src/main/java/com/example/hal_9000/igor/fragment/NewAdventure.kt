@@ -105,6 +105,7 @@ class NewAdventure : Fragment() {
         adventure.title = et_title.text.toString()
         adventure.next_session = ""
         adventure.theme = theme
+        adventure.deleted = false
         adventure.creator = mAuth.currentUser!!.uid
 
         db.collection("adventures")

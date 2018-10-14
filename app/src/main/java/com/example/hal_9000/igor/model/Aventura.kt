@@ -7,18 +7,21 @@ class Aventura(
         var title: String = "",
         var next_session: String = "",
         var theme: String = "",
-        var creator: String = "") : Parcelable {
+        var creator: String = "",
+        var deleted: Boolean = false) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
-            parcel.readString())
+            parcel.readString(),
+            parcel.readByte() != 0.toByte())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(title)
         parcel.writeString(next_session)
         parcel.writeString(theme)
         parcel.writeString(creator)
+        parcel.writeByte(if (deleted) 1 else 0)
     }
 
     override fun describeContents(): Int {
