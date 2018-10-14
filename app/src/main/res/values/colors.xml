@@ -10,4 +10,10 @@
     <color name="green">#00E2BA</color>
     <color name="green_dark">#0B9C8D</color>
 
+    <color name="default_background">#1A3F51</color>
+    <color name="krevast_background">#471839</color>
+    <color name="corvali_background">#165760</color>
+    <color name="heartlands_background">#1E2842</color>
+    <color name="coast_background">#F8AA76</color>
+
 </resources>

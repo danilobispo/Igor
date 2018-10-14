@@ -71,7 +71,12 @@ class HomeFragment : Fragment() {
     }
 
     private fun aventuraItemClicked(aventura: Aventura) {
-        Toast.makeText(context, "Clicked: ${aventura.title}", Toast.LENGTH_LONG).show()
+        Log.d(TAG, "Clicked: ${aventura.title}")
+
+        val action = HomeFragmentDirections.ActionHomeFragmentToAdventureFragment(aventura)
+        action.setAventura(aventura)
+
+        findNavController(this).navigate(action)
     }
 
     private fun aventuraDeleteItemClicked(aventura: Aventura) {

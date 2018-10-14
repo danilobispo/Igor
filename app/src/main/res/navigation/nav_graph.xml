@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_homeFragment_to_newAdventure"
             app:destination="@id/newAdventure" />
+        <action
+            android:id="@+id/action_homeFragment_to_adventureFragment"
+            app:destination="@id/adventureFragment" />
     </fragment>
 
     <fragment
@@ -49,5 +52,15 @@
         android:name="com.example.hal_9000.igor.fragment.ConfiguracoesFragment"
         android:label="fragment_configuracoes"
         tools:layout="@layout/fragment_configuracoes" />
+
+    <fragment
+        android:id="@+id/adventureFragment"
+        android:name="com.example.hal_9000.igor.fragment.AdventureFragment"
+        android:label="fragment_adventure"
+        tools:layout="@layout/fragment_adventure">
+        <argument
+            android:name="aventura"
+            app:argType="com.example.hal_9000.igor.model.Aventura" />
+    </fragment>
 
 </navigation>
