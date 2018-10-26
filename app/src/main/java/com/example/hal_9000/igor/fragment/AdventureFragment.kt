@@ -10,7 +10,9 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
@@ -27,15 +29,19 @@ class AdventureFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_adventure, container, false)
-        val andamentoFragment = AndamentoFragment()
 
         Log.d(TAG, "onCreateView: Started")
 
         setHasOptionsMenu(true)
 
         aventura = AdventureFragmentArgs.fromBundle(arguments).aventura
-        fragmentManager!!.beginTransaction().add(R.id.frameAventura, AndamentoFragment()).addToBackStack(null).commit()
 
+        val andamentoFragment = AndamentoFragment()
+        val bundle = Bundle()
+        bundle.putParcelable("aventura", aventura)
+        andamentoFragment.arguments = bundle
+
+        fragmentManager!!.beginTransaction().add(R.id.frameAventura, andamentoFragment).addToBackStack(null).commit()
 
         val tvTitle = view.findViewById<TextView>(R.id.tv_adventure_title)
         tvTitle.text = aventura!!.title
@@ -72,16 +78,26 @@ class AdventureFragment : Fragment() {
             Log.d(TAG, "left")
             ivTabLeft.setImageResource(R.drawable.tab_l1)
             ivTabRight.setImageResource(R.drawable.tab_r2)
-            val bundle: Bundle
 
-            fragmentManager!!.beginTransaction().replace(R.id.frameAventura, AndamentoFragment()).addToBackStack(null).commit()
+            val andamentoFragment = AndamentoFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("aventura", aventura)
+            andamentoFragment.arguments = bundle
+
+            fragmentManager!!.beginTransaction().add(R.id.frameAventura, andamentoFragment).addToBackStack(null).commit()
         }
 
         ivTabRight.setOnClickListener {
             Log.d(TAG, "right")
             ivTabLeft.setImageResource(R.drawable.tab_l2)
             ivTabRight.setImageResource(R.drawable.tab_r1)
-            fragmentManager!!.beginTransaction().replace(R.id.frameAventura, JogadoresFragment()).addToBackStack(null).commit()
+
+            val jogadoresFragment = JogadoresFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("aventura", aventura)
+            andamentoFragment.arguments = bundle
+
+            fragmentManager!!.beginTransaction().add(R.id.frameAventura, jogadoresFragment).addToBackStack(null).commit()
         }
 
         val fabEditMode = view.findViewById<FloatingActionButton>(R.id.fab_edit_mode)
