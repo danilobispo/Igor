@@ -27,6 +27,7 @@ class AdventureFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_adventure, container, false)
+        fragmentManager!!.beginTransaction().add(R.id.frameAventura, AdventureFragment()).addToBackStack(null).commit()
 
         Log.d(TAG, "onCreateView: Started")
 
@@ -62,49 +63,6 @@ class AdventureFragment : Fragment() {
             }
         }
 
-        val listView = view.findViewById(R.id.lv_next_sessions) as ListView
-        val values: ArrayList<String> = arrayListOf()
-
-        for (session in aventura!!.sessions)
-            values.add("${session.date} ${session.title}")
-
-        val adapter = ArrayAdapter<String>(view.context, R.layout.next_sessions_item, R.id.tv_session, values)
-        listView.adapter = adapter
-
-        listView.setOnItemClickListener { parent, _, position, _ ->
-            Log.d(TAG, "${parent.getItemAtPosition(position)}")
-            if (editMode) {
-                val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(aventura!!)
-                action.setAventura(aventura!!)
-                action.setSession(position)
-                NavHostFragment.findNavController(this).navigate(action)
-            }
-        }
-
-        val tvAdventureText = view.findViewById<TextView>(R.id.tv_description)
-
-        if (aventura!!.description.isEmpty())
-            tvAdventureText.text = "Aventura sem descrição"
-        else
-            tvAdventureText.text = aventura!!.description
-
-        tvAdventureText.post {
-            if (tvAdventureText.lineCount > 6) {
-                val tvSeeMore = view.findViewById<TextView>(R.id.tv_see_more)
-                tvSeeMore.visibility = View.VISIBLE
-
-                tvSeeMore.setOnClickListener {
-                    if (tvAdventureText.maxLines == 6) {
-                        tvAdventureText.maxLines = 99
-                        tvSeeMore.text = "ver menos ▲"
-                    } else {
-                        tvAdventureText.maxLines = 6
-                        tvSeeMore.text = "ver mais ▼"
-                    }
-                }
-            }
-        }
-
         val ivTabLeft = view.findViewById<ImageView>(R.id.iv_tab_left)
         val ivTabRight = view.findViewById<ImageView>(R.id.iv_tab_right)
 
@@ -112,12 +70,14 @@ class AdventureFragment : Fragment() {
             Log.d(TAG, "left")
             ivTabLeft.setImageResource(R.drawable.tab_l1)
             ivTabRight.setImageResource(R.drawable.tab_r2)
+            fragmentManager!!.beginTransaction().replace(R.id.frameAventura, AndamentoFragment()).addToBackStack(null).commit()
         }
 
         ivTabRight.setOnClickListener {
             Log.d(TAG, "right")
             ivTabLeft.setImageResource(R.drawable.tab_l2)
             ivTabRight.setImageResource(R.drawable.tab_r1)
+            fragmentManager!!.beginTransaction().replace(R.id.frameAventura, JogadoresFragment()).addToBackStack(null).commit()
         }
 
         val fabEditMode = view.findViewById<FloatingActionButton>(R.id.fab_edit_mode)
@@ -154,11 +114,11 @@ class AdventureFragment : Fragment() {
             NavHostFragment.findNavController(this).navigate(action)
         }
 
-        tv_description.setOnClickListener {
-            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(aventura!!)
-            action.setAventura(aventura!!)
-            NavHostFragment.findNavController(this).navigate(action)
-        }
+//        tv_description.setOnClickListener {
+//            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(aventura!!)
+//            action.setAventura(aventura!!)
+//            NavHostFragment.findNavController(this).navigate(action)
+//        }
     }
 
     private fun setEditModeOff() {
@@ -170,7 +130,7 @@ class AdventureFragment : Fragment() {
         fab_edit_mode.hide()
 
         tv_adventure_title.setOnClickListener(null)
-        tv_description.setOnClickListener(null)
+//        tv_description.setOnClickListener(null)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -40,7 +40,6 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
     implementation 'android.arch.navigation:navigation-fragment:1.0.0-alpha06'
 
-
     // Firebase
     implementation 'com.google.firebase:firebase-core:16.0.4'
     implementation 'com.google.firebase:firebase-auth:16.0.4'
@@ -52,4 +51,7 @@ dependencies {
 
     // Glide
     implementation 'com.github.bumptech.glide:glide:4.8.0'
+
+    // Circle image view
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
 }
