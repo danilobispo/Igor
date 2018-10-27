@@ -1,38 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginEnd="15dp"
+    android:layout_marginBottom="10dp">
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/imagemJogadorItem"
-        android:layout_width="96dp"
-        android:layout_height="96dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:src="@color/colorPrimary"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <TextView
-        android:id="@+id/nomeJogadorItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:text="Nome Jogador"
-        app:layout_constraintStart_toEndOf="@+id/imagemJogadorItem"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/roleJogadorItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="20dp"
         android:text="Role Jogador"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/imagemJogadorItem"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/nomeJogadorItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="Nome Jogador"
+        android:textStyle="italic"
+        app:layout_constraintStart_toEndOf="@+id/imagemJogadorItem"
+        app:layout_constraintTop_toBottomOf="@+id/roleJogadorItem" />
+
+    <TextView
+        android:id="@+id/descricaoJogadorItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:text="Descricao Jogador"
+        android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/imagemJogadorItem"
         app:layout_constraintTop_toBottomOf="@+id/nomeJogadorItem" />
 

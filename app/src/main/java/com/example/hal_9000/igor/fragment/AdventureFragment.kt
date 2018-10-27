@@ -23,6 +23,9 @@ class AdventureFragment : Fragment() {
 
     private val TAG = "AdventureFragment"
     private var editMode = false
+    private var openedTab = "andamento"
+    private var ivTabLeft: ImageView? = null
+    private var ivTabRight: ImageView? = null
     var aventura: Aventura? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -41,7 +44,7 @@ class AdventureFragment : Fragment() {
         bundle.putParcelable("aventura", aventura)
         andamentoFragment.arguments = bundle
 
-        fragmentManager!!.beginTransaction().add(R.id.frameAventura, andamentoFragment).addToBackStack(null).commit()
+        fragmentManager!!.beginTransaction().add(R.id.frameAventura, andamentoFragment).commit()
 
         val tvTitle = view.findViewById<TextView>(R.id.tv_adventure_title)
         tvTitle.text = aventura!!.title
@@ -71,33 +74,39 @@ class AdventureFragment : Fragment() {
             }
         }
 
-        val ivTabLeft = view.findViewById<ImageView>(R.id.iv_tab_left)
-        val ivTabRight = view.findViewById<ImageView>(R.id.iv_tab_right)
+        ivTabLeft = view.findViewById(R.id.iv_tab_left)
+        ivTabRight = view.findViewById(R.id.iv_tab_right)
 
-        ivTabLeft.setOnClickListener {
-            Log.d(TAG, "left")
-            ivTabLeft.setImageResource(R.drawable.tab_l1)
-            ivTabRight.setImageResource(R.drawable.tab_r2)
+        ivTabLeft?.setOnClickListener {
+            Log.d(TAG, "Andamento tab")
 
-            val andamentoFragment = AndamentoFragment()
-            val bundle = Bundle()
-            bundle.putParcelable("aventura", aventura)
-            andamentoFragment.arguments = bundle
+            if (openedTab == "jogadores") {
+                switchTab("andamento")
 
-            fragmentManager!!.beginTransaction().add(R.id.frameAventura, andamentoFragment).addToBackStack(null).commit()
+                val andamentoFragment = AndamentoFragment()
+                val bundle = Bundle()
+                bundle.putParcelable("aventura", aventura)
+                andamentoFragment.arguments = bundle
+
+                fragmentManager!!.beginTransaction().replace(R.id.frameAventura, andamentoFragment).commit()
+                openedTab = "andamento"
+            }
         }
 
-        ivTabRight.setOnClickListener {
-            Log.d(TAG, "right")
-            ivTabLeft.setImageResource(R.drawable.tab_l2)
-            ivTabRight.setImageResource(R.drawable.tab_r1)
+        ivTabRight?.setOnClickListener {
+            Log.d(TAG, "Jogadores tab")
 
-            val jogadoresFragment = JogadoresFragment()
-            val bundle = Bundle()
-            bundle.putParcelable("aventura", aventura)
-            andamentoFragment.arguments = bundle
+            if (openedTab == "andamento") {
+                switchTab("jogadores")
 
-            fragmentManager!!.beginTransaction().add(R.id.frameAventura, jogadoresFragment).addToBackStack(null).commit()
+                val jogadoresFragment = JogadoresFragment()
+                val bundle = Bundle()
+                bundle.putParcelable("aventura", aventura)
+                andamentoFragment.arguments = bundle
+
+                fragmentManager!!.beginTransaction().replace(R.id.frameAventura, jogadoresFragment).commit()
+                openedTab = "jogadores"
+            }
         }
 
         val fabEditMode = view.findViewById<FloatingActionButton>(R.id.fab_edit_mode)
@@ -118,6 +127,21 @@ class AdventureFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun switchTab(tab: String) {
+        if (tab == "andamento") {
+            ivTabLeft?.setImageResource(R.drawable.tab_l1)
+            ivTabRight?.setImageResource(R.drawable.tab_r2)
+            fab_new_player.hide()
+            fab_new_session.show()
+
+        } else if (tab == "jogadores") {
+            ivTabLeft?.setImageResource(R.drawable.tab_l2)
+            ivTabRight?.setImageResource(R.drawable.tab_r1)
+            fab_new_session.hide()
+            fab_new_player.show()
+        }
     }
 
     private fun setEditModeOn() {
