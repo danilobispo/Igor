@@ -31,7 +31,7 @@ class JogadoresFragment : Fragment() {
         // use a linear layout manager
         jogadoresRv.layoutManager = viewManager
         // specify an viewAdapter (see also next example)
-        jogadoresRv.adapter = JogadoresListAdapter(dataset)
+        jogadoresRv.adapter = JogadoresListAdapter(dataset, fragmentManager)
 
         return view
     }
