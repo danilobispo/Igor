@@ -79,7 +79,7 @@
                         android:textColor="#877D91" />
 
                     <EditText
-                        android:id="@+id/et_description"
+                        android:id="@+id/et_descricao"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/description2"
@@ -91,7 +91,7 @@
                         android:id="@+id/description3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@id/et_description"
+                        android:layout_below="@id/et_descricao"
                         android:layout_marginTop="10dp"
                         android:text="Escolha uma imagem para a sua aventura"
                         android:textColor="#877D91" />

@@ -4,8 +4,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-
 import com.example.hal_9000.igor.R
+import com.example.hal_9000.igor.model.Personagem
 
 class JogadoresViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -19,5 +19,9 @@ class JogadoresViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         nomeJogador = itemView.findViewById<View>(R.id.nomeJogadorItem) as TextView
         roleJogador = itemView.findViewById<View>(R.id.roleJogadorItem) as TextView
         descricaoJogador = itemView.findViewById<View>(R.id.descricaoJogadorItem) as TextView
+    }
+
+    fun setClickListener(personagem: Personagem, clickListener: (Personagem) -> Unit) {
+        itemView.setOnClickListener { clickListener(personagem) }
     }
 }

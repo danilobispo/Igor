@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_background"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    tools:context=".fragment.NewCharacterFragment">
+
+    <android.support.design.card.MaterialCardView
+        android:id="@+id/materialCardView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/btn_concluir"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="10dp"
+        app:cardBackgroundColor="#E2E2E1"
+        app:cardCornerRadius="10dp">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp">
+
+            <EditText
+                android:id="@+id/et_nome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nome do usuário" />
+
+            <EditText
+                android:id="@+id/et_classe"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Classe"
+                app:layout_constraintTop_toBottomOf="@id/et_nome" />
+
+            <EditText
+                android:id="@+id/et_descricao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Descrição"
+                app:layout_constraintTop_toBottomOf="@id/et_classe" />
+
+            <EditText
+                android:id="@+id/et_hp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="HP"
+                android:inputType="number"
+                app:layout_constraintTop_toBottomOf="@id/et_descricao" />
+
+            <TableLayout
+                android:id="@+id/tl_atributos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/et_hp">
+
+                <!--<TableRow>-->
+                    <!--<TextView-->
+                        <!--android:padding="5dp"-->
+                        <!--android:text="ATT" />-->
+                    <!--<TextView-->
+                        <!--android:padding="5dp"-->
+                        <!--android:text="123" />-->
+                <!--</TableRow>-->
+
+                <!--<TableRow>-->
+                    <!--<TextView-->
+                        <!--android:padding="5dp"-->
+                        <!--android:text="DEF" />-->
+                    <!--<TextView-->
+                        <!--android:padding="5dp"-->
+                        <!--android:text="321" />-->
+                <!--</TableRow>-->
+
+                <!--<TableRow>-->
+                    <!--<TextView-->
+                        <!--android:padding="5dp"-->
+                        <!--android:text="STA" />-->
+                    <!--<TextView-->
+                        <!--android:padding="5dp"-->
+                        <!--android:text="313" />-->
+                <!--</TableRow>-->
+
+            </TableLayout>
+
+            <EditText
+                android:id="@+id/et_novo_atributo_titulo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="Atributo"
+                app:layout_constraintEnd_toStartOf="@id/et_novo_atributo_valor"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tl_atributos" />
+
+            <EditText
+                android:id="@+id/et_novo_atributo_valor"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="Valor"
+                android:inputType="number"
+                app:layout_constraintEnd_toStartOf="@id/btn_adicionar_atributo"
+                app:layout_constraintStart_toEndOf="@id/et_novo_atributo_titulo"
+                app:layout_constraintTop_toBottomOf="@id/tl_atributos" />
+
+            <ImageButton
+                android:id="@+id/btn_adicionar_atributo"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_add"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/et_novo_atributo_valor"
+                app:layout_constraintTop_toBottomOf="@id/tl_atributos" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </android.support.design.card.MaterialCardView>
+
+    <Button
+        android:id="@+id/btn_concluir"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:text="Concluir" />
+
+</RelativeLayout>

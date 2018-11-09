@@ -16,6 +16,7 @@ import android.widget.Toast
 import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
+import com.example.hal_9000.igor.model.Personagem
 import kotlinx.android.synthetic.main.fragment_adventure.*
 
 
@@ -26,7 +27,6 @@ class AdventureFragment : Fragment() {
     private var openedTab = "andamento"
     private var ivTabLeft: ImageView? = null
     private var ivTabRight: ImageView? = null
-    var aventura: Aventura? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -47,11 +47,11 @@ class AdventureFragment : Fragment() {
         fragmentManager!!.beginTransaction().add(R.id.frameAventura, andamentoFragment).commit()
 
         val tvTitle = view.findViewById<TextView>(R.id.tv_adventure_title)
-        tvTitle.text = aventura!!.title
+        tvTitle.text = aventura.title
 
         val ivTheme = view.findViewById<ImageView>(R.id.iv_theme)
         val layout = view.findViewById<ConstraintLayout>(R.id.contraint_layout)
-        when (aventura!!.theme) {
+        when (aventura.theme) {
             "krevast" -> {
                 ivTheme.setImageResource(R.drawable.miniatura_krevast)
                 layout.setBackgroundColor(ContextCompat.getColor(view.context, R.color.krevast_background))
@@ -121,8 +121,16 @@ class AdventureFragment : Fragment() {
 
         val fab = view.findViewById<FloatingActionButton>(R.id.fab_new_session)
         fab.setOnClickListener {
-            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(aventura!!)
-            action.setAventura(aventura!!)
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(aventura)
+            action.setAventura(aventura)
+            NavHostFragment.findNavController(this).navigate(action)
+        }
+
+        val fabNewCharacter = view.findViewById<FloatingActionButton>(R.id.fab_new_character)
+        fabNewCharacter.setOnClickListener {
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(aventura, Personagem())
+            action.setAventura(aventura)
+            action.setPersonagem(Personagem())
             NavHostFragment.findNavController(this).navigate(action)
         }
 
@@ -133,14 +141,14 @@ class AdventureFragment : Fragment() {
         if (tab == "andamento") {
             ivTabLeft?.setImageResource(R.drawable.tab_l1)
             ivTabRight?.setImageResource(R.drawable.tab_r2)
-            fab_new_player.hide()
+            fab_new_character.hide()
             fab_new_session.show()
 
         } else if (tab == "jogadores") {
             ivTabLeft?.setImageResource(R.drawable.tab_l2)
             ivTabRight?.setImageResource(R.drawable.tab_r1)
             fab_new_session.hide()
-            fab_new_player.show()
+            fab_new_character.show()
         }
     }
 
@@ -153,14 +161,14 @@ class AdventureFragment : Fragment() {
         fab_edit_mode.show()
 
         tv_adventure_title.setOnClickListener {
-            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(aventura!!)
-            action.setAventura(aventura!!)
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(aventura)
+            action.setAventura(aventura)
             NavHostFragment.findNavController(this).navigate(action)
         }
 
 //        tv_description.setOnClickListener {
-//            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(aventura!!)
-//            action.setAventura(aventura!!)
+//            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(aventura)
+//            action.setAventura(aventura)
 //            NavHostFragment.findNavController(this).navigate(action)
 //        }
     }
@@ -191,6 +199,8 @@ class AdventureFragment : Fragment() {
     }
 
     companion object {
+        lateinit var aventura: Aventura
+
         @JvmStatic
         fun newInstance() = AdventureFragment()
     }

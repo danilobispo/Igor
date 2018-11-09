@@ -200,10 +200,7 @@ class HomeFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-
-        if (adapter != null) {
-            adapter!!.stopListening()
-        }
+        adapter!!.stopListening()
     }
 
     companion object {

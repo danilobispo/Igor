@@ -79,7 +79,7 @@ class NewAdventure : Fragment() {
             tvHeaderTitle.text = "Editar Aventura"
 
             etTitle = view.findViewById(R.id.et_title)
-            etDescription = view.findViewById(R.id.et_description)
+            etDescription = view.findViewById(R.id.et_descricao)
             completeFields()
         } else {
             editMode = false
@@ -146,7 +146,7 @@ class NewAdventure : Fragment() {
         val originalTitle = adventure!!.title
 
         adventure!!.title = et_title.text.toString()
-        adventure!!.description = et_description.text.toString()
+        adventure!!.description = et_descricao.text.toString()
         adventure!!.theme = theme
         adventure!!.creator = mAuth.currentUser!!.uid
         adventure!!.deleted = false
@@ -175,10 +175,10 @@ class NewAdventure : Fragment() {
                         Toast.makeText(context, "Erro ao criar sessão", Toast.LENGTH_SHORT).show()
                     }
         } else {
-            db.collection("adventures")
-                    .add(adventure!!)
-                    .addOnSuccessListener { documentReference ->
-                        Log.d(TAG, "Document ${documentReference.id} created successfully")
+            db.collection("adventures").document("${adventure!!.creator}_${adventure!!.title}")
+                    .set(adventure!!)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "Document created successfully")
                         Toast.makeText(context, "Aventura criada com sucesso!", Toast.LENGTH_SHORT).show()
                         exitFragment()
                     }
