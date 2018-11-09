@@ -3,11 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginBottom="10dp"
-    android:layout_marginEnd="15dp"
-    android:layout_marginStart="20dp"
-    android:layout_marginTop="10dp">
+    android:layout_height="match_parent"
+    android:layout_marginBottom="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="8dp">
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/imagemJogadorItem"
@@ -53,7 +53,7 @@
     <TextView
         android:id="@+id/descricaoJogador"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="15dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
@@ -66,24 +66,20 @@
         android:id="@+id/flechaVerMais"
         android:layout_width="wrap_content"
         android:layout_height="12dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:src="@android:drawable/arrow_down_float"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textoVerMais" />
+        app:layout_constraintStart_toEndOf="@+id/textoVerMais"
+        app:layout_constraintTop_toTopOf="@+id/textoVerMais" />
 
     <TextView
         android:id="@+id/textoVerMais"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="Ver mais"
         android:textColor="@android:color/holo_blue_light"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/descricaoJogador" />
 
@@ -119,12 +115,19 @@
         app:layout_constraintTop_toBottomOf="@+id/hpIndicador" />
 
     <View
-        android:id="@+id/view"
+        android:id="@+id/separador"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="8dp"
         android:background="@android:color/darker_gray"
-        app:layout_constraintTop_toBottomOf="@id/flechaVerMais"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/textoVerMais" />
+
+    <ListView
+        android:id="@+id/listaDeAtributos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/separador" />
+
 
 </android.support.constraint.ConstraintLayout>
