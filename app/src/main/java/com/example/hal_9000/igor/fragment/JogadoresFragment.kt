@@ -49,10 +49,13 @@ class JogadoresFragment : Fragment() {
     }
 
     private fun personagemItemClicked(personagem: Personagem) {
-        val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(AdventureFragment.aventura, personagem)
-        action.setAventura(AdventureFragment.aventura)
-        action.setPersonagem(personagem)
-        NavHostFragment.findNavController(this).navigate(action)
+
+        fragmentManager!!.beginTransaction().replace(R.id.nav_host, JogadorDetalhadoFragment()).commit()
+
+//        val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(AdventureFragment.aventura, personagem)
+//        action.setAventura(AdventureFragment.aventura)
+//        action.setPersonagem(personagem)
+//        NavHostFragment.findNavController(this).navigate(action)
     }
 
     override fun onStart() {

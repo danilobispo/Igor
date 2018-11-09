@@ -77,7 +77,8 @@ class NewCharacterFragment : Fragment() {
             personagem.nome = etNome.text.toString()
             personagem.classe = etClasse.text.toString()
             personagem.descricao = etDescricao.text.toString()
-            personagem.health = Integer.valueOf(etHealth.text.toString())
+
+            personagem.health = Integer.valueOf(etHealth.text?.toString())
 
             Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.health}")
 

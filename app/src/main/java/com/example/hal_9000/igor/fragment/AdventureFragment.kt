@@ -24,9 +24,18 @@ class AdventureFragment : Fragment() {
 
     private val TAG = "AdventureFragment"
     private var editMode = false
-    private var openedTab = "andamento"
+    private lateinit var openedTab: String
     private var ivTabLeft: ImageView? = null
     private var ivTabRight: ImageView? = null
+
+    private lateinit var fabNewCharacter: FloatingActionButton
+    private lateinit var fabNewSession: FloatingActionButton
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(TAG, "onCreate")
+        openedTab = "andamento"
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -39,12 +48,33 @@ class AdventureFragment : Fragment() {
 
         aventura = AdventureFragmentArgs.fromBundle(arguments).aventura
 
+        fabNewCharacter = view.findViewById(R.id.fab_new_character)
+        fabNewSession = view.findViewById(R.id.fab_new_session)
+
+        ivTabLeft = view.findViewById(R.id.iv_tab_left)
+        ivTabRight = view.findViewById(R.id.iv_tab_right)
+
         val andamentoFragment = AndamentoFragment()
         val bundle = Bundle()
         bundle.putParcelable("aventura", aventura)
         andamentoFragment.arguments = bundle
 
-        fragmentManager!!.beginTransaction().add(R.id.frameAventura, andamentoFragment).commit()
+        if (openedTab == "jogadores") {
+            switchTab("jogadores")
+            val jogadoresFragment = JogadoresFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("aventura", aventura)
+            jogadoresFragment.arguments = bundle
+            fragmentManager!!.beginTransaction().replace(R.id.frameAventura, jogadoresFragment).commit()
+
+        } else {
+            switchTab("andamento")
+            val andamentoFragment = AndamentoFragment()
+            val bundle = Bundle()
+            bundle.putParcelable("aventura", aventura)
+            andamentoFragment.arguments = bundle
+            fragmentManager!!.beginTransaction().add(R.id.frameAventura, andamentoFragment).commit()
+        }
 
         val tvTitle = view.findViewById<TextView>(R.id.tv_adventure_title)
         tvTitle.text = aventura.title
@@ -73,9 +103,6 @@ class AdventureFragment : Fragment() {
                 layout.setBackgroundColor(ContextCompat.getColor(view.context, R.color.default_background))
             }
         }
-
-        ivTabLeft = view.findViewById(R.id.iv_tab_left)
-        ivTabRight = view.findViewById(R.id.iv_tab_right)
 
         ivTabLeft?.setOnClickListener {
             Log.d(TAG, "Andamento tab")
@@ -141,14 +168,14 @@ class AdventureFragment : Fragment() {
         if (tab == "andamento") {
             ivTabLeft?.setImageResource(R.drawable.tab_l1)
             ivTabRight?.setImageResource(R.drawable.tab_r2)
-            fab_new_character.hide()
-            fab_new_session.show()
+            fabNewCharacter.hide()
+            fabNewSession.show()
 
         } else if (tab == "jogadores") {
             ivTabLeft?.setImageResource(R.drawable.tab_l2)
             ivTabRight?.setImageResource(R.drawable.tab_r1)
-            fab_new_session.hide()
-            fab_new_character.show()
+            fabNewCharacter.show()
+            fabNewSession.hide()
         }
     }
 
