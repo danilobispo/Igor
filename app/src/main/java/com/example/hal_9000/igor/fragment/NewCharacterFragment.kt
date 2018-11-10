@@ -87,7 +87,7 @@ class NewCharacterFragment : Fragment() {
 
         val tvAtributoValor = TextView(context)
         tvAtributoValor.text = value
-        tvAtributoNome.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20F)
+        tvAtributoValor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20F)
         tvAtributoValor.setPadding(5, 5, 5, 5)
         tr.addView(tvAtributoValor)
 
