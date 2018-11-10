@@ -14,7 +14,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestoreException
 
-class JogadoresListAdapter(options: FirestoreRecyclerOptions<Personagem>, private val itemClickListener: (Personagem) -> Unit) : FirestoreRecyclerAdapter<Personagem, JogadoresListAdapter.JogadoresViewHolder>(options) {
+class JogadoresListAdapter(options: FirestoreRecyclerOptions<Personagem>, private val itemClickListener: (Personagem) -> Unit, private val itemLongClickListener: (Personagem) -> Unit) : FirestoreRecyclerAdapter<Personagem, JogadoresListAdapter.JogadoresViewHolder>(options) {
 
     private val TAG = "JogadoresListAdapter"
 
@@ -27,7 +27,7 @@ class JogadoresListAdapter(options: FirestoreRecyclerOptions<Personagem>, privat
         holder.setJogadorRole(model.classe)
         holder.setJogadorNome(model.nome)
         holder.setJogadorDescricao(model.descricao)
-        holder.setClickListener(model, itemClickListener)
+        holder.setClickListener(model, itemClickListener, itemLongClickListener)
     }
 
     override fun onError(e: FirebaseFirestoreException) {
@@ -58,8 +58,12 @@ class JogadoresListAdapter(options: FirestoreRecyclerOptions<Personagem>, privat
                     .into(ivImagem)
         }
 
-        fun setClickListener(personagem: Personagem, clickListener: (Personagem) -> Unit) {
+        fun setClickListener(personagem: Personagem, clickListener: (Personagem) -> Unit, longClickListener: (Personagem) -> Unit) {
             itemView.setOnClickListener { clickListener(personagem) }
+            itemView.setOnLongClickListener {
+                longClickListener(personagem)
+                true
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 class Personagem(
+        var id: String = "",
         var nome: String = "",
         var classe: String = "",
         var descricao: String = "",
@@ -15,12 +16,14 @@ class Personagem(
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
+            parcel.readString(),
             parcel.readInt(),
             parcel.readString(),
             parcel.readString(),
             parcel.createTypedArrayList(Atributo.CREATOR))
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(id)
         parcel.writeString(nome)
         parcel.writeString(classe)
         parcel.writeString(descricao)

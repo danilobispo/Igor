@@ -3,6 +3,7 @@ package com.example.hal_9000.igor.fragment
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ class NewCharacterFragment : Fragment() {
 
     private val TAG = "NewCharacterFragment"
     private var aventura: Aventura? = null
+    private lateinit var personagem: Personagem
 
     lateinit var etNome: EditText
     lateinit var etClasse: EditText
@@ -34,7 +36,7 @@ class NewCharacterFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_new_character, container, false)
 
         aventura = NewCharacterFragmentArgs.fromBundle(arguments).aventura
-        val personagem = NewCharacterFragmentArgs.fromBundle(arguments).personagem
+        personagem = NewCharacterFragmentArgs.fromBundle(arguments).personagem
 
         etNome = view.findViewById(R.id.et_nome)
         etClasse = view.findViewById(R.id.et_classe)
@@ -42,7 +44,7 @@ class NewCharacterFragment : Fragment() {
         etHealth = view.findViewById(R.id.et_hp)
         tlAtributos = view.findViewById(R.id.tl_atributos)
 
-        if (personagem.aventuraId.isNotEmpty())
+        if (personagem.id.isNotEmpty())
             completeFields(personagem)
 
         view.btn_adicionar_atributo.setOnClickListener {
@@ -52,47 +54,84 @@ class NewCharacterFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            val tr = TableRow(context)
-            tr.layoutParams = TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT)
-
-            val tvAtributoNome = TextView(context)
-            tvAtributoNome.text = et_novo_atributo_titulo.text.toString()
-            tvAtributoNome.setPadding(5, 5, 5, 5)
-            tr.addView(tvAtributoNome)
-
-            val tvAtributoValor = TextView(context)
-            tvAtributoValor.text = et_novo_atributo_valor.text.toString()
-            tvAtributoValor.setPadding(5, 5, 5, 5)
-            tr.addView(tvAtributoValor)
-
-            tlAtributos.addView(tr)
+            addTableRow(et_novo_atributo_titulo.text.toString(), et_novo_atributo_valor.text.toString())
         }
 
-        view.btn_concluir.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
-            val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        view.btn_concluir.setOnClickListener { concluirCriacao() }
 
-            val personagem = Personagem()
+        return view
+    }
 
-            personagem.nome = etNome.text.toString()
-            personagem.classe = etClasse.text.toString()
-            personagem.descricao = etDescricao.text.toString()
+    private fun completeFields(personagem: Personagem) {
+        etNome.setText(personagem.nome)
+        etClasse.setText(personagem.classe)
+        etDescricao.setText(personagem.descricao)
 
-            personagem.health = Integer.valueOf(etHealth.text?.toString())
+        if (personagem.health != -1)
+            etHealth.setText(personagem.health.toString(), TextView.BufferType.EDITABLE)
 
-            Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.health}")
+        for (atributo in personagem.atributos) {
+            addTableRow(atributo.nome, atributo.valor)
+        }
+    }
 
-            for (i in 0 until tl_atributos.childCount) {
-                val row = tl_atributos.getChildAt(i) as TableRow
-                val nome = (row.getVirtualChildAt(0) as TextView).text.toString()
-                val valor = (row.getVirtualChildAt(1) as TextView).text.toString()
-                Log.d(TAG, "$nome : $valor")
+    private fun addTableRow(name: String, value: String) {
+        val tr = TableRow(context)
+        tr.layoutParams = TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT)
 
-                val atributo = Atributo(nome, valor)
-                personagem.atributos.add(atributo)
-            }
+        val tvAtributoNome = TextView(context)
+        tvAtributoNome.text = name
+        tvAtributoNome.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20F)
+        tvAtributoNome.setPadding(5, 5, 5, 5)
+        tr.addView(tvAtributoNome)
 
-            //TODO: Atualizar documento se ele já existir
+        val tvAtributoValor = TextView(context)
+        tvAtributoValor.text = value
+        tvAtributoNome.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20F)
+        tvAtributoValor.setPadding(5, 5, 5, 5)
+        tr.addView(tvAtributoValor)
+
+        tlAtributos.addView(tr)
+    }
+
+    private fun concluirCriacao() {
+        progressBar.visibility = View.VISIBLE
+        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+
+        personagem.nome = etNome.text.toString()
+        personagem.classe = etClasse.text.toString()
+        personagem.descricao = etDescricao.text.toString()
+
+        personagem.health = Integer.valueOf(etHealth.text?.toString())
+
+        Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.health}")
+
+
+        personagem.atributos.clear()
+        for (i in 0 until tl_atributos.childCount) {
+            val row = tl_atributos.getChildAt(i) as TableRow
+            val nome = (row.getVirtualChildAt(0) as TextView).text.toString()
+            val valor = (row.getVirtualChildAt(1) as TextView).text.toString()
+            Log.d(TAG, "$nome : $valor")
+
+            personagem.atributos.add(Atributo(nome, valor))
+        }
+
+        if (personagem.id.isNotEmpty()) {
+            db.collection("characters")
+                    .document(personagem.id)
+                    .set(personagem)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "Document updated successfully")
+                        Toast.makeText(context, "Personagem atualizado com sucesso!", Toast.LENGTH_SHORT).show()
+                        NavHostFragment.findNavController(this).popBackStack(R.id.adventureFragment, false)
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error updating document", e)
+                        Toast.makeText(context, "Erro ao atualizar personagem", Toast.LENGTH_SHORT).show()
+                        progressBar.visibility = View.INVISIBLE
+                    }
+        } else {
 
             db.collection("adventures")
                     .whereEqualTo("title", aventura?.title)
@@ -107,6 +146,9 @@ class NewCharacterFragment : Fragment() {
                                 .addOnSuccessListener { documentReference ->
                                     Log.d(TAG, "Document ${documentReference.id} created successfully")
                                     Toast.makeText(context, "Personagem criado com sucesso!", Toast.LENGTH_SHORT).show()
+
+                                    db.collection("characters").document(documentReference.id).update("id", documentReference.id)
+
                                     NavHostFragment.findNavController(this).popBackStack(R.id.adventureFragment, false)
                                 }
                                 .addOnFailureListener { e ->
@@ -120,34 +162,6 @@ class NewCharacterFragment : Fragment() {
                         Toast.makeText(context, "Erro ao reconhecer aventura", Toast.LENGTH_SHORT).show()
                         progressBar.visibility = View.INVISIBLE
                     }
-        }
-
-        return view
-    }
-
-    private fun completeFields(personagem: Personagem) {
-        etNome.setText(personagem.nome)
-        etClasse.setText(personagem.classe)
-        etDescricao.setText(personagem.descricao)
-
-        if (personagem.health != -1)
-            etHealth.setText(personagem.health.toString(), TextView.BufferType.EDITABLE)
-
-        for (atributo in personagem.atributos) {
-            val tr = TableRow(context)
-            tr.layoutParams = TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT)
-
-            val tvAtributoNome = TextView(context)
-            tvAtributoNome.text = atributo.nome
-            tvAtributoNome.setPadding(5, 5, 5, 5)
-            tr.addView(tvAtributoNome)
-
-            val tvAtributoValor = TextView(context)
-            tvAtributoValor.text = atributo.valor
-            tvAtributoValor.setPadding(5, 5, 5, 5)
-            tr.addView(tvAtributoValor)
-
-            tlAtributos.addView(tr)
         }
     }
 }

@@ -42,20 +42,21 @@ class JogadoresFragment : Fragment() {
                 .setQuery(query, Personagem::class.java)
                 .build()
 
-        adapter = JogadoresListAdapter(options) { personagem: Personagem -> personagemItemClicked(personagem) }
+        adapter = JogadoresListAdapter(options, { personagem: Personagem -> personagemItemClicked(personagem) }, { personagem: Personagem -> personagemLongItemClicked(personagem) })
         mJogadoresList?.adapter = adapter
 
         return view
     }
 
     private fun personagemItemClicked(personagem: Personagem) {
-
         fragmentManager!!.beginTransaction().replace(R.id.nav_host, JogadorDetalhadoFragment()).commit()
+    }
 
-//        val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(AdventureFragment.aventura, personagem)
-//        action.setAventura(AdventureFragment.aventura)
-//        action.setPersonagem(personagem)
-//        NavHostFragment.findNavController(this).navigate(action)
+    private fun personagemLongItemClicked(personagem: Personagem) {
+        val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(AdventureFragment.aventura, personagem)
+        action.setAventura(AdventureFragment.aventura)
+        action.setPersonagem(personagem)
+        NavHostFragment.findNavController(this).navigate(action)
     }
 
     override fun onStart() {

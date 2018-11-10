@@ -65,28 +65,34 @@
                 <!--<TableRow>-->
                     <!--<TextView-->
                         <!--android:padding="5dp"-->
-                        <!--android:text="ATT" />-->
+                        <!--android:text="ATT"-->
+                        <!--android:textSize="20dp" />-->
                     <!--<TextView-->
                         <!--android:padding="5dp"-->
-                        <!--android:text="123" />-->
+                        <!--android:text="123"-->
+                        <!--android:textSize="20dp" />-->
                 <!--</TableRow>-->
 
                 <!--<TableRow>-->
                     <!--<TextView-->
                         <!--android:padding="5dp"-->
-                        <!--android:text="DEF" />-->
+                        <!--android:text="DEF"-->
+                        <!--android:textSize="20dp" />-->
                     <!--<TextView-->
                         <!--android:padding="5dp"-->
-                        <!--android:text="321" />-->
+                        <!--android:text="321"-->
+                        <!--android:textSize="20dp" />-->
                 <!--</TableRow>-->
 
                 <!--<TableRow>-->
                     <!--<TextView-->
                         <!--android:padding="5dp"-->
-                        <!--android:text="STA" />-->
+                        <!--android:text="STA"-->
+                        <!--android:textSize="20dp" />-->
                     <!--<TextView-->
                         <!--android:padding="5dp"-->
-                        <!--android:text="313" />-->
+                        <!--android:text="313"-->
+                        <!--android:textSize="20dp" />-->
                 <!--</TableRow>-->
 
             </TableLayout>
