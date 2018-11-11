@@ -9,8 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
+import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
+import com.example.hal_9000.igor.model.Personagem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_new_adventure.*
@@ -151,6 +153,8 @@ class NewAdventure : Fragment() {
         adventure!!.creator = mAuth.currentUser!!.uid
         adventure!!.deleted = false
 
+        adventure!!.players[LoginActivity.username] = true
+
         if (editMode!!) {
             db.collection("adventures")
                     .whereEqualTo("title", originalTitle)
@@ -180,6 +184,17 @@ class NewAdventure : Fragment() {
                     .addOnSuccessListener {
                         Log.d(TAG, "Document created successfully")
                         Toast.makeText(context, "Aventura criada com sucesso!", Toast.LENGTH_SHORT).show()
+
+                        val master = Personagem()
+                        master.nome = LoginActivity.username
+                        master.classe = "Mestre"
+                        master.created = System.currentTimeMillis() / 1000
+                        master.aventuraId = "${adventure?.creator}_${adventure?.title}"
+
+                        db.collection("characters").add(master).addOnSuccessListener { documentReference ->
+                            db.collection("characters").document(documentReference.id).update("id", documentReference.id)
+                        }
+
                         exitFragment()
                     }
                     .addOnFailureListener { e ->

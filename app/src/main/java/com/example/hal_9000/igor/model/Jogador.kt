@@ -1,4 +1,3 @@
 package com.example.hal_9000.igor.model
 
-class Jogador(nome: String, role: String) {
-}
+data class Jogador(var nome: String, var role: String)

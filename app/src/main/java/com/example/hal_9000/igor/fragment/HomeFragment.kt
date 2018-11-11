@@ -15,10 +15,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
+import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.AdventureRecyclerViewAdapter
 import com.example.hal_9000.igor.model.Aventura
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_home.*
 
@@ -40,11 +42,14 @@ class HomeFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
+        val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
+        LoginActivity.username = mAuth.currentUser?.displayName.toString()
+
         mRecyclerView = view.findViewById(R.id.rv_adventures_list)
         mRecyclerView?.layoutManager = LinearLayoutManager(context)
 
         db = FirebaseFirestore.getInstance()
-        val query = db!!.collection("adventures").whereEqualTo("deleted", false)
+        val query = db!!.collection("adventures").whereEqualTo("deleted", false).whereEqualTo("players.${LoginActivity.username}", true)
 
         val options = FirestoreRecyclerOptions.Builder<Aventura>()
                 .setQuery(query, Aventura::class.java)

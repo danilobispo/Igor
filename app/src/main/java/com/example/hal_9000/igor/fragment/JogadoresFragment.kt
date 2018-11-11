@@ -36,7 +36,7 @@ class JogadoresFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
 
         val aventura = AdventureFragment.aventura
-        val query = db!!.collection("characters").whereEqualTo("aventuraId", "${aventura.creator}_${aventura.title}")
+        val query = db!!.collection("characters").whereEqualTo("aventuraId", "${aventura.creator}_${aventura.title}").orderBy("created")
 
         val options = FirestoreRecyclerOptions.Builder<Personagem>()
                 .setQuery(query, Personagem::class.java)

@@ -11,7 +11,9 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import com.example.hal_9000.igor.model.Usuario
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 
 
@@ -93,16 +95,23 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun storeUserData() {
-        val user = HashMap<String, Any>()
-        user["username"] = username!!
-        user["birthday"] = birthday!!
-        user["genre"] = genre!!
-        user["email"] = email!!
+        val user = Usuario()
+        user.username = username!!
+        user.birthday = birthday!!
+        user.genre = genre!!
+        user.email = email!!
+        user.uid = mAuth!!.currentUser!!.uid
 
         db!!.collection("users")
-                .document(mAuth!!.currentUser!!.uid)
+                .document(username!!)
                 .set(user)
-                .addOnSuccessListener { Log.d(TAG, "Document added successfully") }
+                .addOnSuccessListener {
+                    Log.d(TAG, "Document added successfully")
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                            .setDisplayName(user.username)
+                            .build()
+                    mAuth?.currentUser?.updateProfile(profileUpdates)
+                }
                 .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
     }
 

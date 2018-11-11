@@ -23,6 +23,11 @@ class LoginActivity : AppCompatActivity() {
 
     private var mAuth: FirebaseAuth? = null
 
+    companion object {
+        lateinit var userUid: String
+        var username: String = ""
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -31,6 +36,7 @@ class LoginActivity : AppCompatActivity() {
         mProgressBar = findViewById<View>(R.id.progressBar) as ProgressBar
 
         if (mAuth!!.currentUser != null) {
+            userUid = mAuth?.currentUser!!.uid
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
@@ -85,6 +91,7 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show()
                 Log.d(TAG, ": Login Successful")
+                userUid = mAuth?.currentUser!!.uid
                 val intent = Intent(this, MainActivity::class.java)
                 intent.putExtra("id", mAuth!!.currentUser?.uid)
                 startActivity(intent)
