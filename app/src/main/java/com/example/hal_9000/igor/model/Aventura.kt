@@ -11,5 +11,4 @@ data class Aventura(
         var creator: String = "",
         var next_session: String = "",
         var players: HashMap<String, Boolean> = hashMapOf(),
-        val sessions: ArrayList<Session> = arrayListOf(),
         var deleted: Boolean = false) : Parcelable

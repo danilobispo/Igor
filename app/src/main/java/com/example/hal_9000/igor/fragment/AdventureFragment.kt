@@ -17,13 +17,13 @@ import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Personagem
+import com.example.hal_9000.igor.model.Session
 import kotlinx.android.synthetic.main.fragment_adventure.*
 
 
 class AdventureFragment : Fragment() {
 
     private val TAG = "AdventureFragment"
-    private var editMode = false
     private lateinit var openedTab: String
     private var ivTabLeft: ImageView? = null
     private var ivTabRight: ImageView? = null
@@ -148,8 +148,9 @@ class AdventureFragment : Fragment() {
 
         val fab = view.findViewById<FloatingActionButton>(R.id.fab_new_session)
         fab.setOnClickListener {
-            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(aventura)
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(aventura, Session())
             action.setAventura(aventura)
+            action.setSession(Session())
             NavHostFragment.findNavController(this).navigate(action)
         }
 
@@ -227,6 +228,7 @@ class AdventureFragment : Fragment() {
 
     companion object {
         lateinit var aventura: Aventura
+        var editMode: Boolean = false
 
         @JvmStatic
         fun newInstance() = AdventureFragment()

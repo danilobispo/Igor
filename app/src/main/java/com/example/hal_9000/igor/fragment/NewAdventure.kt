@@ -176,7 +176,7 @@ class NewAdventure : Fragment() {
                     }
                     .addOnFailureListener { e ->
                         Log.w(TAG, "Error querying document", e)
-                        Toast.makeText(context, "Erro ao criar sessão", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Erro ao criar aventura", Toast.LENGTH_SHORT).show()
                     }
         } else {
             db.collection("adventures").document("${adventure!!.creator}_${adventure!!.title}")

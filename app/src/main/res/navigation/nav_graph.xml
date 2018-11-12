@@ -85,7 +85,7 @@
             app:argType="com.example.hal_9000.igor.model.Aventura" />
         <argument
             android:name="session"
-            android:defaultValue="-1" />
+            app:argType="com.example.hal_9000.igor.model.Session" />
         <action
             android:id="@+id/action_newSession_to_adventureFragment"
             app:destination="@id/adventureFragment" />
