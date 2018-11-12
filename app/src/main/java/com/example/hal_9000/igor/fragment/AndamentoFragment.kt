@@ -64,6 +64,11 @@ class AndamentoFragment : Fragment() {
                 action.setAventura(aventura)
                 action.setSession(session)
                 NavHostFragment.findNavController(this).navigate(action)
+            } else {
+                val action = AdventureFragmentDirections.ActionAdventureFragmentToCombatFragment(aventura, session)
+                action.setAventura(aventura)
+                action.setSession(session)
+                NavHostFragment.findNavController(this).navigate(action)
             }
         }
 
