@@ -114,7 +114,7 @@ class CombatFragment : Fragment() {
         event.type = "custom"
 
         AlertDialog.Builder(view!!.context)
-                .setTitle("Criar nota")
+                .setTitle("Criar evento")
                 .setView(input)
                 .setPositiveButton("Criar") { _, _ ->
                     event.event = input.text.toString()
@@ -133,17 +133,67 @@ class CombatFragment : Fragment() {
                             }
                             .addOnFailureListener { e ->
                                 Log.w(TAG, "Error adding document", e)
-                                Toast.makeText(context, "Erro ao adicionar evnto", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Erro ao adicionar evento", Toast.LENGTH_SHORT).show()
                             }
                 }
                 .setNegativeButton("Cancelar") { _, _ ->
-                    Log.d(TAG, "note creation canceled")
+                    Log.d(TAG, "Event creation canceled")
                 }
                 .show()
     }
 
     private fun eventoItemClicked(evento: Evento) {
-        Log.d(TAG, "Event clicked")
+        val input = EditText(context)
+        input.inputType = InputType.TYPE_CLASS_TEXT
+
+        input.setText(evento.event)
+
+        AlertDialog.Builder(view!!.context)
+                .setTitle("Editar evento")
+                .setView(input)
+                .setPositiveButton("Editar") { _, _ ->
+                    evento.event = input.text.toString()
+
+                    db
+                            .collection("adventures")
+                            .document("${aventura.creator}_${aventura.title}")
+                            .collection("sessions")
+                            .document(session.created.toString())
+                            .collection("events")
+                            .document(evento.date.toString())
+                            .set(evento)
+                            .addOnSuccessListener {
+                                Log.d(TAG, "Document added successfully")
+                                Toast.makeText(context, "Evento editado com sucesso", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w(TAG, "Error adding document", e)
+                                Toast.makeText(context, "Erro ao editar evento", Toast.LENGTH_SHORT).show()
+                            }
+                }
+                .setNegativeButton("Cancelar") { _, _ ->
+                    Log.d(TAG, "note creation canceled")
+                }
+                .setNeutralButton("Deletar") { _, _ ->
+                    db
+                            .collection("adventures")
+                            .document("${aventura.creator}_${aventura.title}")
+                            .collection("sessions")
+                            .document(session.created.toString())
+                            .collection("events")
+                            .document(evento.date.toString())
+                            .delete()
+                            .addOnSuccessListener {
+                                Log.d(TAG, "Document removed successfully")
+                                Toast.makeText(context, "Evento removido", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener { e ->
+                                Log.w(TAG, "Error removing document", e)
+                                Toast.makeText(context, "Erro ao remover evento", Toast.LENGTH_SHORT).show()
+                            }
+
+                }
+                .show()
     }
 
     override fun onStart() {
