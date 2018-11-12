@@ -11,5 +11,7 @@ data class Personagem(
         var descricao: String = "",
         var health: Int = -1,
         var created: Long = 0,
+        var creator: String = "",
+        var isNpc: Boolean = false,
         var aventuraId: String = "",
         var atributos: ArrayList<Atributo> = arrayListOf()) : Parcelable

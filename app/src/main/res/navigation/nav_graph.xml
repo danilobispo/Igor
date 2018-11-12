@@ -105,6 +105,10 @@
         <argument
             android:name="personagem"
             app:argType="com.example.hal_9000.igor.model.Personagem" />
+        <argument
+            android:name="isNpc"
+            android:defaultValue="false"
+            app:argType="boolean" />
     </fragment>
 
     <fragment
@@ -118,6 +122,9 @@
         <argument
             android:name="session"
             app:argType="com.example.hal_9000.igor.model.Session" />
+        <action
+            android:id="@+id/action_combatFragment_to_newCharacterFragment"
+            app:destination="@id/newCharacterFragment" />
     </fragment>
 
 </navigation>

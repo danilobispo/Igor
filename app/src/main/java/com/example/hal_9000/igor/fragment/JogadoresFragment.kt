@@ -32,11 +32,15 @@ class JogadoresFragment : Fragment() {
 
         mJogadoresList = view.findViewById(R.id.jogadores_rv)
         mJogadoresList?.layoutManager = LinearLayoutManager(context)
+        mJogadoresList?.setHasFixedSize(true)
 
         db = FirebaseFirestore.getInstance()
 
         val aventura = AdventureFragment.aventura
-        val query = db!!.collection("characters").whereEqualTo("aventuraId", "${aventura.creator}_${aventura.title}").orderBy("created")
+        val query = db!!.collection("characters")
+                .whereEqualTo("aventuraId", "${aventura.creator}_${aventura.title}")
+                .whereEqualTo("npc", false)
+                .orderBy("created")
 
         val options = FirestoreRecyclerOptions.Builder<Personagem>()
                 .setQuery(query, Personagem::class.java)

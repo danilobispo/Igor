@@ -47,6 +47,7 @@ class HomeFragment : Fragment() {
 
         mRecyclerView = view.findViewById(R.id.rv_adventures_list)
         mRecyclerView?.layoutManager = LinearLayoutManager(context)
+        mRecyclerView?.setHasFixedSize(true)
 
         db = FirebaseFirestore.getInstance()
         val query = db!!.collection("adventures").whereEqualTo("deleted", false).whereEqualTo("players.${LoginActivity.username}", true)

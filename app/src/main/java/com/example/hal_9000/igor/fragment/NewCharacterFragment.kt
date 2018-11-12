@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
+import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Atributo
 import com.example.hal_9000.igor.model.Aventura
@@ -24,12 +25,16 @@ class NewCharacterFragment : Fragment() {
     private val TAG = "NewCharacterFragment"
     private var aventura: Aventura? = null
     private lateinit var personagemOld: Personagem
+    private var isNPC: Boolean = false
 
     private lateinit var etNome: EditText
     private lateinit var etClasse: EditText
     private lateinit var etDescricao: EditText
     private lateinit var etHealth: EditText
     private lateinit var tlAtributos: TableLayout
+
+    private lateinit var db: FirebaseFirestore
+    private lateinit var aventuraId: String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -38,6 +43,7 @@ class NewCharacterFragment : Fragment() {
 
         aventura = NewCharacterFragmentArgs.fromBundle(arguments).aventura
         personagemOld = NewCharacterFragmentArgs.fromBundle(arguments).personagem
+        isNPC = NewCharacterFragmentArgs.fromBundle(arguments).isNpc
 
         etNome = view.findViewById(R.id.et_nome)
         etClasse = view.findViewById(R.id.et_classe)
@@ -45,8 +51,15 @@ class NewCharacterFragment : Fragment() {
         etHealth = view.findViewById(R.id.et_hp)
         tlAtributos = view.findViewById(R.id.tl_atributos)
 
+        db = FirebaseFirestore.getInstance()
+
+        if (isNPC)
+            etNome.hint = "Nome"
+
         if (personagemOld.id.isNotEmpty())
             completeFields()
+
+        aventuraId = "${aventura?.creator}_${aventura?.title}"
 
         view.btn_adicionar_atributo.setOnClickListener {
 
@@ -100,13 +113,15 @@ class NewCharacterFragment : Fragment() {
 
     private fun concluirCriacao() {
         progressBar.visibility = View.VISIBLE
-        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
 
         val personagem = Personagem()
         personagem.nome = etNome.text.toString()
         personagem.classe = etClasse.text.toString()
         personagem.descricao = etDescricao.text.toString()
         personagem.health = Integer.valueOf(etHealth.text?.toString())
+
+        personagem.creator = LoginActivity.username
+        personagem.isNpc = isNPC
 
         Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.health}")
 
@@ -118,50 +133,56 @@ class NewCharacterFragment : Fragment() {
             Log.d(TAG, "$nome : $valor")
         }
 
-        val aventuraId = "${aventura?.creator}_${aventura?.title}"
         personagem.aventuraId = aventuraId
 
         if (personagemOld.id.isEmpty()) {
             personagem.created = System.currentTimeMillis() / 1000
+            createCharacter(personagem)
 
-            db.collection("characters")
-                    .add(personagem)
-                    .addOnSuccessListener { documentReference ->
-                        Log.d(TAG, "Document ${documentReference.id} created successfully")
-                        Toast.makeText(context, "Personagem criado com sucesso!", Toast.LENGTH_SHORT).show()
-                        db.collection("characters").document(documentReference.id).update("id", documentReference.id)
-                        NavHostFragment.findNavController(this).popBackStack(R.id.adventureFragment, false)
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w(TAG, "Error creating document", e)
-                        Toast.makeText(context, "Erro ao criar personagem", Toast.LENGTH_SHORT).show()
-                        progressBar.visibility = View.INVISIBLE
-                    }
         } else {
             personagem.id = personagemOld.id
             personagem.created = personagemOld.created
-
-            db.collection("characters")
-                    .document(personagem.id)
-                    .set(personagem)
-                    .addOnSuccessListener {
-                        Log.d(TAG, "Document updated successfully")
-                        Toast.makeText(context, "Personagem atualizado com sucesso!", Toast.LENGTH_SHORT).show()
-
-                        if (personagemOld.nome != personagem.nome) {
-                            if (personagem.nome.isNotEmpty())
-                                db.collection("adventures").document(aventuraId).update("players." + personagem.nome, true)
-                            if (personagemOld.nome.isNotEmpty())
-                                db.collection("adventures").document(aventuraId).update("players." + personagemOld.nome, FieldValue.delete())
-                        }
-
-                        NavHostFragment.findNavController(this).popBackStack(R.id.adventureFragment, false)
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w(TAG, "Error updating document", e)
-                        Toast.makeText(context, "Erro ao atualizar personagem", Toast.LENGTH_SHORT).show()
-                        progressBar.visibility = View.INVISIBLE
-                    }
+            editCharacter(personagem)
         }
+    }
+
+    private fun createCharacter(personagem: Personagem) {
+        db.collection("characters")
+                .add(personagem)
+                .addOnSuccessListener { documentReference ->
+                    Log.d(TAG, "Document ${documentReference.id} created successfully")
+                    Toast.makeText(context, "Personagem criado com sucesso!", Toast.LENGTH_SHORT).show()
+                    db.collection("characters").document(documentReference.id).update("id", documentReference.id)
+                    NavHostFragment.findNavController(this).popBackStack()
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error creating document", e)
+                    Toast.makeText(context, "Erro ao criar personagem", Toast.LENGTH_SHORT).show()
+                    progressBar.visibility = View.INVISIBLE
+                }
+    }
+
+    private fun editCharacter(personagem: Personagem) {
+        db.collection("characters")
+                .document(personagem.id)
+                .set(personagem)
+                .addOnSuccessListener {
+                    Log.d(TAG, "Document updated successfully")
+                    Toast.makeText(context, "Personagem atualizado com sucesso!", Toast.LENGTH_SHORT).show()
+
+                    if (!isNPC && personagemOld.nome != personagem.nome) {
+                        if (personagem.nome.isNotEmpty())
+                            db.collection("adventures").document(aventuraId).update("players." + personagem.nome, true)
+                        if (personagemOld.nome.isNotEmpty())
+                            db.collection("adventures").document(aventuraId).update("players." + personagemOld.nome, FieldValue.delete())
+                    }
+
+                    NavHostFragment.findNavController(this).popBackStack()
+                }
+                .addOnFailureListener { e ->
+                    Log.w(TAG, "Error updating document", e)
+                    Toast.makeText(context, "Erro ao atualizar personagem", Toast.LENGTH_SHORT).show()
+                    progressBar.visibility = View.INVISIBLE
+                }
     }
 }
