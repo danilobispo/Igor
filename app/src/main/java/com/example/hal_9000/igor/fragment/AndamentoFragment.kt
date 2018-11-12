@@ -47,8 +47,10 @@ class AndamentoFragment : Fragment() {
                         sessions.add(session.toObject(Session::class.java)!!)
                     }
 
-                    val adapter = ArrayAdapter<String>(context, R.layout.next_sessions_item, R.id.tv_session, values)
-                    listView.adapter = adapter
+                    if (context != null) {
+                        val adapter = ArrayAdapter<String>(context!!, R.layout.next_sessions_item, R.id.tv_session, values)
+                        listView.adapter = adapter
+                    }
                 }
 
         listView.setOnItemClickListener { parent, _, position, _ ->
