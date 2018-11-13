@@ -20,11 +20,10 @@ import com.example.hal_9000.igor.model.Evento
 import com.example.hal_9000.igor.model.Session
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
-import java.nio.FloatBuffer
 
-class CombatFragment : Fragment() {
+class EventsFragment : Fragment() {
 
-    private val TAG = "CombatFragment"
+    private val TAG = "EventsFragment"
 
     private lateinit var aventura: Aventura
     private lateinit var session: Session
@@ -36,16 +35,16 @@ class CombatFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_combat, container, false)
+        val view = inflater.inflate(R.layout.fragment_events, container, false)
 
 //        arguments?.let {
-//            val safeArgs = CombatFragmentArgs.fromBundle(it)
+//            val safeArgs = EventFragmentArgs.fromBundle(it)
 //            aventura = safeArgs.aventura
 //            session = safeArgs.session
 //        }
 
-//        aventura = CombatFragmentArgs.fromBundle(arguments).aventura
-//        session = CombatFragmentArgs.fromBundle(arguments).session
+//        aventura = EventFragmentArgs.fromBundle(arguments).aventura
+//        session = EventFragmentArgs.fromBundle(arguments).session
 
         aventura = SessionFragment.aventura
         session = SessionFragment.session
@@ -191,6 +190,6 @@ class CombatFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = CombatFragment()
+        fun newInstance() = EventsFragment()
     }
 }

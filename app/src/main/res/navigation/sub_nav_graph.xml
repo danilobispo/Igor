@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/sub_nav_graph"
-    app:startDestination="@id/combatFragment">
+    app:startDestination="@id/eventFragment">
 
     <fragment
-        android:id="@+id/combatFragment"
-        android:name="com.example.hal_9000.igor.fragment.CombatFragment"
-        android:label="fragment_combat"
-        tools:layout="@layout/fragment_combat">
+        android:id="@+id/eventFragment"
+        android:name="com.example.hal_9000.igor.fragment.EventsFragment"
+        android:label="fragment_event"
+        tools:layout="@layout/fragment_events">
         <argument
             android:name="aventura"
             app:argType="com.example.hal_9000.igor.model.Aventura" />

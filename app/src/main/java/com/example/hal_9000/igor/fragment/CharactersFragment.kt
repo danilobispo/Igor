@@ -22,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class CharactersFragment : Fragment() {
 
-    private val TAG = "CombatFragment"
+    private val TAG = "EventsFragment"
 
     private lateinit var aventura: Aventura
     private lateinit var session: Session

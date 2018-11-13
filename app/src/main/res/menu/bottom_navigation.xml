@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/combatFragment"
+        android:id="@+id/eventFragment"
         android:title="Log"
         android:icon="@drawable/ic_notes">
     </item>
     <item
-        android:id="@+id/combatFragment2"
+        android:id="@+id/combatFragment"
         android:title="Combate"
         android:icon="@drawable/ic_combat">
     </item>
