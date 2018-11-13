@@ -116,7 +116,7 @@ class HomeFragment : Fragment() {
                 .addOnSuccessListener { it ->
                     it.documents[0].reference
                             .delete()
-                            .addOnSuccessListener { it2 ->
+                            .addOnSuccessListener { _ ->
                                 Log.d(TAG, "DocumentSnapshot successfully deleted!")
                                 Toast.makeText(context, "Aventura deletada", Toast.LENGTH_SHORT).show()
                             }

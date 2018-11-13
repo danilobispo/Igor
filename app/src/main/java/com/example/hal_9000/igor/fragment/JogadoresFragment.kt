@@ -60,6 +60,7 @@ class JogadoresFragment : Fragment() {
         val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(AdventureFragment.aventura, personagem)
         action.setAventura(AdventureFragment.aventura)
         action.setPersonagem(personagem)
+        action.setIsNpc(false)
         NavHostFragment.findNavController(this).navigate(action)
     }
 

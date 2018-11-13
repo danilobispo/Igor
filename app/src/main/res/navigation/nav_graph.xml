@@ -74,8 +74,8 @@
             android:id="@+id/action_adventureFragment_to_newCharacterFragment"
             app:destination="@id/newCharacterFragment" />
         <action
-            android:id="@+id/action_adventureFragment_to_combatFragment"
-            app:destination="@id/combatFragment" />
+            android:id="@+id/action_adventureFragment_to_sessionFragment"
+            app:destination="@id/sessionFragment" />
     </fragment>
 
     <fragment
@@ -112,10 +112,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/combatFragment"
-        android:name="com.example.hal_9000.igor.fragment.CombatFragment"
-        android:label="fragment_combat"
-        tools:layout="@layout/fragment_combat">
+        android:id="@+id/sessionFragment"
+        android:name="com.example.hal_9000.igor.fragment.SessionFragment"
+        android:label="fragment_session"
+        tools:layout="@layout/fragment_session">
         <argument
             android:name="aventura"
             app:argType="com.example.hal_9000.igor.model.Aventura" />
@@ -123,8 +123,10 @@
             android:name="session"
             app:argType="com.example.hal_9000.igor.model.Session" />
         <action
-            android:id="@+id/action_combatFragment_to_newCharacterFragment"
+            android:id="@+id/action_sessionFragment_to_newCharacterFragment"
             app:destination="@id/newCharacterFragment" />
     </fragment>
+
+    <include app:graph="@navigation/sub_nav_graph" />
 
 </navigation>

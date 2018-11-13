@@ -118,7 +118,9 @@ class NewCharacterFragment : Fragment() {
         personagem.nome = etNome.text.toString()
         personagem.classe = etClasse.text.toString()
         personagem.descricao = etDescricao.text.toString()
-        personagem.health = Integer.valueOf(etHealth.text?.toString())
+
+        if (etHealth.text.isNotEmpty())
+            personagem.health = Integer.valueOf(etHealth.text.toString())
 
         personagem.creator = LoginActivity.username
         personagem.isNpc = isNPC

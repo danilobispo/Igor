@@ -1,7 +1,7 @@
 package com.example.hal_9000.igor.fragment
 
 import android.os.Bundle
-import android.support.design.widget.BottomNavigationView
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
@@ -12,17 +12,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
-import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.EventsListAdapter
 import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Evento
-import com.example.hal_9000.igor.model.Personagem
 import com.example.hal_9000.igor.model.Session
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
+import java.nio.FloatBuffer
 
 class CombatFragment : Fragment() {
 
@@ -32,7 +30,7 @@ class CombatFragment : Fragment() {
     private lateinit var session: Session
 
     private lateinit var adapter: EventsListAdapter
-    private lateinit var mEventosList: RecyclerView
+    private lateinit var mRecyclerView: RecyclerView
     private lateinit var db: FirebaseFirestore
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -40,19 +38,21 @@ class CombatFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_combat, container, false)
 
-        aventura = NewSessionArgs.fromBundle(arguments).aventura
-        session = NewSessionArgs.fromBundle(arguments).session
+//        arguments?.let {
+//            val safeArgs = CombatFragmentArgs.fromBundle(it)
+//            aventura = safeArgs.aventura
+//            session = safeArgs.session
+//        }
 
-        val bottomNavigationView = view.findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        val adventureTitle = view.findViewById<TextView>(R.id.tv_adventure_title)
-        val sessionTitle = view.findViewById<TextView>(R.id.tv_session_title)
+//        aventura = CombatFragmentArgs.fromBundle(arguments).aventura
+//        session = CombatFragmentArgs.fromBundle(arguments).session
 
-        adventureTitle.text = aventura.title
-        sessionTitle.text = session.title
+        aventura = SessionFragment.aventura
+        session = SessionFragment.session
 
-        mEventosList = view.findViewById(R.id.eventos_rv)
-        mEventosList.layoutManager = LinearLayoutManager(context)
-        mEventosList.setHasFixedSize(true)
+        mRecyclerView = view.findViewById(R.id.eventos_rv)
+        mRecyclerView.layoutManager = LinearLayoutManager(context)
+        mRecyclerView.setHasFixedSize(true)
 
         db = FirebaseFirestore.getInstance()
 
@@ -69,33 +69,18 @@ class CombatFragment : Fragment() {
                 .build()
 
         adapter = EventsListAdapter(options) { evento: Evento -> eventoItemClicked(evento) }
-        mEventosList.adapter = adapter
+        mRecyclerView.adapter = adapter
 
         adapter.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
             override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
                 super.onItemRangeInserted(positionStart, itemCount)
-                mEventosList.scrollToPosition(adapter.itemCount - 1)
+                mRecyclerView.scrollToPosition(adapter.itemCount - 1)
             }
         })
 
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.action_npc -> {
-                    val action = CombatFragmentDirections.ActionCombatFragmentToNewCharacterFragment(AdventureFragment.aventura, Personagem())
-                    action.setAventura(AdventureFragment.aventura)
-                    action.setPersonagem(Personagem())
-                    action.setIsNpc(true)
-                    NavHostFragment.findNavController(this).navigate(action)
-                }
-                R.id.action_combat -> {
-                    Log.d(TAG, "action_combat clicked")
-
-                }
-                R.id.action_notes -> {
-                    enterNote()
-                }
-            }
-            true
+        val fab = view.findViewById<FloatingActionButton>(R.id.fab)
+        fab.setOnClickListener {
+            enterNote()
         }
 
         return view

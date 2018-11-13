@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sub_nav_graph"
+    app:startDestination="@id/combatFragment">
+
+    <fragment
+        android:id="@+id/combatFragment"
+        android:name="com.example.hal_9000.igor.fragment.CombatFragment"
+        android:label="fragment_combat"
+        tools:layout="@layout/fragment_combat">
+        <argument
+            android:name="aventura"
+            app:argType="com.example.hal_9000.igor.model.Aventura" />
+        <argument
+            android:name="session"
+            app:argType="com.example.hal_9000.igor.model.Session" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/charactersFragment"
+        android:name="com.example.hal_9000.igor.fragment.CharactersFragment"
+        android:label="fragment_characters"
+        tools:layout="@layout/fragment_characters">
+        <argument
+            android:name="aventura"
+            app:argType="com.example.hal_9000.igor.model.Aventura" />
+        <argument
+            android:name="session"
+            app:argType="com.example.hal_9000.igor.model.Session" />
+    </fragment>
+
+</navigation>

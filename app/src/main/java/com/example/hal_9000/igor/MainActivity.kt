@@ -2,6 +2,7 @@ package com.example.hal_9000.igor
 
 import android.content.Intent
 import android.os.Bundle
+import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -12,7 +13,9 @@ import android.view.MenuItem
 import android.widget.ListView
 import android.widget.Toast
 import androidx.navigation.NavOptions
+import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
+import com.example.hal_9000.igor.R.navigation.sub_nav_graph
 import com.example.hal_9000.igor.adapters.ListDrawerAdapter
 import com.example.hal_9000.igor.fragment.HomeFragment
 import com.example.hal_9000.igor.model.Categoria
@@ -21,6 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar_layout.*
+import kotlinx.android.synthetic.main.fragment_session.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -60,7 +64,7 @@ class MainActivity : AppCompatActivity() {
         val listView = findViewById<ListView>(R.id.lst_menu_items)
         listView.adapter = adapter
 
-        listView.setOnItemClickListener { parent, view, position, id ->
+        listView.setOnItemClickListener { _, _, position, _ ->
 
             val navController = findNavController(this, R.id.nav_host)
             val navBuilder = NavOptions.Builder()
