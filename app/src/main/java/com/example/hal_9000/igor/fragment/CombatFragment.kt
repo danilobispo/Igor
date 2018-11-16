@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.CharactersCombatListAdapter
 import com.example.hal_9000.igor.model.*
@@ -359,15 +360,13 @@ class CombatFragment : Fragment() {
     }
 
     private fun askRollDices(diceName: String, quantity: Int = Random.nextInt(1, 5)) {
-        fun ask(batch: WriteBatch, playerDices: PlayerDices, char: Personagem) {
-            playerDices.character = char.nome
-
+        fun ask(batch: WriteBatch, playerDices: PlayerDices, charName: String) {
             batch.set(db!!.collection("adventures")
                     .document(AdventureFragment.aventuraId)
                     .collection("sessions")
                     .document(SessionFragment.sessionId)
                     .collection("dices")
-                    .document(char.nome)
+                    .document(charName)
                     , playerDices)
         }
 
@@ -379,13 +378,15 @@ class CombatFragment : Fragment() {
         val players = adapterPlayers!!.selectedIds
         for (idx in players) {
             val char = adapterPlayers!!.getItem(idx)
-            ask(batch, playerDices, char)
+            playerDices.character = char.nome
+            ask(batch, playerDices, char.nome)
         }
 
         val enemies = adapterEnemies!!.selectedIds
         for (idx in enemies) {
             val char = adapterEnemies!!.getItem(idx)
-            ask(batch, playerDices, char)
+            playerDices.character = char.nome
+            ask(batch, playerDices, LoginActivity.username)
         }
 
         batch.commit()
