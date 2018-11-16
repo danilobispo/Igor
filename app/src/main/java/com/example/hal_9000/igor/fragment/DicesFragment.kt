@@ -51,6 +51,8 @@ class DicesFragment : Fragment() {
 
         documentReference.get()
                 .addOnSuccessListener {
+                    if (it == null || !it.exists()) return@addOnSuccessListener
+
                     playerDices = it.toObject(PlayerDices::class.java)!!
                     adapter = DicesListAdapter(playerDices.dices) { position: Int -> diceItemClicked(position) }
 

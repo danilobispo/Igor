@@ -158,6 +158,7 @@ class NewCharacterFragment : Fragment() {
                     Log.d(TAG, "Document ${documentReference.id} created successfully")
                     Toast.makeText(context, "Personagem criado com sucesso!", Toast.LENGTH_SHORT).show()
                     db.collection("characters").document(documentReference.id).update("id", documentReference.id)
+                    db.collection("adventures").document(aventuraId).update("players." + personagem.nome, true)
                     NavHostFragment.findNavController(this).popBackStack()
                 }
                 .addOnFailureListener { e ->
