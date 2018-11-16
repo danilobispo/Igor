@@ -30,25 +30,50 @@ data class Personagem(
             health = healthMax
     }
 
-    fun statUp(stat: String, value: Int) {
+    fun statCreate(statName: String, value: String) {
+        atributos.add(Atributo(statName, value))
+    }
+
+    fun statRemove(statName: String) {
         atributos.forEachIndexed { index, atributo ->
-            if (atributo.nome == stat) {
+            if (atributo.nome == statName) {
+                atributos.removeAt(index)
+                return
+            }
+        }
+    }
+
+    fun statChange(statName: String, value: String) {
+        atributos.forEachIndexed { index, atributo ->
+            if (atributo.nome == statName) {
+                atributos[index].valor = value
+                return
+            }
+        }
+        statCreate(statName, value)
+    }
+
+    fun statUp(statName: String, value: Int) {
+        atributos.forEachIndexed { index, atributo ->
+            if (atributo.nome == statName) {
                 val atributoValor = atributos[index].valor.toIntOrNull()
                 if (atributoValor != null)
                     atributos[index].valor = (atributoValor + value).toString()
                 return
             }
         }
+        statCreate(statName, value.toString())
     }
 
-    fun statDown(stat: String, value: Int) {
+    fun statDown(statName: String, value: Int) {
         atributos.forEachIndexed { index, atributo ->
-            if (atributo.nome == stat) {
+            if (atributo.nome == statName) {
                 val atributoValor = atributos[index].valor.toIntOrNull()
                 if (atributoValor != null)
                     atributos[index].valor = (atributoValor - value).toString()
                 return
             }
         }
+        statCreate(statName, (0 - value).toString())
     }
 }
