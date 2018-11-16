@@ -31,4 +31,10 @@
             app:argType="com.example.hal_9000.igor.model.Session" />
     </fragment>
 
+    <fragment
+        android:id="@+id/combatFragment"
+        android:name="com.example.hal_9000.igor.fragment.CombatFragment"
+        android:label="fragment_combat"
+        tools:layout="@layout/fragment_combat" />
+
 </navigation>

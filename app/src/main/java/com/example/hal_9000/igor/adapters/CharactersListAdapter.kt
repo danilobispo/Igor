@@ -37,12 +37,12 @@ class CharactersListAdapter(options: FirestoreRecyclerOptions<Personagem>, priva
     class CharactersViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun setCharacterNome(nomeCharacter: String) {
-            val tvNome: TextView = itemView.findViewById(R.id.nomeJogadorItem)
+            val tvNome: TextView = itemView.findViewById(R.id.tv_class)
             tvNome.text = nomeCharacter
         }
 
         fun setCharacterRole(roleCharacter: String) {
-            val tvClasse: TextView = itemView.findViewById(R.id.roleJogadorItem)
+            val tvClasse: TextView = itemView.findViewById(R.id.tv_name)
             tvClasse.text = roleCharacter
         }
 
@@ -52,7 +52,7 @@ class CharactersListAdapter(options: FirestoreRecyclerOptions<Personagem>, priva
         }
 
         fun setCharacterImagem(imagemCharacter: String) {
-            val ivImagem: ImageView = itemView.findViewById(R.id.imagemJogadorItem)
+            val ivImagem: ImageView = itemView.findViewById(R.id.iv_imagem)
             Glide.with(itemView)
                     .load(imagemCharacter)
                     .into(ivImagem)

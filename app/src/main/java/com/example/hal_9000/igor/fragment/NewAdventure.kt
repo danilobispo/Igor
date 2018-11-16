@@ -188,6 +188,8 @@ class NewAdventure : Fragment() {
                         val master = Personagem()
                         master.nome = LoginActivity.username
                         master.classe = "Mestre"
+                        master.isMaster = true
+                        master.isNpc = false
                         master.created = System.currentTimeMillis() / 1000
                         master.aventuraId = "${adventure?.creator}_${adventure?.title}"
 

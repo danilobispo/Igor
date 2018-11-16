@@ -1,6 +1,7 @@
 package com.example.hal_9000.igor
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
@@ -17,6 +18,7 @@ import androidx.navigation.Navigation
 import androidx.navigation.Navigation.findNavController
 import com.example.hal_9000.igor.R.navigation.sub_nav_graph
 import com.example.hal_9000.igor.adapters.ListDrawerAdapter
+import com.example.hal_9000.igor.fragment.CombatFragment
 import com.example.hal_9000.igor.fragment.HomeFragment
 import com.example.hal_9000.igor.model.Categoria
 import com.google.firebase.auth.FirebaseAuth

@@ -40,6 +40,7 @@ class JogadoresFragment : Fragment() {
         val query = db!!.collection("characters")
                 .whereEqualTo("aventuraId", "${aventura.creator}_${aventura.title}")
                 .whereEqualTo("npc", false)
+                .whereEqualTo("master", false)
                 .orderBy("created")
 
         val options = FirestoreRecyclerOptions.Builder<Personagem>()

@@ -84,8 +84,8 @@ class NewCharacterFragment : Fragment() {
         etClasse.setText(personagemOld.classe)
         etDescricao.setText(personagemOld.descricao)
 
-        if (personagemOld.health != -1)
-            etHealth.setText(personagemOld.health.toString(), TextView.BufferType.EDITABLE)
+        if (personagemOld.healthMax != -1)
+            etHealth.setText(personagemOld.healthMax.toString(), TextView.BufferType.EDITABLE)
 
         for (atributo in personagemOld.atributos) {
             addTableRow(atributo.nome, atributo.valor)
@@ -120,12 +120,13 @@ class NewCharacterFragment : Fragment() {
         personagem.descricao = etDescricao.text.toString()
 
         if (etHealth.text.isNotEmpty())
-            personagem.health = Integer.valueOf(etHealth.text.toString())
+            personagem.healthMax = Integer.valueOf(etHealth.text.toString())
 
         personagem.creator = LoginActivity.username
         personagem.isNpc = isNPC
+        personagem.isMaster = false
 
-        Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.health}")
+        Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.healthMax}")
 
         for (i in 0 until tl_atributos.childCount) {
             val row = tl_atributos.getChildAt(i) as TableRow
@@ -139,11 +140,13 @@ class NewCharacterFragment : Fragment() {
 
         if (personagemOld.id.isEmpty()) {
             personagem.created = System.currentTimeMillis() / 1000
+            personagem.health = personagem.healthMax
             createCharacter(personagem)
 
         } else {
             personagem.id = personagemOld.id
             personagem.created = personagemOld.created
+            personagem.health = personagemOld.health
             editCharacter(personagem)
         }
     }

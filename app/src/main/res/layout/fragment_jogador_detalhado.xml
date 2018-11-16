@@ -10,7 +10,7 @@
     android:layout_marginTop="8dp">
 
     <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/imagemJogadorItem"
+        android:id="@+id/iv_imagem"
         android:layout_width="52dp"
         android:layout_height="52dp"
         android:layout_marginStart="8dp"
@@ -20,25 +20,25 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/roleJogadorItem"
+        android:id="@+id/tv_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:layout_marginTop="8dp"
         android:text="Role Jogador"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/imagemJogadorItem"
+        app:layout_constraintStart_toEndOf="@+id/iv_imagem"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/nomeJogadorItem"
+        android:id="@+id/tv_class"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:text="Nome Jogador"
         android:textStyle="italic"
-        app:layout_constraintStart_toEndOf="@+id/imagemJogadorItem"
-        app:layout_constraintTop_toBottomOf="@+id/roleJogadorItem" />
+        app:layout_constraintStart_toEndOf="@+id/iv_imagem"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name" />
 
     <TextView
         android:id="@+id/descricaoJogadorItem"
@@ -47,8 +47,8 @@
         android:layout_marginStart="20dp"
         android:text="Descricao Jogador"
         android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@+id/imagemJogadorItem"
-        app:layout_constraintTop_toBottomOf="@+id/nomeJogadorItem" />
+        app:layout_constraintStart_toEndOf="@+id/iv_imagem"
+        app:layout_constraintTop_toBottomOf="@+id/tv_class" />
 
     <TextView
         android:id="@+id/descricaoJogador"
@@ -60,7 +60,7 @@
         android:text="Lorem Ipsum"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nomeJogadorItem" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_class" />
 
     <ImageView
         android:id="@+id/flechaVerMais"

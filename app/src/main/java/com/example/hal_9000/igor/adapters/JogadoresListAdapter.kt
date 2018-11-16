@@ -37,12 +37,12 @@ class JogadoresListAdapter(options: FirestoreRecyclerOptions<Personagem>, privat
     class JogadoresViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun setJogadorNome(nomeJogador: String) {
-            val tvNome: TextView = itemView.findViewById(R.id.nomeJogadorItem)
+            val tvNome: TextView = itemView.findViewById(R.id.tv_class)
             tvNome.text = nomeJogador
         }
 
         fun setJogadorRole(roleJogador: String) {
-            val tvClasse: TextView = itemView.findViewById(R.id.roleJogadorItem)
+            val tvClasse: TextView = itemView.findViewById(R.id.tv_name)
             tvClasse.text = roleJogador
         }
 
@@ -52,7 +52,7 @@ class JogadoresListAdapter(options: FirestoreRecyclerOptions<Personagem>, privat
         }
 
         fun setJogadorImagem(imagemJogador: String) {
-            val ivImagem: ImageView = itemView.findViewById(R.id.imagemJogadorItem)
+            val ivImagem: ImageView = itemView.findViewById(R.id.iv_imagem)
             Glide.with(itemView)
                     .load(imagemJogador)
                     .into(ivImagem)
