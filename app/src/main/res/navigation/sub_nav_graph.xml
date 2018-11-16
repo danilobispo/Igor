@@ -37,4 +37,10 @@
         android:label="fragment_combat"
         tools:layout="@layout/fragment_combat" />
 
+    <fragment
+        android:id="@+id/dicesFragment"
+        android:name="com.example.hal_9000.igor.fragment.DicesFragment"
+        android:label="DicesFragment"
+        tools:layout="@layout/fragment_dices" />
+
 </navigation>

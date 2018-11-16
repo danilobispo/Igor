@@ -3,36 +3,31 @@ package com.example.hal_9000.igor.fragment
 
 import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment
-
+import androidx.navigation.ui.setupWithNavController
+import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
+import com.example.hal_9000.igor.model.PlayerDices
 import com.example.hal_9000.igor.model.Session
-import android.R.attr.fragment
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupWithNavController
-import com.example.hal_9000.igor.model.Personagem
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.EventListener
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class SessionFragment : Fragment() {
 
     private val TAG = "SessionFragment"
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        Log.d(TAG, "onCreate")
-    }
+    private var db: FirebaseFirestore? = null
+    private lateinit var navController: NavController
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -43,14 +38,15 @@ class SessionFragment : Fragment() {
 
         aventura = SessionFragmentArgs.fromBundle(arguments).aventura
         session = SessionFragmentArgs.fromBundle(arguments).session
+        sessionId = session.created.toString()
 
-        val args = Bundle()
-        args.putParcelable("aventura", aventura)
-        args.putParcelable("session", session)
-
+//        val args = Bundle()
+//        args.putParcelable("aventura", aventura)
+//        args.putParcelable("session", session)
+//
         val fragmentContainer = view.findViewById<View>(R.id.nav_host_session)
-        val navController = Navigation.findNavController(fragmentContainer)
-        navController.setGraph(R.navigation.sub_nav_graph, args)
+        navController = Navigation.findNavController(fragmentContainer)
+//        navController.setGraph(R.navigation.sub_nav_graph, args)
 
         val bottomNavigationView = view.findViewById<BottomNavigationView>(R.id.bottom_navigation)
         val adventureTitle = view.findViewById<TextView>(R.id.tv_adventure_title)
@@ -61,19 +57,54 @@ class SessionFragment : Fragment() {
         adventureTitle.text = aventura.title
         sessionTitle.text = session.title
 
+        db = FirebaseFirestore.getInstance()
+
+        val docRef = db!!.collection("adventures")
+                .document(AdventureFragment.aventuraId)
+                .collection("sessions")
+                .document(SessionFragment.sessionId)
+                .collection("dices")
+                .document(LoginActivity.username)
+
+        docRef.addSnapshotListener(EventListener<DocumentSnapshot> { snapshot, e ->
+            if (e != null) {
+                Log.w(TAG, "Listen failed.", e)
+                return@EventListener
+            }
+
+            if (snapshot != null && snapshot.exists()) {
+                Log.d(TAG, "Dices roll requested: " + snapshot.data!!)
+                val playerDices = snapshot.toObject(PlayerDices::class.java)!!
+                if (!playerDices.rolled && navController.currentDestination?.label != "DicesFragment")
+                    rollDices()
+            } else {
+                Log.d(TAG, "Dices roll requested: null")
+            }
+        })
+
         return view
+    }
+
+    private fun rollDices() {
+        Log.d(TAG, "User must roll dices")
+
+        if (context == null)
+            return
+
+        AlertDialog.Builder(context!!)
+                .setTitle("Rolar dados")
+                .setMessage("Você precisa rolar dados. Deseja ir para a tela de rolagem de dados?")
+                .setPositiveButton("Ir") { _, _ ->
+                    navController.navigate(R.id.dicesFragment)
+                }
+                .setNegativeButton("Cancelar") { _, _ ->
+                }
+                .show()
     }
 
     companion object {
         lateinit var aventura: Aventura
         lateinit var session: Session
-
-//        fun navigateToNewCharacter() {
-//            val action = SessionFragmentDirections.ActionSessionFragmentToNewCharacterFragment(aventura, Personagem())
-//            action.setAventura(aventura)
-//            action.setPersonagem(Personagem())
-//            action.setIsNpc(true)
-//            NavHostFragment.findNavController(getAc).navigate(action)
-//        }
+        lateinit var sessionId: String
     }
 }

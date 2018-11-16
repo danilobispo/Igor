@@ -13,12 +13,16 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.CharactersCombatListAdapter
 import com.example.hal_9000.igor.model.Atributo
+import com.example.hal_9000.igor.model.Dice
 import com.example.hal_9000.igor.model.Personagem
+import com.example.hal_9000.igor.model.PlayerDices
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.random.Random
 
 
 class CombatFragment : Fragment() {
@@ -78,37 +82,18 @@ class CombatFragment : Fragment() {
         adapterEnemies = CharactersCombatListAdapter(optionsEnemies) { personagem: Personagem -> enemyItemClicked(personagem) }
         mEnemiesList?.adapter = adapterEnemies
 
-        val button = view.findViewById<Button>(R.id.button)
-
-//        button.setOnClickListener {
-//            val a = adapterPlayers!!.selectedIds
-//            val b = adapterEnemies!!.selectedIds
-//
-//            for (i in a) {
-//                val char = adapterPlayers!!.getItem(i)
-//                char.hit(10)
-//
-//                db!!
-//                        .collection("characters")
-//                        .document(char.id)
-//                        .set(char)
-//                        .addOnSuccessListener {
-//                            Log.d(TAG, "Document ${char.id} updated successfully")
-//                        }
-//            }
-//        }
-
         val btnAction = view.findViewById<Button>(R.id.btn_action)
         btnAction.setOnClickListener {
             val actions = arrayOf("Rolar dados", "Dar dano", "Curar", "Aumentar Atributo", "Diminuir Atributo")
 
+            //TODO: Criar layout para o DialogAlert
+
             val builder = AlertDialog.Builder(context!!)
             builder.setTitle("Escolha uma ação")
-            builder.setItems(actions) { dialog, which ->
-                button.text = actions[which]
+            builder.setItems(actions) { _, which ->
                 when (actions[which]) {
                     "Rolar dados" -> {
-//                        rolarDados()
+                        showDiceChooser()
                     }
                     "Dar dano" -> {
                         showDamageDialog()
@@ -201,7 +186,7 @@ class CombatFragment : Fragment() {
             else -> return
         }
 
-        val statsNames: Array<String?> = arrayOfNulls<String>(stats.size)
+        val statsNames: Array<String?> = arrayOfNulls(stats.size)
         for (stat in stats)
             statsNames[statsNames.lastIndex] = stat.nome
 
@@ -286,6 +271,80 @@ class CombatFragment : Fragment() {
                 }
                 .addOnFailureListener {
                     Log.d(TAG, "Batch alterarAtributoPersonagem error")
+                    Toast.makeText(context, "Erro ao realizar operação", Toast.LENGTH_SHORT).show()
+                }
+    }
+
+    private fun showDiceChooser() {
+        val dices = arrayOf("D4", "D6", "D8", "D10", "D00", "D12", "D20")
+
+        AlertDialog.Builder(context!!)
+                .setTitle("Escolha o tipo do dado")
+                .setItems(dices) { _, which ->
+                    showDiceQuantityChooser(dices[which])
+                }
+                .show()
+    }
+
+    private fun showDiceQuantityChooser(dice: String) {
+        val input = EditText(context)
+        input.inputType = InputType.TYPE_CLASS_NUMBER
+
+        AlertDialog.Builder(view!!.context)
+                .setTitle("Solicitar rolagem de dados")
+                .setMessage("Digite a quantidade de dados")
+                .setView(input)
+                .setPositiveButton("OK") { _, _ ->
+                    if (input.text != null)
+                        askRollDices(dice, input.text.toString().toInt())
+                }
+                .show()
+    }
+
+    private fun askRollDices(diceName: String, quantity: Int = Random.nextInt(1, 5)) {
+        val players = adapterPlayers!!.selectedIds
+        val enemies = adapterEnemies!!.selectedIds
+
+        val playerDices = PlayerDices()
+        playerDices.rolled = false
+        for (i in 1..quantity)
+            playerDices.dices.add(Dice(diceName))
+
+        val batch = db!!.batch()
+
+        for (idx in players) {
+            val char = adapterPlayers!!.getItem(idx)
+            playerDices.character = char.nome
+
+            batch.set(db!!.collection("adventures")
+                    .document(AdventureFragment.aventuraId)
+                    .collection("sessions")
+                    .document(SessionFragment.sessionId)
+                    .collection("dices")
+                    .document(char.nome)
+                    , playerDices)
+        }
+
+        for (idx in enemies) {
+            val char = adapterEnemies!!.getItem(idx)
+            playerDices.character = char.nome
+
+            batch.set(db!!.collection("adventures")
+                    .document(AdventureFragment.aventuraId)
+                    .collection("sessions")
+                    .document(SessionFragment.sessionId)
+                    .collection("dices")
+                    .document(LoginActivity.username)
+                    , playerDices)
+        }
+
+        batch.commit()
+                .addOnSuccessListener {
+                    Log.d(TAG, "Batch dices add success")
+                    Toast.makeText(context, "Sucesso", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener {
+                    Log.d(TAG, "Batch dices add error")
                     Toast.makeText(context, "Erro ao realizar operação", Toast.LENGTH_SHORT).show()
                 }
     }

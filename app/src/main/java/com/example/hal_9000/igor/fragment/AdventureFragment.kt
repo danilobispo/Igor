@@ -47,6 +47,7 @@ class AdventureFragment : Fragment() {
         setHasOptionsMenu(true)
 
         aventura = AdventureFragmentArgs.fromBundle(arguments).aventura
+        aventuraId = "${aventura.creator}_${aventura.title}"
 
         fabNewCharacter = view.findViewById(R.id.fab_new_character)
         fabNewSession = view.findViewById(R.id.fab_new_session)
@@ -229,6 +230,7 @@ class AdventureFragment : Fragment() {
 
     companion object {
         lateinit var aventura: Aventura
+        lateinit var aventuraId: String
         var editMode: Boolean = false
 
         @JvmStatic

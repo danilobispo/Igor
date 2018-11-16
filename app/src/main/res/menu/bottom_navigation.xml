@@ -12,7 +12,12 @@
     </item>
     <item
         android:id="@+id/charactersFragment"
-        android:title="NPC"
+        android:title="Personagens"
         android:icon="@drawable/ic_monster">
+    </item>
+    <item
+        android:id="@+id/dicesFragment"
+        android:title="Dados"
+        android:icon="@drawable/ic_dice">
     </item>
 </menu>
