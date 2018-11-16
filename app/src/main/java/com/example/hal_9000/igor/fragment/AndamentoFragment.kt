@@ -2,24 +2,29 @@ package com.example.hal_9000.igor.fragment
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ListView
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.R
+import com.example.hal_9000.igor.adapters.SessionsListAdapter
+import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Session
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_andamento.*
 
 class AndamentoFragment : Fragment() {
 
     private val TAG = "AndamentoFragment"
-    private var sessions: ArrayList<Session> = arrayListOf()
+    private lateinit var aventura: Aventura
 
+    private lateinit var adapter: SessionsListAdapter
+    private lateinit var mRecyclerView: RecyclerView
     private lateinit var db: FirebaseFirestore
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -29,48 +34,25 @@ class AndamentoFragment : Fragment() {
 
         Log.d(TAG, "onCreateView: Started")
 
-        val aventura = AdventureFragmentArgs.fromBundle(arguments).aventura
+        aventura = AdventureFragmentArgs.fromBundle(arguments).aventura
 
-        val listView = view?.findViewById(R.id.lv_next_sessions) as ListView
+        mRecyclerView = view.findViewById(R.id.rv_next_sessions)
+        mRecyclerView.layoutManager = LinearLayoutManager(context)
+        mRecyclerView.setHasFixedSize(true)
 
         db = FirebaseFirestore.getInstance()
-        db
+
+        val query = db
                 .collection("adventures")
                 .document("${aventura.creator}_${aventura.title}")
                 .collection("sessions")
-                .get()
-                .addOnSuccessListener { it ->
-                    val values: ArrayList<String> = arrayListOf()
 
-                    for (session in it.documents) {
-                        values.add("${session["date"].toString()} ${session["title"].toString()}")
-                        sessions.add(session.toObject(Session::class.java)!!)
-                    }
+        val options = FirestoreRecyclerOptions.Builder<Session>()
+                .setQuery(query, Session::class.java)
+                .build()
 
-                    if (context != null) {
-                        val adapter = ArrayAdapter<String>(context!!, R.layout.next_sessions_item, R.id.tv_session, values)
-                        listView.adapter = adapter
-                    }
-                }
-
-        listView.setOnItemClickListener { parent, _, position, _ ->
-
-            Log.d(TAG, "${parent.getItemAtPosition(position)}")
-
-            val session = sessions[position]
-
-            if (AdventureFragment.editMode) {
-                val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(aventura, session)
-                action.setAventura(aventura)
-                action.setSession(session)
-                NavHostFragment.findNavController(this).navigate(action)
-            } else {
-                val action = AdventureFragmentDirections.ActionAdventureFragmentToSessionFragment(aventura, session)
-                action.setAventura(aventura)
-                action.setSession(session)
-                NavHostFragment.findNavController(this).navigate(action)
-            }
-        }
+        adapter = SessionsListAdapter(options) { session: Session -> sessionItemClicked(session) }
+        mRecyclerView.adapter = adapter
 
         val tvDescription = view.findViewById<TextView>(R.id.tv_description)
 
@@ -97,5 +79,31 @@ class AndamentoFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun sessionItemClicked(session: Session) {
+        Log.d(TAG, "Clicked ${session.title}")
+
+        if (AdventureFragment.editMode) {
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(aventura, session)
+            action.setAventura(aventura)
+            action.setSession(session)
+            NavHostFragment.findNavController(this).navigate(action)
+        } else {
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToSessionFragment(aventura, session)
+            action.setAventura(aventura)
+            action.setSession(session)
+            NavHostFragment.findNavController(this).navigate(action)
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        adapter.startListening()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        adapter.stopListening()
     }
 }

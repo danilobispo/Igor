@@ -135,7 +135,6 @@ class NewSession : Fragment() {
 
         if (editMode) {
             session.created = sessionOld.created
-            session.events = sessionOld.events
         } else {
             session.created = System.currentTimeMillis() / 1000
         }
