@@ -16,12 +16,10 @@ import android.widget.Toast
 import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.CharactersCombatListAdapter
-import com.example.hal_9000.igor.model.Atributo
-import com.example.hal_9000.igor.model.Dice
-import com.example.hal_9000.igor.model.Personagem
-import com.example.hal_9000.igor.model.PlayerDices
+import com.example.hal_9000.igor.model.*
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.WriteBatch
 import kotlin.random.Random
 
 
@@ -145,36 +143,6 @@ class CombatFragment : Fragment() {
                 .show()
     }
 
-    private fun showStatUpDialog(stat: String) {
-        val input = EditText(context)
-        input.inputType = InputType.TYPE_CLASS_NUMBER
-
-        AlertDialog.Builder(view!!.context)
-                .setTitle("Aumentar atributo")
-                .setMessage("Digite o quanto você deseja aumentar o atributo $stat")
-                .setView(input)
-                .setPositiveButton("OK") { _, _ ->
-                    if (input.text != null)
-                        alterarAtributoPersonagem("up", stat, input.text.toString().toInt())
-                }
-                .show()
-    }
-
-    private fun showStatDownDialog(stat: String) {
-        val input = EditText(context)
-        input.inputType = InputType.TYPE_CLASS_NUMBER
-
-        AlertDialog.Builder(view!!.context)
-                .setTitle("Diminuir atributo")
-                .setMessage("Digite o quanto você deseja diminuir o atributo $stat")
-                .setView(input)
-                .setPositiveButton("OK") { _, _ ->
-                    if (input.text != null)
-                        alterarAtributoPersonagem("down", stat, input.text.toString().toInt())
-                }
-                .show()
-    }
-
     private fun showStatChooserDialog(action: String) {
 
         val stats: ArrayList<Atributo> = when {
@@ -194,14 +162,44 @@ class CombatFragment : Fragment() {
         builder.setTitle("Escolha um atributo")
         builder.setItems(statsNames) { dialog, which ->
             when (action) {
-                "up" -> showStatUpDialog(statsNames[which]!!)
-                "down" -> showStatDownDialog(statsNames[which]!!)
+                "up" -> showStatUpDialog(statsNames[which]!!, which)
+                "down" -> showStatDownDialog(statsNames[which]!!, which)
             }
         }
         builder.show()
     }
 
-    private fun alterarVidaPersonagem(acao: String, valor: Int) {
+    private fun showStatUpDialog(stat: String, statIdx: Int) {
+        val input = EditText(context)
+        input.inputType = InputType.TYPE_CLASS_NUMBER
+
+        AlertDialog.Builder(view!!.context)
+                .setTitle("Aumentar atributo")
+                .setMessage("Digite o quanto você deseja aumentar o atributo $stat")
+                .setView(input)
+                .setPositiveButton("OK") { _, _ ->
+                    if (input.text != null)
+                        alterarAtributoPersonagem("up", stat, statIdx, input.text.toString().toInt())
+                }
+                .show()
+    }
+
+    private fun showStatDownDialog(stat: String, statIdx: Int) {
+        val input = EditText(context)
+        input.inputType = InputType.TYPE_CLASS_NUMBER
+
+        AlertDialog.Builder(view!!.context)
+                .setTitle("Diminuir atributo")
+                .setMessage("Digite o quanto você deseja diminuir o atributo $stat")
+                .setView(input)
+                .setPositiveButton("OK") { _, _ ->
+                    if (input.text != null)
+                        alterarAtributoPersonagem("down", stat, statIdx, input.text.toString().toInt())
+                }
+                .show()
+    }
+
+    private fun alterarVidaPersonagem(action: String, value: Int) {
         val players = adapterPlayers!!.selectedIds
         val enemies = adapterEnemies!!.selectedIds
 
@@ -209,22 +207,30 @@ class CombatFragment : Fragment() {
 
         for (idx in players) {
             val char = adapterPlayers!!.getItem(idx)
-            when (acao) {
-                "damage" -> char.hit(valor)
-                "heal" -> char.heal(valor)
+            when (action) {
+                "damage" -> char.hit(value)
+                "heal" -> char.heal(value)
                 else -> return
             }
             batch.set(db!!.collection("characters").document(char.id), char)
+            if (action == "damage")
+                logEvent(batch, "stat", "${char.nome} sofreu $value de dano (${char.health + value}➡${char.health})")
+            else
+                logEvent(batch, "stat", "${char.nome} recebeu $value de cura (${char.health - value}➡${char.health})")
         }
 
         for (idx in enemies) {
             val char = adapterEnemies!!.getItem(idx)
-            when (acao) {
-                "damage" -> char.hit(valor)
-                "heal" -> char.heal(valor)
+            when (action) {
+                "damage" -> char.hit(value)
+                "heal" -> char.heal(value)
                 else -> return
             }
             batch.set(db!!.collection("characters").document(char.id), char)
+            if (action == "damage")
+                logEvent(batch, "stat", "${char.nome} sofreu $value de dano (${char.health + value}➡${char.health})")
+            else
+                logEvent(batch, "stat", "${char.nome} recebeu $value de cura (${char.health - value}➡${char.health})")
         }
 
         batch.commit()
@@ -238,7 +244,7 @@ class CombatFragment : Fragment() {
                 }
     }
 
-    private fun alterarAtributoPersonagem(action: String, stat: String, value: Int) {
+    private fun alterarAtributoPersonagem(action: String, stat: String, statIdx:Int, value: Int) {
         val players = adapterPlayers!!.selectedIds
         val enemies = adapterEnemies!!.selectedIds
 
@@ -252,6 +258,10 @@ class CombatFragment : Fragment() {
                 else -> return
             }
             batch.set(db!!.collection("characters").document(char.id), char)
+            if (action == "up")
+                logEvent(batch, "stat", "${char.nome} aumentou seu $stat em $value (${char.atributos[statIdx].valor.toInt() - value}➡${char.atributos[statIdx].valor})")
+            else
+                logEvent(batch, "stat", "${char.nome} diminuiu seu $stat em $value (${char.atributos[statIdx].valor.toInt() + value}➡${char.atributos[statIdx].valor})")
         }
 
         for (idx in enemies) {
@@ -262,6 +272,10 @@ class CombatFragment : Fragment() {
                 else -> return
             }
             batch.set(db!!.collection("characters").document(char.id), char)
+            if (action == "up")
+                logEvent(batch, "stat", "${char.nome} aumentou seu $stat em $value (${char.atributos[statIdx].valor.toInt() - value}➡${char.atributos[statIdx].valor})")
+            else
+                logEvent(batch, "stat", "${char.nome} diminuiu seu $stat em $value (${char.atributos[statIdx].valor.toInt() + value}➡${char.atributos[statIdx].valor})")
         }
 
         batch.commit()
@@ -347,6 +361,23 @@ class CombatFragment : Fragment() {
                     Log.d(TAG, "Batch dices add error")
                     Toast.makeText(context, "Erro ao realizar operação", Toast.LENGTH_SHORT).show()
                 }
+    }
+
+    private fun logEvent(batch: WriteBatch, type: String, message: String) {
+        val event = Evento()
+        event.date = System.currentTimeMillis()
+        event.type = type
+        event.event = message
+
+        val eventLogReference = db!!
+                .collection("adventures")
+                .document(AdventureFragment.aventuraId)
+                .collection("sessions")
+                .document(SessionFragment.sessionId)
+                .collection("events")
+                .document(event.date.toString())
+
+        batch.set(eventLogReference, event)
     }
 
     private fun enemyItemClicked(personagem: Personagem) {

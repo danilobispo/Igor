@@ -33,18 +33,13 @@ class EventsListAdapter(options: FirestoreRecyclerOptions<Evento>, private val i
         Log.e(TAG, "Error: $e.message")
     }
 
-    override fun onDataChanged() {
-        super.onDataChanged()
-
-    }
-
     class EventosViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun setEventoData(dataEvento: Long) {
             val tvNome: TextView = itemView.findViewById(R.id.tv_date)
 
             val sdf = SimpleDateFormat("dd/MM HH:mm:ss")
-            tvNome.text = sdf.format(Date(dataEvento * 1000))
+            tvNome.text = sdf.format(Date(dataEvento))
         }
 
         fun setEventoTexto(textEvento: String) {

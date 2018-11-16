@@ -92,7 +92,7 @@ class EventsFragment : Fragment() {
         input.inputType = InputType.TYPE_CLASS_TEXT
 
         val event = Evento()
-        event.date = System.currentTimeMillis() / 1000
+        event.date = System.currentTimeMillis()
         event.type = "custom"
 
         AlertDialog.Builder(view!!.context)

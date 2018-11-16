@@ -12,6 +12,7 @@ import android.widget.Toast
 import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.DicesListAdapter
+import com.example.hal_9000.igor.model.Evento
 import com.example.hal_9000.igor.model.PlayerDices
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -86,6 +87,7 @@ class DicesFragment : Fragment() {
             batch = db.batch()
 
             batch.set(documentReference, playerDices)
+            logEvent(position)
 
             batch.commit()
                     .addOnSuccessListener {
@@ -97,6 +99,24 @@ class DicesFragment : Fragment() {
                     }
             adapter.notifyDataSetChanged()
         }
+    }
+
+    private fun logEvent(position: Int) {
+        val event = Evento()
+        event.date = System.currentTimeMillis()
+        event.type = "dice"
+
+        event.event = "${playerDices.character} tirou ${playerDices.dices[position].value} no dado ${playerDices.dices[position].dice}"
+
+        val eventLogReference = db
+                .collection("adventures")
+                .document(AdventureFragment.aventuraId)
+                .collection("sessions")
+                .document(SessionFragment.sessionId)
+                .collection("events")
+                .document(event.date.toString())
+
+        batch.set(eventLogReference, event)
     }
 
     companion object {
