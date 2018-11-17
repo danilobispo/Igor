@@ -6,11 +6,11 @@
     android:layout_marginTop="3dp"
     android:layout_marginBottom="3dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+    <ImageView
         android:id="@+id/iv_imagem"
         android:layout_width="52dp"
         android:layout_height="52dp"
-        android:src="@color/colorPrimary"
+        android:src="@drawable/ic_person"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

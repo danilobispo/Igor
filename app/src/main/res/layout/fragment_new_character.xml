@@ -25,17 +25,30 @@
             android:layout_height="match_parent"
             android:padding="10dp">
 
+            <ImageView
+                android:id="@+id/iv_photo"
+                android:layout_width="90dp"
+                android:layout_height="90dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_person"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <EditText
                 android:id="@+id/et_nome"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="Nome do usuário" />
+                android:hint="Nome do usuário"
+                app:layout_constraintEnd_toStartOf="@id/iv_photo"
+                app:layout_constraintStart_toStartOf="parent" />
 
             <EditText
                 android:id="@+id/et_classe"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:hint="Classe"
+                app:layout_constraintEnd_toStartOf="@id/iv_photo"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/et_nome" />
 
             <EditText
@@ -63,36 +76,36 @@
                 app:layout_constraintTop_toBottomOf="@id/et_hp">
 
                 <!--<TableRow>-->
-                    <!--<TextView-->
-                        <!--android:padding="5dp"-->
-                        <!--android:text="ATT"-->
-                        <!--android:textSize="20dp" />-->
-                    <!--<TextView-->
-                        <!--android:padding="5dp"-->
-                        <!--android:text="123"-->
-                        <!--android:textSize="20dp" />-->
+                <!--<TextView-->
+                <!--android:padding="5dp"-->
+                <!--android:text="ATT"-->
+                <!--android:textSize="20dp" />-->
+                <!--<TextView-->
+                <!--android:padding="5dp"-->
+                <!--android:text="123"-->
+                <!--android:textSize="20dp" />-->
                 <!--</TableRow>-->
 
                 <!--<TableRow>-->
-                    <!--<TextView-->
-                        <!--android:padding="5dp"-->
-                        <!--android:text="DEF"-->
-                        <!--android:textSize="20dp" />-->
-                    <!--<TextView-->
-                        <!--android:padding="5dp"-->
-                        <!--android:text="321"-->
-                        <!--android:textSize="20dp" />-->
+                <!--<TextView-->
+                <!--android:padding="5dp"-->
+                <!--android:text="DEF"-->
+                <!--android:textSize="20dp" />-->
+                <!--<TextView-->
+                <!--android:padding="5dp"-->
+                <!--android:text="321"-->
+                <!--android:textSize="20dp" />-->
                 <!--</TableRow>-->
 
                 <!--<TableRow>-->
-                    <!--<TextView-->
-                        <!--android:padding="5dp"-->
-                        <!--android:text="STA"-->
-                        <!--android:textSize="20dp" />-->
-                    <!--<TextView-->
-                        <!--android:padding="5dp"-->
-                        <!--android:text="313"-->
-                        <!--android:textSize="20dp" />-->
+                <!--<TextView-->
+                <!--android:padding="5dp"-->
+                <!--android:text="STA"-->
+                <!--android:textSize="20dp" />-->
+                <!--<TextView-->
+                <!--android:padding="5dp"-->
+                <!--android:text="313"-->
+                <!--android:textSize="20dp" />-->
                 <!--</TableRow>-->
 
             </TableLayout>

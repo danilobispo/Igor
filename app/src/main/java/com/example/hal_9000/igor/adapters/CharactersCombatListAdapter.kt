@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.`interface`.ViewHolderClickListerner
 import com.example.hal_9000.igor.model.Personagem
@@ -31,6 +32,7 @@ class CharactersCombatListAdapter(options: FirestoreRecyclerOptions<Personagem>,
         holder.setCharacterRole(model.classe)
         holder.setCharacterNome(model.nome)
         holder.setCharacterHP(model.health, model.healthMax)
+        holder.setCharacterImagem(model.imageUrl, model.isNpc)
         holder.setClickListener(model, itemClickListener)
 
         if (selectedIds.contains(position))
@@ -77,11 +79,25 @@ class CharactersCombatListAdapter(options: FirestoreRecyclerOptions<Personagem>,
             tvHp.text = "$health/$healthMax"
         }
 
-        fun setCharacterImagem(imagemCharacter: String) {
+        fun setCharacterImagem(imagemCharacter: String, isNPC: Boolean) {
             val ivImagem: ImageView = itemView.findViewById(R.id.iv_imagem)
-            Glide.with(itemView)
-                    .load(imagemCharacter)
-                    .into(ivImagem)
+
+            if (imagemCharacter.isEmpty()) {
+                if (isNPC)
+                    Glide.with(itemView)
+                            .load(R.drawable.ic_monster)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(ivImagem)
+                else
+                    Glide.with(itemView)
+                            .load(R.drawable.ic_person)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(ivImagem)
+            } else
+                Glide.with(itemView)
+                        .load(imagemCharacter)
+                            .apply(RequestOptions.circleCropTransform())
+                        .into(ivImagem)
         }
 
         fun setClickListener(personagem: Personagem, clickListener: (Personagem) -> Unit) {

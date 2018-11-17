@@ -13,6 +13,7 @@ data class Personagem(
         var healthMax: Int = -1,
         var created: Long = 0,
         var creator: String = "",
+        var imageUrl: String = "",
         var isNpc: Boolean = false,
         var isMaster: Boolean = false,
         var aventuraId: String = "",

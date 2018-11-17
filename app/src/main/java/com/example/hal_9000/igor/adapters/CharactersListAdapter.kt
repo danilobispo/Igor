@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Personagem
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -27,6 +28,7 @@ class CharactersListAdapter(options: FirestoreRecyclerOptions<Personagem>, priva
         holder.setCharacterRole(model.classe)
         holder.setCharacterNome(model.nome)
         holder.setCharacterDescricao(model.descricao)
+        holder.setCharacterImagem(model.imageUrl, model.isNpc)
         holder.setClickListener(model, itemClickListener)
     }
 
@@ -51,11 +53,25 @@ class CharactersListAdapter(options: FirestoreRecyclerOptions<Personagem>, priva
             tvDescricao.text = descricaoCharacter
         }
 
-        fun setCharacterImagem(imagemCharacter: String) {
+        fun setCharacterImagem(imagemCharacter: String, isNPC: Boolean) {
             val ivImagem: ImageView = itemView.findViewById(R.id.iv_imagem)
-            Glide.with(itemView)
-                    .load(imagemCharacter)
-                    .into(ivImagem)
+
+            if (imagemCharacter.isEmpty()) {
+                if (isNPC)
+                    Glide.with(itemView)
+                            .load(R.drawable.ic_monster)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(ivImagem)
+                else
+                    Glide.with(itemView)
+                            .load(R.drawable.ic_person)
+                            .apply(RequestOptions.circleCropTransform())
+                            .into(ivImagem)
+            } else
+                Glide.with(itemView)
+                        .load(imagemCharacter)
+                            .apply(RequestOptions.circleCropTransform())
+                        .into(ivImagem)
         }
 
         fun setClickListener(personagem: Personagem, clickListener: (Personagem) -> Unit) {

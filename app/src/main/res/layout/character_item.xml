@@ -13,12 +13,12 @@
         android:orientation="vertical"
         android:padding="4dp">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/iv_imagem"
             android:layout_width="52dp"
             android:layout_height="52dp"
             android:layout_gravity="center"
-            android:src="@color/colorPrimary" />
+            android:src="@drawable/ic_person" />
 
         <TextView
             android:id="@+id/tv_name"

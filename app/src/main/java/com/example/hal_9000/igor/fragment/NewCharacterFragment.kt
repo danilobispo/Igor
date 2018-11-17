@@ -1,6 +1,10 @@
 package com.example.hal_9000.igor.fragment
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.util.TypedValue
@@ -9,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
+import com.bumptech.glide.Glide
 import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Atributo
@@ -16,8 +21,12 @@ import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Personagem
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.fragment_new_character.*
 import kotlinx.android.synthetic.main.fragment_new_character.view.*
+import java.io.IOException
+import java.util.*
 
 
 class NewCharacterFragment : Fragment() {
@@ -32,9 +41,19 @@ class NewCharacterFragment : Fragment() {
     private lateinit var etDescricao: EditText
     private lateinit var etHealth: EditText
     private lateinit var tlAtributos: TableLayout
+    private lateinit var ivPhoto: ImageView
+    private lateinit var progressBar: ProgressBar
 
     private lateinit var db: FirebaseFirestore
     private lateinit var aventuraId: String
+
+    private lateinit var storage: FirebaseStorage
+    private lateinit var storageReference: StorageReference
+
+    private val PICK_IMAGE_REQUEST = 71
+
+    private var filePath: Uri? = null
+    private var downloadUrl: Uri? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -50,8 +69,12 @@ class NewCharacterFragment : Fragment() {
         etDescricao = view.findViewById(R.id.et_descricao)
         etHealth = view.findViewById(R.id.et_hp)
         tlAtributos = view.findViewById(R.id.tl_atributos)
+        ivPhoto = view.findViewById(R.id.iv_photo)
+        progressBar = view.findViewById(R.id.progressBar)
 
         db = FirebaseFirestore.getInstance()
+        storage = FirebaseStorage.getInstance()
+        storageReference = storage.reference
 
         if (isNPC)
             etNome.hint = "Nome"
@@ -76,6 +99,8 @@ class NewCharacterFragment : Fragment() {
 
         view.btn_concluir.setOnClickListener { concluirCriacao() }
 
+        view.iv_photo.setOnClickListener { chooseImage() }
+
         return view
     }
 
@@ -90,6 +115,11 @@ class NewCharacterFragment : Fragment() {
         for (atributo in personagemOld.atributos) {
             addTableRow(atributo.nome, atributo.valor)
         }
+
+        if (personagemOld.imageUrl.isNotEmpty())
+            Glide.with(this)
+                    .load(personagemOld.imageUrl)
+                    .into(ivPhoto)
     }
 
     private fun addTableRow(name: String, value: String) {
@@ -114,6 +144,8 @@ class NewCharacterFragment : Fragment() {
     private fun concluirCriacao() {
         progressBar.visibility = View.VISIBLE
 
+        uploadImage()
+
         val personagem = Personagem()
         personagem.nome = etNome.text.toString()
         personagem.classe = etClasse.text.toString()
@@ -123,6 +155,7 @@ class NewCharacterFragment : Fragment() {
             personagem.healthMax = Integer.valueOf(etHealth.text.toString())
 
         personagem.creator = LoginActivity.username
+        personagem.imageUrl = downloadUrl.toString()
         personagem.isNpc = isNPC
         personagem.isMaster = false
 
@@ -190,5 +223,54 @@ class NewCharacterFragment : Fragment() {
                     Toast.makeText(context, "Erro ao atualizar personagem", Toast.LENGTH_SHORT).show()
                     progressBar.visibility = View.INVISIBLE
                 }
+    }
+
+    private fun chooseImage() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Selecione um imagem"), PICK_IMAGE_REQUEST)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode === PICK_IMAGE_REQUEST && resultCode === RESULT_OK
+                && data != null && data.data != null) {
+            filePath = data.data
+            try {
+                val bitmap = MediaStore.Images.Media.getBitmap(context?.contentResolver, filePath)
+                iv_photo.setImageBitmap(bitmap)
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            uploadImage()
+        }
+    }
+
+    private fun uploadImage() {
+
+        btn_concluir.isEnabled = false
+
+        if (filePath != null) {
+            progressBar.visibility = View.VISIBLE
+
+            val ref = storageReference.child("images/" + UUID.randomUUID().toString())
+            ref.putFile(filePath!!)
+                    .addOnSuccessListener { it ->
+                        Log.d(TAG, "Image upload successfully")
+                        ref.downloadUrl.addOnSuccessListener {
+                            Log.d(TAG, "DownloadUrl: $it")
+                            downloadUrl = it
+                            progressBar.visibility = View.INVISIBLE
+                            btn_concluir.isEnabled = true
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        progressBar.visibility = View.INVISIBLE
+                        Log.e(TAG, "Error: $e.message")
+                        Toast.makeText(context, "Erro ao enviar imagem " + e.message, Toast.LENGTH_SHORT).show()
+                        btn_concluir.isEnabled = true
+                    }
+        }
     }
 }
