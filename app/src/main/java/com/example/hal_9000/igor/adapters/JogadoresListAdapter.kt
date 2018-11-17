@@ -56,22 +56,20 @@ class JogadoresListAdapter(options: FirestoreRecyclerOptions<Personagem>, privat
         fun setJogadorImagem(imagemJogador: String, isNPC: Boolean) {
             val ivImagem: ImageView = itemView.findViewById(R.id.iv_imagem)
 
-            if (imagemJogador.isEmpty()) {
-                if (isNPC)
-                    Glide.with(itemView)
-                            .load(R.drawable.ic_monster)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(ivImagem)
-                else
-                    Glide.with(itemView)
-                            .load(R.drawable.ic_person)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(ivImagem)
-            } else
-                Glide.with(itemView)
+            when {
+                imagemJogador.isNotEmpty() -> Glide.with(itemView)
                         .load(imagemJogador)
                         .apply(RequestOptions.circleCropTransform())
                         .into(ivImagem)
+                isNPC -> Glide.with(itemView)
+                        .load(R.drawable.ic_monster)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(ivImagem)
+                else -> Glide.with(itemView)
+                        .load(R.drawable.ic_person)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(ivImagem)
+            }
         }
 
         fun setClickListener(personagem: Personagem, clickListener: (Personagem) -> Unit, longClickListener: (Personagem) -> Unit) {

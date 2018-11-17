@@ -5,13 +5,10 @@ import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.NavHost
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.CharactersListAdapter
 import com.example.hal_9000.igor.model.Aventura
@@ -35,9 +32,6 @@ class CharactersFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_characters, container, false)
-
-//        aventura = NewSessionArgs.fromBundle(arguments).aventura
-//        session = NewSessionArgs.fromBundle(arguments).session
 
         aventura = SessionFragment.aventura
         session = SessionFragment.session
@@ -73,7 +67,9 @@ class CharactersFragment : Fragment() {
     }
 
     private fun characterItemClicked(character: Personagem) {
-        Log.d(TAG, "Clicked ${character.nome}")
+        val action = SessionFragmentDirections.ActionSessionFragmentToCharacterProfileFragment(character)
+        action.setCharacter(character)
+        Navigation.findNavController(activity!!, R.id.nav_host).navigate(action)
     }
 
     override fun onStart() {

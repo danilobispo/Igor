@@ -16,4 +16,8 @@
     <color name="heartlands_background">#1E2842</color>
     <color name="coast_background">#F8AA76</color>
 
+    <color name="hp_green">#4CAF50</color>
+    <color name="hp_yellow">#FFEB3B</color>
+    <color name="hp_red">#f44336</color>
+
 </resources>

@@ -56,22 +56,20 @@ class CharactersListAdapter(options: FirestoreRecyclerOptions<Personagem>, priva
         fun setCharacterImagem(imagemCharacter: String, isNPC: Boolean) {
             val ivImagem: ImageView = itemView.findViewById(R.id.iv_imagem)
 
-            if (imagemCharacter.isEmpty()) {
-                if (isNPC)
-                    Glide.with(itemView)
-                            .load(R.drawable.ic_monster)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(ivImagem)
-                else
-                    Glide.with(itemView)
-                            .load(R.drawable.ic_person)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(ivImagem)
-            } else
-                Glide.with(itemView)
+            when {
+                imagemCharacter.isNotEmpty() -> Glide.with(itemView)
                         .load(imagemCharacter)
-                            .apply(RequestOptions.circleCropTransform())
+                        .apply(RequestOptions.circleCropTransform())
                         .into(ivImagem)
+                isNPC -> Glide.with(itemView)
+                        .load(R.drawable.ic_monster)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(ivImagem)
+                else -> Glide.with(itemView)
+                        .load(R.drawable.ic_person)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(ivImagem)
+            }
         }
 
         fun setClickListener(personagem: Personagem, clickListener: (Personagem) -> Unit) {

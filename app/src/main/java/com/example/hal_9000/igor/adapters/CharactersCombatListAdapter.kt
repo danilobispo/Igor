@@ -1,11 +1,14 @@
 package com.example.hal_9000.igor.adapters
 
+import android.graphics.drawable.LayerDrawable
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -77,27 +80,45 @@ class CharactersCombatListAdapter(options: FirestoreRecyclerOptions<Personagem>,
         fun setCharacterHP(health: Int, healthMax: Int) {
             val tvHp: TextView = itemView.findViewById(R.id.tv_hp)
             tvHp.text = "$health/$healthMax"
+
+            val progressBarHealth: ProgressBar = itemView.findViewById(R.id.progress_bar_health)
+
+            val healthPercentage = 100 * health / healthMax
+            progressBarHealth.progress = healthPercentage
+
+//            val progressAnimator = ObjectAnimator.ofInt(progressBarHealth, "progress", 0, healthPercentage)
+//            progressAnimator.duration = 3000
+//            progressAnimator.start()
+
+            val color = when {
+                healthPercentage >= 66 -> ContextCompat.getColor(progressBarHealth.context, R.color.hp_green)
+                healthPercentage >= 33 -> ContextCompat.getColor(progressBarHealth.context, R.color.hp_yellow)
+                else -> ContextCompat.getColor(progressBarHealth.context, R.color.hp_red)
+            }
+
+            val progressDrawable = progressBarHealth.progressDrawable.mutate() as LayerDrawable
+            progressDrawable.getDrawable(1).setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
+            progressBarHealth.progressDrawable = progressDrawable
+
         }
 
         fun setCharacterImagem(imagemCharacter: String, isNPC: Boolean) {
             val ivImagem: ImageView = itemView.findViewById(R.id.iv_imagem)
 
-            if (imagemCharacter.isEmpty()) {
-                if (isNPC)
-                    Glide.with(itemView)
-                            .load(R.drawable.ic_monster)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(ivImagem)
-                else
-                    Glide.with(itemView)
-                            .load(R.drawable.ic_person)
-                            .apply(RequestOptions.circleCropTransform())
-                            .into(ivImagem)
-            } else
-                Glide.with(itemView)
+            when {
+                imagemCharacter.isNotEmpty() -> Glide.with(itemView)
                         .load(imagemCharacter)
-                            .apply(RequestOptions.circleCropTransform())
+                        .apply(RequestOptions.circleCropTransform())
                         .into(ivImagem)
+                isNPC -> Glide.with(itemView)
+                        .load(R.drawable.ic_monster)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(ivImagem)
+                else -> Glide.with(itemView)
+                        .load(R.drawable.ic_person)
+                        .apply(RequestOptions.circleCropTransform())
+                        .into(ivImagem)
+            }
         }
 
         fun setClickListener(personagem: Personagem, clickListener: (Personagem) -> Unit) {

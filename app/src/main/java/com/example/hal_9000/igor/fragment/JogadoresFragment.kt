@@ -54,7 +54,9 @@ class JogadoresFragment : Fragment() {
     }
 
     private fun personagemItemClicked(personagem: Personagem) {
-        fragmentManager!!.beginTransaction().replace(R.id.nav_host, JogadorDetalhadoFragment()).commit()
+        val action = AdventureFragmentDirections.ActionAdventureFragmentToCharacterProfileFragment(personagem)
+        action.setCharacter(personagem)
+        NavHostFragment.findNavController(this).navigate(action)
     }
 
     private fun personagemLongItemClicked(personagem: Personagem) {

@@ -7,7 +7,7 @@
     android:foreground="?android:attr/selectableItemBackground"
     app:cardUseCompatPadding="true">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -17,13 +17,14 @@
             android:id="@+id/iv_imagem"
             android:layout_width="52dp"
             android:layout_height="52dp"
-            android:layout_gravity="center"
+            android:layout_centerHorizontal="true"
             android:src="@drawable/ic_person" />
 
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/iv_imagem"
             android:gravity="center"
             android:lines="1"
             android:text="Name"
@@ -33,19 +34,31 @@
             android:id="@+id/tv_class"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_name"
             android:gravity="center"
             android:lines="1"
             android:text="Class" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar_health"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_below="@+id/tv_class"
+            android:layout_toEndOf="@id/tv_hp_label"
+            android:progress="100"
+            android:progressDrawable="@drawable/health_bar" />
 
         <TextView
             android:id="@+id/tv_hp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_class"
             android:gravity="center"
             android:lines="1"
-            android:text="HP 100/100" />
+            android:text="100/100" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <View
         android:id="@+id/selected_overlay"

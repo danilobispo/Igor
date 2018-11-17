@@ -76,6 +76,9 @@
         <action
             android:id="@+id/action_adventureFragment_to_sessionFragment"
             app:destination="@id/sessionFragment" />
+        <action
+            android:id="@+id/action_adventureFragment_to_characterProfileFragment"
+            app:destination="@id/characterProfileFragment" />
     </fragment>
 
     <fragment
@@ -125,6 +128,19 @@
         <action
             android:id="@+id/action_sessionFragment_to_newCharacterFragment"
             app:destination="@id/newCharacterFragment" />
+        <action
+            android:id="@+id/action_sessionFragment_to_characterProfileFragment"
+            app:destination="@id/characterProfileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/characterProfileFragment"
+        android:name="com.example.hal_9000.igor.fragment.CharacterProfileFragment"
+        android:label="CharacterProfileFragment"
+        tools:layout="@layout/fragment_character_profile">
+    <argument
+        android:name="character"
+        app:argType="com.example.hal_9000.igor.model.Personagem" />
     </fragment>
 
     <include app:graph="@navigation/sub_nav_graph" />
