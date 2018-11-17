@@ -66,77 +66,19 @@
                 android:inputType="number"
                 app:layout_constraintTop_toBottomOf="@id/et_descricao" />
 
-            <TableLayout
-                android:id="@+id/tl_atributos"
-                android:layout_width="wrap_content"
+            <ListView
+                android:id="@+id/lv_stats"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/et_hp">
+                app:layout_constraintTop_toBottomOf="@id/et_hp" />
 
-                <!--<TableRow>-->
-                <!--<TextView-->
-                <!--android:padding="5dp"-->
-                <!--android:text="ATT"-->
-                <!--android:textSize="20dp" />-->
-                <!--<TextView-->
-                <!--android:padding="5dp"-->
-                <!--android:text="123"-->
-                <!--android:textSize="20dp" />-->
-                <!--</TableRow>-->
-
-                <!--<TableRow>-->
-                <!--<TextView-->
-                <!--android:padding="5dp"-->
-                <!--android:text="DEF"-->
-                <!--android:textSize="20dp" />-->
-                <!--<TextView-->
-                <!--android:padding="5dp"-->
-                <!--android:text="321"-->
-                <!--android:textSize="20dp" />-->
-                <!--</TableRow>-->
-
-                <!--<TableRow>-->
-                <!--<TextView-->
-                <!--android:padding="5dp"-->
-                <!--android:text="STA"-->
-                <!--android:textSize="20dp" />-->
-                <!--<TextView-->
-                <!--android:padding="5dp"-->
-                <!--android:text="313"-->
-                <!--android:textSize="20dp" />-->
-                <!--</TableRow>-->
-
-            </TableLayout>
-
-            <EditText
-                android:id="@+id/et_novo_atributo_titulo"
-                android:layout_width="0dp"
+            <Button
+                android:id="@+id/btn_add_stat"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Atributo"
-                app:layout_constraintEnd_toStartOf="@id/et_novo_atributo_valor"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tl_atributos" />
-
-            <EditText
-                android:id="@+id/et_novo_atributo_valor"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:hint="Valor"
-                android:inputType="number"
-                app:layout_constraintEnd_toStartOf="@id/btn_adicionar_atributo"
-                app:layout_constraintStart_toEndOf="@id/et_novo_atributo_titulo"
-                app:layout_constraintTop_toBottomOf="@id/tl_atributos" />
-
-            <ImageButton
-                android:id="@+id/btn_adicionar_atributo"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_add"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/et_novo_atributo_valor"
-                app:layout_constraintTop_toBottomOf="@id/tl_atributos" />
+                android:layout_marginBottom="10dp"
+                android:text="Novo atributo"
+                app:layout_constraintTop_toBottomOf="@id/lv_stats" />
 
             <ProgressBar
                 android:id="@+id/progressBar"

@@ -6,8 +6,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
+import android.support.v7.app.AlertDialog
+import android.text.InputType
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
 import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
+import com.example.hal_9000.igor.adapters.StatsListAdapter
 import com.example.hal_9000.igor.model.Atributo
 import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Personagem
@@ -27,6 +29,7 @@ import kotlinx.android.synthetic.main.fragment_new_character.*
 import kotlinx.android.synthetic.main.fragment_new_character.view.*
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class NewCharacterFragment : Fragment() {
@@ -40,9 +43,11 @@ class NewCharacterFragment : Fragment() {
     private lateinit var etClasse: EditText
     private lateinit var etDescricao: EditText
     private lateinit var etHealth: EditText
-    private lateinit var tlAtributos: TableLayout
+    private lateinit var lvStats: ListView
     private lateinit var ivPhoto: ImageView
     private lateinit var progressBar: ProgressBar
+
+    private lateinit var adapter: StatsListAdapter
 
     private lateinit var db: FirebaseFirestore
     private lateinit var aventuraId: String
@@ -68,7 +73,7 @@ class NewCharacterFragment : Fragment() {
         etClasse = view.findViewById(R.id.et_classe)
         etDescricao = view.findViewById(R.id.et_descricao)
         etHealth = view.findViewById(R.id.et_hp)
-        tlAtributos = view.findViewById(R.id.tl_atributos)
+        lvStats = view.findViewById(R.id.lv_stats)
         ivPhoto = view.findViewById(R.id.iv_photo)
         progressBar = view.findViewById(R.id.progressBar)
 
@@ -76,32 +81,60 @@ class NewCharacterFragment : Fragment() {
         storage = FirebaseStorage.getInstance()
         storageReference = storage.reference
 
+        aventuraId = "${aventura?.creator}_${aventura?.title}"
+
+        val arrayOfStats = ArrayList<Atributo>()
+        adapter = StatsListAdapter(context!!, arrayOfStats)
+        lvStats.adapter = adapter
+
         if (isNPC)
             etNome.hint = "Nome"
 
         if (personagemOld.id.isNotEmpty())
             completeFields()
 
-        aventuraId = "${aventura?.creator}_${aventura?.title}"
-
-        view.btn_adicionar_atributo.setOnClickListener {
-
-            if (et_novo_atributo_titulo.text.isEmpty() || et_novo_atributo_valor.text.isEmpty()) {
-                Toast.makeText(context, "Insira ambos os dados do atributo", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            addTableRow(et_novo_atributo_titulo.text.toString(), et_novo_atributo_valor.text.toString())
-
-            et_novo_atributo_titulo.text.clear()
-            et_novo_atributo_valor.text.clear()
-        }
+        view.btn_add_stat.setOnClickListener { newStat() }
 
         view.btn_concluir.setOnClickListener { concluirCriacao() }
 
         view.iv_photo.setOnClickListener { chooseImage() }
 
         return view
+    }
+
+    private fun newStat() {
+        fun showStatValueDialog(stat: Atributo) {
+            val input = EditText(context)
+            input.inputType = InputType.TYPE_CLASS_TEXT
+
+            AlertDialog.Builder(view!!.context)
+                    .setTitle("Novo atributo")
+                    .setMessage("Digite o valor do atributo")
+                    .setView(input)
+                    .setPositiveButton("OK") { _, _ ->
+                        stat.valor = input.text.toString()
+                        adapter.add(stat)
+                    }
+                    .show()
+        }
+
+        fun showStatNameDialog(stat: Atributo) {
+            val input = EditText(context)
+            input.inputType = InputType.TYPE_CLASS_TEXT
+
+            AlertDialog.Builder(view!!.context)
+                    .setTitle("Novo atributo")
+                    .setMessage("Digite o nome do atributo")
+                    .setView(input)
+                    .setPositiveButton("OK") { _, _ ->
+                        stat.nome = input.text.toString()
+                        showStatValueDialog(stat)
+                    }
+                    .show()
+        }
+
+        val stat = Atributo()
+        showStatNameDialog(stat)
     }
 
     private fun completeFields() {
@@ -113,32 +146,13 @@ class NewCharacterFragment : Fragment() {
             etHealth.setText(personagemOld.healthMax.toString(), TextView.BufferType.EDITABLE)
 
         for (atributo in personagemOld.atributos) {
-            addTableRow(atributo.nome, atributo.valor)
+            adapter.add(atributo)
         }
 
         if (personagemOld.imageUrl.isNotEmpty())
             Glide.with(this)
                     .load(personagemOld.imageUrl)
                     .into(ivPhoto)
-    }
-
-    private fun addTableRow(name: String, value: String) {
-        val tr = TableRow(context)
-        tr.layoutParams = TableLayout.LayoutParams(TableLayout.LayoutParams.MATCH_PARENT, TableLayout.LayoutParams.WRAP_CONTENT)
-
-        val tvAtributoNome = TextView(context)
-        tvAtributoNome.text = name
-        tvAtributoNome.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20F)
-        tvAtributoNome.setPadding(5, 5, 5, 5)
-        tr.addView(tvAtributoNome)
-
-        val tvAtributoValor = TextView(context)
-        tvAtributoValor.text = value
-        tvAtributoValor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20F)
-        tvAtributoValor.setPadding(5, 5, 5, 5)
-        tr.addView(tvAtributoValor)
-
-        tlAtributos.addView(tr)
     }
 
     private fun concluirCriacao() {
@@ -155,19 +169,15 @@ class NewCharacterFragment : Fragment() {
             personagem.healthMax = Integer.valueOf(etHealth.text.toString())
 
         personagem.creator = LoginActivity.username
-        personagem.imageUrl = downloadUrl.toString()
+        if (downloadUrl != null)
+            personagem.imageUrl = downloadUrl.toString()
         personagem.isNpc = isNPC
         personagem.isMaster = false
 
         Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.healthMax}")
 
-        for (i in 0 until tl_atributos.childCount) {
-            val row = tl_atributos.getChildAt(i) as TableRow
-            val nome = (row.getVirtualChildAt(0) as TextView).text.toString()
-            val valor = (row.getVirtualChildAt(1) as TextView).text.toString()
-            personagem.atributos.add(Atributo(nome, valor))
-            Log.d(TAG, "$nome : $valor")
-        }
+        for (i in 0 until adapter.count)
+            personagem.atributos.add(adapter.getItem(i)!!)
 
         personagem.aventuraId = aventuraId
 

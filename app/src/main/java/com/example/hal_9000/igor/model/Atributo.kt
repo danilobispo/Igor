@@ -5,5 +5,5 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Atributo(
-        val nome: String = "",
+        var nome: String = "",
         var valor: String = "") : Parcelable
