@@ -161,8 +161,6 @@ class NewCharacterFragment : Fragment() {
     private fun concluirCriacao() {
         progressBar.visibility = View.VISIBLE
 
-        uploadImage()
-
         val personagem = Personagem()
         personagem.nome = etNome.text.toString()
         personagem.classe = etClasse.text.toString()
