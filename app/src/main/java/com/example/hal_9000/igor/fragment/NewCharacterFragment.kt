@@ -58,7 +58,7 @@ class NewCharacterFragment : Fragment() {
     private val PICK_IMAGE_REQUEST = 71
 
     private var filePath: Uri? = null
-    private var downloadUrl: Uri? = null
+    private var downloadUrl: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -149,10 +149,13 @@ class NewCharacterFragment : Fragment() {
             adapter.add(atributo)
         }
 
-        if (personagemOld.imageUrl.isNotEmpty())
+        if (personagemOld.imageUrl.isNotEmpty()) {
             Glide.with(this)
                     .load(personagemOld.imageUrl)
                     .into(ivPhoto)
+
+            downloadUrl = personagemOld.imageUrl
+        }
     }
 
     private fun concluirCriacao() {
@@ -169,8 +172,7 @@ class NewCharacterFragment : Fragment() {
             personagem.healthMax = Integer.valueOf(etHealth.text.toString())
 
         personagem.creator = LoginActivity.username
-        if (downloadUrl != null)
-            personagem.imageUrl = downloadUrl.toString()
+        personagem.imageUrl = downloadUrl
         personagem.isNpc = isNPC
         personagem.isMaster = false
 
@@ -270,7 +272,7 @@ class NewCharacterFragment : Fragment() {
                         Log.d(TAG, "Image upload successfully")
                         ref.downloadUrl.addOnSuccessListener {
                             Log.d(TAG, "DownloadUrl: $it")
-                            downloadUrl = it
+                            downloadUrl = it.toString()
                             progressBar.visibility = View.INVISIBLE
                             btn_concluir.isEnabled = true
                         }
