@@ -13,6 +13,8 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -24,7 +26,6 @@ class LoginActivity : AppCompatActivity() {
     private var mAuth: FirebaseAuth? = null
 
     companion object {
-        lateinit var userUid: String
         var username: String = ""
     }
 
@@ -32,11 +33,16 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .setPersistenceEnabled(true)
+                .build()
+        FirebaseFirestore.getInstance().firestoreSettings = settings
+
         mAuth = FirebaseAuth.getInstance()
         mProgressBar = findViewById<View>(R.id.progressBar) as ProgressBar
 
         if (mAuth!!.currentUser != null) {
-            userUid = mAuth?.currentUser!!.uid
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }
@@ -91,7 +97,6 @@ class LoginActivity : AppCompatActivity() {
             if (task.isSuccessful) {
                 Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show()
                 Log.d(TAG, ": Login Successful")
-                userUid = mAuth?.currentUser!!.uid
                 val intent = Intent(this, MainActivity::class.java)
                 intent.putExtra("id", mAuth!!.currentUser?.uid)
                 startActivity(intent)

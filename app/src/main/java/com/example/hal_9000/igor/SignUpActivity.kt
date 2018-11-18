@@ -24,19 +24,19 @@ class SignUpActivity : AppCompatActivity() {
     private var db: FirebaseFirestore? = null
     private var mAuth: FirebaseAuth? = null
 
-    private var etUsername: EditText? = null
-    private var etEmail: EditText? = null
-    private var etPassword: EditText? = null
-    private var etBirthday: EditText? = null
-    private var etGenre: EditText? = null
-    private var btnCreateAccount: Button? = null
-    private var mProgressBar: ProgressBar? = null
+    private lateinit var etUsername: EditText
+    private lateinit var etEmail: EditText
+    private lateinit var etPassword: EditText
+    private lateinit var etBirthday: EditText
+    private lateinit var etGenre: EditText
+    private lateinit var btnCreateAccount: Button
+    private lateinit var mProgressBar: ProgressBar
 
-    private var email: String? = null
-    private var password: String? = null
-    private var username: String? = null
-    private var birthday: String? = null
-    private var genre: String? = null
+    private lateinit var email: String
+    private lateinit var password: String
+    private lateinit var username: String
+    private lateinit var birthday: String
+    private lateinit var genre: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,16 +46,18 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun initialize() {
-        etEmail = findViewById<View>(R.id.et_email) as EditText
-        etPassword = findViewById<View>(R.id.et_password) as EditText
-        etUsername = findViewById<View>(R.id.et_username) as EditText
-        btnCreateAccount = findViewById<View>(R.id.btn_signUp) as Button
-        mProgressBar = findViewById<View>(R.id.progressBar) as ProgressBar
+        etEmail = findViewById(R.id.et_email)
+        etPassword = findViewById(R.id.et_password)
+        etUsername = findViewById(R.id.et_username)
+        etBirthday = findViewById(R.id.et_birthday)
+        etGenre = findViewById(R.id.et_genre)
+        btnCreateAccount = findViewById(R.id.btn_signUp)
+        mProgressBar = findViewById(R.id.progressBar)
 
         db = FirebaseFirestore.getInstance()
         mAuth = FirebaseAuth.getInstance()
 
-        btnCreateAccount!!.setOnClickListener { signUp() }
+        btnCreateAccount.setOnClickListener { signUp() }
     }
 
     private fun signUp() {
@@ -64,28 +66,30 @@ class SignUpActivity : AppCompatActivity() {
         val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
 
-        email = etEmail?.text.toString()
-        password = etPassword?.text.toString()
-        username = etUsername?.text.toString()
-        birthday = etBirthday?.text.toString()
-        genre = etGenre?.text.toString()
+        email = etEmail.text.toString()
+        password = etPassword.text.toString()
+        username = etUsername.text.toString()
+        birthday = etBirthday.text.toString()
+        genre = etGenre.text.toString()
 
-        if (!checkData(email!!, password!!, username!!, birthday!!, genre!!)) {
-            Toast.makeText(this, "Digite todos as informações corretamente", Toast.LENGTH_SHORT).show()
+        val errorMessage = checkData(email, password, username, birthday, genre)
+        if (errorMessage.isNotEmpty()) {
+            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
             return
         }
 
-        mProgressBar!!.visibility = View.VISIBLE
+        mProgressBar.visibility = View.VISIBLE
 
         mAuth!!
-                .createUserWithEmailAndPassword(email!!, password!!)
+                .createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this) { task ->
-                    mProgressBar!!.visibility = View.INVISIBLE
+                    mProgressBar.visibility = View.INVISIBLE
 
                     if (task.isSuccessful) {
                         Log.d(TAG, "signUp: success")
-                        Toast.makeText(this@SignUpActivity, "Cadastrado com sucesso!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@SignUpActivity, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
                         storeUserData()
+                        LoginActivity.username = username
                         finish()
                     } else {
                         Log.w(TAG, "signUp: fail", task.exception)
@@ -96,14 +100,14 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun storeUserData() {
         val user = Usuario()
-        user.username = username!!
-        user.birthday = birthday!!
-        user.genre = genre!!
-        user.email = email!!
+        user.username = username
+        user.birthday = birthday
+        user.genre = genre
+        user.email = email
         user.uid = mAuth!!.currentUser!!.uid
 
         db!!.collection("users")
-                .document(username!!)
+                .document(username)
                 .set(user)
                 .addOnSuccessListener {
                     Log.d(TAG, "Document added successfully")
@@ -115,17 +119,19 @@ class SignUpActivity : AppCompatActivity() {
                 .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
     }
 
-    private fun checkData(email: String, password: String, username: String, birthday: String, genre: String): Boolean {
+    private fun checkData(email: String, password: String, username: String, birthday: String, genre: String): String {
 
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)
                 || TextUtils.isEmpty(username) || TextUtils.isEmpty(birthday)
                 || TextUtils.isEmpty(genre))
-            return false
+            return "Preencha todas as informações"
         if (!email.contains('@'))
-            return false
+            return "E-mail inválido"
         if (password.length < 6)
-            return false
+            return "A senha deve conter ao menos 6 caracteres"
+        if (username.toLowerCase() == "system" || username.toLowerCase() == "admin")
+            return "Nome de usuário inválido"
 
-        return true
+        return ""
     }
 }

@@ -28,7 +28,7 @@ class CharactersListAdapter(options: FirestoreRecyclerOptions<Personagem>, priva
         holder.setCharacterRole(model.classe)
         holder.setCharacterNome(model.nome)
         holder.setCharacterDescricao(model.descricao)
-        holder.setCharacterImagem(model.imageUrl, model.isNpc)
+        holder.setCharacterImagem(model.image_url, model.isnpc)
         holder.setClickListener(model, itemClickListener)
     }
 

@@ -15,7 +15,6 @@ import androidx.navigation.Navigation
 import androidx.navigation.ui.setupWithNavController
 import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
-import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.PlayerDices
 import com.example.hal_9000.igor.model.Session
 import com.google.firebase.firestore.DocumentSnapshot
@@ -31,22 +30,16 @@ class SessionFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+
         val view = inflater.inflate(R.layout.fragment_session, container, false)
 
         Log.d(TAG, "onCreateView")
 
-        aventura = SessionFragmentArgs.fromBundle(arguments).aventura
         session = SessionFragmentArgs.fromBundle(arguments).session
-        sessionId = session.created.toString()
+        sessionId = session.created_at.toString()
 
-//        val args = Bundle()
-//        args.putParcelable("aventura", aventura)
-//        args.putParcelable("session", session)
-//
         val fragmentContainer = view.findViewById<View>(R.id.nav_host_session)
         navController = Navigation.findNavController(fragmentContainer)
-//        navController.setGraph(R.navigation.sub_nav_graph, args)
 
         val bottomNavigationView = view.findViewById<BottomNavigationView>(R.id.bottom_navigation)
         val adventureTitle = view.findViewById<TextView>(R.id.tv_adventure_title)
@@ -54,15 +47,15 @@ class SessionFragment : Fragment() {
 
         bottomNavigationView.setupWithNavController(navController)
 
-        adventureTitle.text = aventura.title
+        adventureTitle.text = AdventureFragment.aventura.title
         sessionTitle.text = session.title
 
         db = FirebaseFirestore.getInstance()
 
         val docRef = db!!.collection("adventures")
-                .document(AdventureFragment.aventuraId)
+                .document(AdventureFragment.aventura.id)
                 .collection("sessions")
-                .document(SessionFragment.sessionId)
+                .document(sessionId)
                 .collection("dices")
                 .document(LoginActivity.username)
 
@@ -103,7 +96,6 @@ class SessionFragment : Fragment() {
     }
 
     companion object {
-        lateinit var aventura: Aventura
         lateinit var session: Session
         lateinit var sessionId: String
     }

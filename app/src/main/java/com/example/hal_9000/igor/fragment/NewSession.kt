@@ -12,9 +12,9 @@ import android.widget.*
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.R
-import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Session
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.WriteBatch
 import kotlinx.android.synthetic.main.fragment_new_session.*
 import java.util.*
 
@@ -22,31 +22,29 @@ import java.util.*
 class NewSession : Fragment() {
 
     private val TAG = "NewSession"
-    private lateinit var aventura: Aventura
     private lateinit var sessionOld: Session
 
     private var editMode = false
 
-    private var mProgressBar: ProgressBar? = null
+    private lateinit var etTitle: EditText
+    private lateinit var etSummary: EditText
+    private lateinit var btnDate: Button
+    private lateinit var mProgressBar: ProgressBar
 
-    private var etTitle: EditText? = null
-    private var etSummary: EditText? = null
-    private var btnDate: Button? = null
+    private var date: Long = 0L
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_new_session, container, false)
 
         etTitle = view.findViewById(R.id.et_title)
         etSummary = view.findViewById(R.id.et_summary)
         btnDate = view.findViewById(R.id.btn_date)
 
-        aventura = NewSessionArgs.fromBundle(arguments).aventura
         sessionOld = NewSessionArgs.fromBundle(arguments).session
 
-        if (sessionOld.created != 0L) {
+        if (sessionOld.created_at != 0L) {
             editMode = true
             val tvHeaderTitle = view.findViewById<TextView>(R.id.tv_header_title)
             tvHeaderTitle.text = "Editar Aventura"
@@ -55,26 +53,22 @@ class NewSession : Fragment() {
 
         mProgressBar = view.findViewById(R.id.progressBar)
 
-        btnDate!!.setOnClickListener {
+        btnDate.setOnClickListener {
 
-            val c = Calendar.getInstance()
+            val calendar = Calendar.getInstance()
 
-            val mDay: Int
-            val mMonth: Int
-            val mYear = c.get(Calendar.YEAR)
+            if (editMode)
+                calendar.timeInMillis = sessionOld.date
 
-            if (editMode) {
-                mDay = sessionOld.date.split("/")[0].toInt()
-                mMonth = sessionOld.date.split("/")[1].toInt()
-            } else {
-                mDay = c.get(Calendar.DAY_OF_MONTH)
-                mMonth = c.get(Calendar.MONTH)
-            }
+            val mDay = calendar.get(Calendar.DAY_OF_MONTH)
+            val mMonth = calendar.get(Calendar.MONTH)
+            val mYear = calendar.get(Calendar.YEAR)
 
             val datePickerDialog = DatePickerDialog(view.context,
-                    DatePickerDialog.OnDateSetListener { _, _, monthOfYear, dayOfMonth ->
+                    DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
                         val dateText = dayOfMonth.toString() + "/" + (monthOfYear + 1).toString()
-                        btnDate!!.text = dateText
+                        btnDate.text = dateText
+                        date = GregorianCalendar(year, monthOfYear, dayOfMonth).timeInMillis
                     }, mYear, mMonth, mDay)
             datePickerDialog.show()
         }
@@ -99,13 +93,16 @@ class NewSession : Fragment() {
 
     private fun completeFields() {
         if (sessionOld.title.isNotEmpty())
-            etTitle!!.setText(sessionOld.title)
+            etTitle.setText(sessionOld.title)
 
         if (sessionOld.summary.isNotEmpty())
-            etSummary!!.setText(sessionOld.summary)
+            etSummary.setText(sessionOld.summary)
 
-        if (sessionOld.date.isNotEmpty())
-            btnDate!!.text = sessionOld.date
+        if (sessionOld.date != 0L) {
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = sessionOld.date
+            btnDate.text = "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH)}"
+        }
     }
 
     private fun saveSession() {
@@ -124,29 +121,36 @@ class NewSession : Fragment() {
             return
         }
 
-        mProgressBar!!.visibility = View.VISIBLE
-
-        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        mProgressBar.visibility = View.VISIBLE
 
         val session = Session()
         session.title = et_title.text.toString()
         session.summary = et_summary.text.toString()
-        session.date = btn_date.text.toString()
+        session.date = date
 
         if (editMode) {
-            session.created = sessionOld.created
+            session.created_at = sessionOld.created_at
         } else {
-            session.created = System.currentTimeMillis() / 1000
+            session.created_at = System.currentTimeMillis()
         }
 
-        db
+        val db: FirebaseFirestore = FirebaseFirestore.getInstance()
+        val batch: WriteBatch = db.batch()
+
+        batch.set(db
                 .collection("adventures")
-                .document("${aventura.creator}_${aventura.title}")
+                .document(AdventureFragment.aventura.id)
                 .collection("sessions")
-                .document(session.created.toString())
-                .set(session)
+                .document(session.created_at.toString()), session)
+
+        if (AdventureFragment.aventura.next_session == 0L || session.date < AdventureFragment.aventura.next_session)
+            batch.update(db
+                    .collection("adventures")
+                    .document(AdventureFragment.aventura.id), "next_session", session.date)
+
+        batch.commit()
                 .addOnSuccessListener {
-                    Log.d(TAG, "Document ${session.created} created successfully")
+                    Log.d(TAG, "Document ${session.created_at} created_at successfully")
                     if (editMode)
                         Toast.makeText(context, "Sessão atualizada com sucesso!", Toast.LENGTH_SHORT).show()
                     else
@@ -155,14 +159,14 @@ class NewSession : Fragment() {
                 }
                 .addOnFailureListener { e ->
                     Log.w(TAG, "Error creating document", e)
-                    mProgressBar!!.visibility = View.INVISIBLE
+                    mProgressBar.visibility = View.INVISIBLE
                 }
     }
 
     private fun exitFragment() {
 
-        val action = NewSessionDirections.ActionNewSessionToAdventureFragment(aventura)
-        action.setAventura(aventura)
+        val action = NewSessionDirections.ActionNewSessionToAdventureFragment(AdventureFragment.aventura)
+        action.setAventura(AdventureFragment.aventura)
 
         val navBuilder = NavOptions.Builder()
         val navOptions = navBuilder.setPopUpTo(R.id.adventureFragment, true).build()

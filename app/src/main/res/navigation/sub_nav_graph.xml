@@ -9,27 +9,13 @@
         android:id="@+id/eventFragment"
         android:name="com.example.hal_9000.igor.fragment.EventsFragment"
         android:label="fragment_event"
-        tools:layout="@layout/fragment_events">
-        <argument
-            android:name="aventura"
-            app:argType="com.example.hal_9000.igor.model.Aventura" />
-        <argument
-            android:name="session"
-            app:argType="com.example.hal_9000.igor.model.Session" />
-    </fragment>
+        tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/charactersFragment"
         android:name="com.example.hal_9000.igor.fragment.CharactersFragment"
         android:label="fragment_characters"
-        tools:layout="@layout/fragment_characters">
-        <argument
-            android:name="aventura"
-            app:argType="com.example.hal_9000.igor.model.Aventura" />
-        <argument
-            android:name="session"
-            app:argType="com.example.hal_9000.igor.model.Session" />
-    </fragment>
+        tools:layout="@layout/fragment_characters" />
 
     <fragment
         android:id="@+id/combatFragment"

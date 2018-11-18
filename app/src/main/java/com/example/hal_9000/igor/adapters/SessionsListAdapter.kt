@@ -11,19 +11,19 @@ import com.example.hal_9000.igor.model.Session
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestoreException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class SessionsListAdapter(options: FirestoreRecyclerOptions<Session>, private val itemClickListener: (Session) -> Unit) : FirestoreRecyclerAdapter<Session, SessionsListAdapter.SessionsViewHolder>(options) {
 
     private val TAG = "SessionsListAdapter"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionsViewHolder {
-        Log.d(TAG, "onCreateViewHolder")
         return SessionsViewHolder(LayoutInflater.from(parent.context)
                 .inflate(R.layout.session_item, parent, false))
     }
 
     override fun onBindViewHolder(holder: SessionsViewHolder, position: Int, model: Session) {
-        Log.d(TAG, "onBindViewHolder")
         holder.setSessionData(model.date)
         holder.setSessionTexto(model.title)
         holder.setClickListener(model, itemClickListener)
@@ -35,9 +35,12 @@ class SessionsListAdapter(options: FirestoreRecyclerOptions<Session>, private va
 
     class SessionsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        fun setSessionData(dataSession: String) {
+        fun setSessionData(dataSession: Long) {
             val tvNome: TextView = itemView.findViewById(R.id.tv_date)
-            tvNome.text = dataSession
+
+            val calendar = Calendar.getInstance()
+            calendar.timeInMillis = dataSession
+            tvNome.text = SimpleDateFormat("dd/MM").format(calendar.time)
         }
 
         fun setSessionTexto(textSession: String) {

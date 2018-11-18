@@ -14,6 +14,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestoreException
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, private val editMode: Boolean, private val itemClickListener: (Aventura) -> Unit, private val deleteClickListener: (Aventura) -> Unit) : FirestoreRecyclerAdapter<Aventura, AdventureRecyclerViewAdapter.AdventureViewHolder>(options) {
@@ -46,10 +48,16 @@ class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, 
             title.text = adventureTitle
         }
 
-        fun setAdventureNextSession(adventureNextSession: String) {
+        fun setAdventureNextSession(adventureNextSession: Long) {
             val nextSession: TextView = itemView.findViewById(R.id.tv_next_session)
-            val nextSessionText = "próxima sessão $adventureNextSession"
-            nextSession.text = nextSessionText
+
+            if (adventureNextSession != 0L) {
+                val calendar = Calendar.getInstance()
+                calendar.timeInMillis = adventureNextSession
+                nextSession.text = "próxima sessão ${SimpleDateFormat("dd/MM").format(calendar.time)}"
+            } else {
+                nextSession.text = "próxima sessão"
+            }
         }
 
         fun setAdventureTheme(adventureTheme: String) {

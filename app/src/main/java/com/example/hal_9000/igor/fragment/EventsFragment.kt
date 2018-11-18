@@ -15,9 +15,7 @@ import android.widget.EditText
 import android.widget.Toast
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.EventsListAdapter
-import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Evento
-import com.example.hal_9000.igor.model.Session
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -25,29 +23,14 @@ class EventsFragment : Fragment() {
 
     private val TAG = "EventsFragment"
 
-    private lateinit var aventura: Aventura
-    private lateinit var session: Session
-
     private lateinit var adapter: EventsListAdapter
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var db: FirebaseFirestore
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+
         val view = inflater.inflate(R.layout.fragment_events, container, false)
-
-//        arguments?.let {
-//            val safeArgs = EventFragmentArgs.fromBundle(it)
-//            aventura = safeArgs.aventura
-//            session = safeArgs.session
-//        }
-
-//        aventura = EventFragmentArgs.fromBundle(arguments).aventura
-//        session = EventFragmentArgs.fromBundle(arguments).session
-
-        aventura = SessionFragment.aventura
-        session = SessionFragment.session
 
         mRecyclerView = view.findViewById(R.id.eventos_rv)
         mRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -58,9 +41,9 @@ class EventsFragment : Fragment() {
         val aventura = AdventureFragment.aventura
         val query = db
                 .collection("adventures")
-                .document("${aventura.creator}_${aventura.title}")
+                .document(aventura.id)
                 .collection("sessions")
-                .document(session.created.toString())
+                .document(SessionFragment.sessionId)
                 .collection("events")
 
         val options = FirestoreRecyclerOptions.Builder<Evento>()
@@ -88,12 +71,10 @@ class EventsFragment : Fragment() {
     private fun enterNote() {
         //TODO: Criar layout para o DialogAlert
 
+        val event = Evento(System.currentTimeMillis(), "custom")
+
         val input = EditText(context)
         input.inputType = InputType.TYPE_CLASS_TEXT
-
-        val event = Evento()
-        event.date = System.currentTimeMillis()
-        event.type = "custom"
 
         AlertDialog.Builder(view!!.context)
                 .setTitle("Criar evento")
@@ -103,9 +84,9 @@ class EventsFragment : Fragment() {
 
                     db
                             .collection("adventures")
-                            .document("${aventura.creator}_${aventura.title}")
+                            .document(AdventureFragment.aventura.id)
                             .collection("sessions")
-                            .document(session.created.toString())
+                            .document(SessionFragment.sessionId)
                             .collection("events")
                             .document(event.date.toString())
                             .set(event)
@@ -138,9 +119,9 @@ class EventsFragment : Fragment() {
 
                     db
                             .collection("adventures")
-                            .document("${aventura.creator}_${aventura.title}")
+                            .document(AdventureFragment.aventura.id)
                             .collection("sessions")
-                            .document(session.created.toString())
+                            .document(SessionFragment.sessionId)
                             .collection("events")
                             .document(evento.date.toString())
                             .set(evento)
@@ -159,9 +140,9 @@ class EventsFragment : Fragment() {
                 .setNeutralButton("Deletar") { _, _ ->
                     db
                             .collection("adventures")
-                            .document("${aventura.creator}_${aventura.title}")
+                            .document(AdventureFragment.aventura.id)
                             .collection("sessions")
-                            .document(session.created.toString())
+                            .document(SessionFragment.sessionId)
                             .collection("events")
                             .document(evento.date.toString())
                             .delete()

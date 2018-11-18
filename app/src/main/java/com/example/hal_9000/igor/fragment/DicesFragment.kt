@@ -33,7 +33,7 @@ class DicesFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+
         val view = inflater.inflate(R.layout.fragment_dices, container, false)
 
         mRecyclerView = view.findViewById(R.id.recyclerview)
@@ -43,7 +43,7 @@ class DicesFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
 
         documentReference = db.collection("adventures")
-                .document(AdventureFragment.aventuraId)
+                .document(AdventureFragment.aventura.id)
                 .collection("sessions")
                 .document(SessionFragment.sessionId)
                 .collection("dices")
@@ -112,7 +112,7 @@ class DicesFragment : Fragment() {
 
         val eventLogReference = db
                 .collection("adventures")
-                .document(AdventureFragment.aventuraId)
+                .document(AdventureFragment.aventura.id)
                 .collection("sessions")
                 .document(SessionFragment.sessionId)
                 .collection("events")

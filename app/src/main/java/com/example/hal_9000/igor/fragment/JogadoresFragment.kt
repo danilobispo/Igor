@@ -27,7 +27,7 @@ class JogadoresFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+
         val view = inflater.inflate(R.layout.fragment_jogadores, container, false)
 
         mJogadoresList = view.findViewById(R.id.jogadores_rv)
@@ -38,9 +38,8 @@ class JogadoresFragment : Fragment() {
 
         val aventura = AdventureFragment.aventura
         val query = db!!.collection("characters")
-                .whereEqualTo("aventuraId", "${aventura.creator}_${aventura.title}")
-                .whereEqualTo("npc", false)
-                .orderBy("created")
+                .whereEqualTo("aventura_id", aventura.id)
+                .whereEqualTo("isnpc", false)
 
         val options = FirestoreRecyclerOptions.Builder<Personagem>()
                 .setQuery(query, Personagem::class.java)
@@ -59,8 +58,7 @@ class JogadoresFragment : Fragment() {
     }
 
     private fun personagemLongItemClicked(personagem: Personagem) {
-        val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(AdventureFragment.aventura, personagem)
-        action.setAventura(AdventureFragment.aventura)
+        val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(personagem)
         action.setPersonagem(personagem)
         action.setIsNpc(false)
         NavHostFragment.findNavController(this).navigate(action)

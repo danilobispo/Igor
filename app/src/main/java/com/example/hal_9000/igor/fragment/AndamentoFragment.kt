@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.fragment_andamento.*
 class AndamentoFragment : Fragment() {
 
     private val TAG = "AndamentoFragment"
-    private lateinit var aventura: Aventura
 
     private lateinit var adapter: SessionsListAdapter
     private lateinit var mRecyclerView: RecyclerView
@@ -29,12 +28,8 @@ class AndamentoFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+
         val view = inflater.inflate(R.layout.fragment_andamento, container, false)
-
-        Log.d(TAG, "onCreateView: Started")
-
-        aventura = AdventureFragmentArgs.fromBundle(arguments).aventura
 
         mRecyclerView = view.findViewById(R.id.rv_next_sessions)
         mRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -44,7 +39,7 @@ class AndamentoFragment : Fragment() {
 
         val query = db
                 .collection("adventures")
-                .document("${aventura.creator}_${aventura.title}")
+                .document(AdventureFragment.aventura.id)
                 .collection("sessions")
 
         val options = FirestoreRecyclerOptions.Builder<Session>()
@@ -56,10 +51,10 @@ class AndamentoFragment : Fragment() {
 
         val tvDescription = view.findViewById<TextView>(R.id.tv_description)
 
-        if (aventura.description.isEmpty())
+        if (AdventureFragment.aventura.description.isEmpty())
             tvDescription.text = "Aventura sem descrição"
         else
-            tvDescription.text = aventura.description
+            tvDescription.text = AdventureFragment.aventura.description
 
         tvDescription.post {
             if (tvDescription.lineCount > 6) {
@@ -85,13 +80,11 @@ class AndamentoFragment : Fragment() {
         Log.d(TAG, "Clicked ${session.title}")
 
         if (AdventureFragment.editMode) {
-            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(aventura, session)
-            action.setAventura(aventura)
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(session)
             action.setSession(session)
             NavHostFragment.findNavController(this).navigate(action)
         } else {
-            val action = AdventureFragmentDirections.ActionAdventureFragmentToSessionFragment(aventura, session)
-            action.setAventura(aventura)
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToSessionFragment(session)
             action.setSession(session)
             NavHostFragment.findNavController(this).navigate(action)
         }

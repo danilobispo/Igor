@@ -25,8 +25,8 @@ class AdventureFragment : Fragment() {
 
     private val TAG = "AdventureFragment"
     private lateinit var openedTab: String
-    private var ivTabLeft: ImageView? = null
-    private var ivTabRight: ImageView? = null
+    private lateinit var ivTabLeft: ImageView
+    private lateinit var ivTabRight: ImageView
 
     private lateinit var fabNewCharacter: FloatingActionButton
     private lateinit var fabNewSession: FloatingActionButton
@@ -39,15 +39,14 @@ class AdventureFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+
         val view = inflater.inflate(R.layout.fragment_adventure, container, false)
 
-        Log.d(TAG, "onCreateView: Started")
+        Log.d(TAG, "onCreateView")
 
         setHasOptionsMenu(true)
 
         aventura = AdventureFragmentArgs.fromBundle(arguments).aventura
-        aventuraId = "${aventura.creator}_${aventura.title}"
 
         fabNewCharacter = view.findViewById(R.id.fab_new_character)
         fabNewSession = view.findViewById(R.id.fab_new_session)
@@ -55,27 +54,10 @@ class AdventureFragment : Fragment() {
         ivTabLeft = view.findViewById(R.id.iv_tab_left)
         ivTabRight = view.findViewById(R.id.iv_tab_right)
 
-        val andamentoFragment = AndamentoFragment()
-        val bundle = Bundle()
-        bundle.putParcelable("aventura", aventura)
-        andamentoFragment.arguments = bundle
-
-        if (openedTab == "jogadores") {
+        if (openedTab == "jogadores")
             switchTab("jogadores")
-            val jogadoresFragment = JogadoresFragment()
-            val bundle = Bundle()
-            bundle.putParcelable("aventura", aventura)
-            jogadoresFragment.arguments = bundle
-            fragmentManager!!.beginTransaction().replace(R.id.frameAventura, jogadoresFragment).commit()
-
-        } else {
+        else
             switchTab("andamento")
-            val andamentoFragment = AndamentoFragment()
-            val bundle = Bundle()
-            bundle.putParcelable("aventura", aventura)
-            andamentoFragment.arguments = bundle
-            fragmentManager!!.beginTransaction().add(R.id.frameAventura, andamentoFragment).commit()
-        }
 
         val tvTitle = view.findViewById<TextView>(R.id.tv_adventure_title)
         tvTitle.text = aventura.title
@@ -105,36 +87,14 @@ class AdventureFragment : Fragment() {
             }
         }
 
-        ivTabLeft?.setOnClickListener {
-            Log.d(TAG, "Andamento tab")
-
-            if (openedTab == "jogadores") {
+        ivTabLeft.setOnClickListener {
+            if (openedTab != "andamento")
                 switchTab("andamento")
-
-                val andamentoFragment = AndamentoFragment()
-                val bundle = Bundle()
-                bundle.putParcelable("aventura", aventura)
-                andamentoFragment.arguments = bundle
-
-                fragmentManager!!.beginTransaction().replace(R.id.frameAventura, andamentoFragment).commit()
-                openedTab = "andamento"
-            }
         }
 
-        ivTabRight?.setOnClickListener {
-            Log.d(TAG, "Jogadores tab")
-
-            if (openedTab == "andamento") {
+        ivTabRight.setOnClickListener {
+            if (openedTab != "jogadores")
                 switchTab("jogadores")
-
-                val jogadoresFragment = JogadoresFragment()
-                val bundle = Bundle()
-                bundle.putParcelable("aventura", aventura)
-                andamentoFragment.arguments = bundle
-
-                fragmentManager!!.beginTransaction().replace(R.id.frameAventura, jogadoresFragment).commit()
-                openedTab = "jogadores"
-            }
         }
 
         val fabEditMode = view.findViewById<FloatingActionButton>(R.id.fab_edit_mode)
@@ -149,16 +109,14 @@ class AdventureFragment : Fragment() {
 
         val fab = view.findViewById<FloatingActionButton>(R.id.fab_new_session)
         fab.setOnClickListener {
-            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(aventura, Session())
-            action.setAventura(aventura)
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(Session())
             action.setSession(Session())
             NavHostFragment.findNavController(this).navigate(action)
         }
 
         val fabNewCharacter = view.findViewById<FloatingActionButton>(R.id.fab_new_character)
         fabNewCharacter.setOnClickListener {
-            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(aventura, Personagem())
-            action.setAventura(aventura)
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(Personagem())
             action.setPersonagem(Personagem())
             action.setIsNpc(false)
             NavHostFragment.findNavController(this).navigate(action)
@@ -168,17 +126,23 @@ class AdventureFragment : Fragment() {
     }
 
     private fun switchTab(tab: String) {
+        Log.d(TAG, "switchTab: $tab, OpenedTad: $openedTab")
+
         if (tab == "andamento") {
-            ivTabLeft?.setImageResource(R.drawable.tab_l1)
-            ivTabRight?.setImageResource(R.drawable.tab_r2)
+            openedTab = "andamento"
+            ivTabLeft.setImageResource(R.drawable.tab_l1)
+            ivTabRight.setImageResource(R.drawable.tab_r2)
             fabNewCharacter.hide()
             fabNewSession.show()
+            fragmentManager!!.beginTransaction().replace(R.id.frameAventura, AndamentoFragment()).commit()
 
         } else if (tab == "jogadores") {
-            ivTabLeft?.setImageResource(R.drawable.tab_l2)
-            ivTabRight?.setImageResource(R.drawable.tab_r1)
+            openedTab = "jogadores"
+            ivTabLeft.setImageResource(R.drawable.tab_l2)
+            ivTabRight.setImageResource(R.drawable.tab_r1)
             fabNewCharacter.show()
             fabNewSession.hide()
+            fragmentManager!!.beginTransaction().replace(R.id.frameAventura, JogadoresFragment()).commit()
         }
     }
 
@@ -195,12 +159,6 @@ class AdventureFragment : Fragment() {
             action.setAventura(aventura)
             NavHostFragment.findNavController(this).navigate(action)
         }
-
-//        tv_description.setOnClickListener {
-//            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(aventura)
-//            action.setAventura(aventura)
-//            NavHostFragment.findNavController(this).navigate(action)
-//        }
     }
 
     private fun setEditModeOff() {
@@ -212,7 +170,6 @@ class AdventureFragment : Fragment() {
         fab_edit_mode.hide()
 
         tv_adventure_title.setOnClickListener(null)
-//        tv_description.setOnClickListener(null)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -230,7 +187,6 @@ class AdventureFragment : Fragment() {
 
     companion object {
         lateinit var aventura: Aventura
-        lateinit var aventuraId: String
         var editMode: Boolean = false
 
         @JvmStatic

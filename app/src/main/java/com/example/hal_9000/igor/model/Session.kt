@@ -7,6 +7,6 @@ import kotlinx.android.parcel.Parcelize
 data class Session(
         var title: String = "",
         var summary: String = "",
-        var created: Long = 0L,
-        var date: String = "") : Parcelable
+        var created_at: Long = 0L,
+        var date: Long = 0L) : Parcelable
 

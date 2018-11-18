@@ -79,10 +79,10 @@ class CharacterProfileFragment : Fragment() {
         }
 
         when {
-            character.imageUrl.isNotEmpty() -> Glide.with(view)
-                    .load(character.imageUrl)
+            character.image_url.isNotEmpty() -> Glide.with(view)
+                    .load(character.image_url)
                     .into(ivImagem)
-            character.isNpc -> Glide.with(view)
+            character.isnpc -> Glide.with(view)
                     .load(R.drawable.ic_monster)
                     .into(ivImagem)
             else -> Glide.with(view)
@@ -101,9 +101,11 @@ class CharacterProfileFragment : Fragment() {
     }
 
     private fun setHealthBar() {
-        tvHpText.text = "${character.health}/${character.healthMax}"
+        tvHpText.text = "${character.health}/${character.health_max}"
 
-        val healthPercentage = 100 * character.health / character.healthMax
+        var healthPercentage = 100
+        if (character.health_max != 0)
+            healthPercentage = 100 * character.health / character.health_max
         progressBarHealth.progress = healthPercentage
 
         val color = when {

@@ -34,8 +34,8 @@ class CharactersCombatListAdapter(options: FirestoreRecyclerOptions<Personagem>,
     override fun onBindViewHolder(holder: CharactersViewHolder, position: Int, model: Personagem) {
         holder.setCharacterRole(model.classe)
         holder.setCharacterNome(model.nome)
-        holder.setCharacterHP(model.health, model.healthMax)
-        holder.setCharacterImagem(model.imageUrl, model.isNpc)
+        holder.setCharacterHP(model.health, model.health_max)
+        holder.setCharacterImagem(model.image_url, model.isnpc)
         holder.setClickListener(model, itemClickListener)
 
         if (selectedIds.contains(position))

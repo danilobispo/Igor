@@ -28,7 +28,7 @@ class JogadoresListAdapter(options: FirestoreRecyclerOptions<Personagem>, privat
         holder.setJogadorRole(model.classe)
         holder.setJogadorNome(model.nome)
         holder.setJogadorDescricao(model.descricao)
-        holder.setJogadorImagem(model.imageUrl, model.isNpc)
+        holder.setJogadorImagem(model.image_url, model.isnpc)
         holder.setClickListener(model, itemClickListener, itemLongClickListener)
     }
 

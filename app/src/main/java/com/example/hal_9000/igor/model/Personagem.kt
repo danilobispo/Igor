@@ -9,14 +9,14 @@ data class Personagem(
         var nome: String = "",
         var classe: String = "",
         var descricao: String = "",
-        var health: Int = -1,
-        var healthMax: Int = -1,
-        var created: Long = 0,
+        var health: Int = 0,
+        var health_max: Int = 0,
+        var created_at: Long = 0,
         var creator: String = "",
-        var imageUrl: String = "",
-        var isNpc: Boolean = false,
-        var isMaster: Boolean = false,
-        var aventuraId: String = "",
+        var image_url: String = "",
+        var isnpc: Boolean = false,
+        var ismaster: Boolean = false,
+        var aventura_id: String = "",
         var atributos: ArrayList<Atributo> = arrayListOf()) : Parcelable {
 
     fun hit(value: Int) {
@@ -27,8 +27,8 @@ data class Personagem(
 
     fun heal(value: Int) {
         health += value
-        if (health > healthMax)
-            health = healthMax
+        if (health > health_max)
+            health = health_max
     }
 
     fun statCreate(statName: String, value: String) {

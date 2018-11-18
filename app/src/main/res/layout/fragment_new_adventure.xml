@@ -65,7 +65,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/description1"
-                        android:hint="Nome da aventura, se tiver duas linhas ela ocupa esse espaço"
+                        android:hint="Nome da aventura"
                         android:textColor="@color/colorPrimary"
                         android:textColorHint="@color/colorPrimary" />
 

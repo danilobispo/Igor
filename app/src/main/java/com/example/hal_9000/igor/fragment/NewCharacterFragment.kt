@@ -19,10 +19,10 @@ import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.StatsListAdapter
 import com.example.hal_9000.igor.model.Atributo
-import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Personagem
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.fragment_new_character.*
@@ -35,7 +35,7 @@ import kotlin.collections.ArrayList
 class NewCharacterFragment : Fragment() {
 
     private val TAG = "NewCharacterFragment"
-    private var aventura: Aventura? = null
+
     private lateinit var personagemOld: Personagem
     private var isNPC: Boolean = false
 
@@ -50,22 +50,19 @@ class NewCharacterFragment : Fragment() {
     private lateinit var adapter: StatsListAdapter
 
     private lateinit var db: FirebaseFirestore
-    private lateinit var aventuraId: String
 
     private lateinit var storage: FirebaseStorage
     private lateinit var storageReference: StorageReference
 
     private val PICK_IMAGE_REQUEST = 71
-
     private var filePath: Uri? = null
     private var downloadUrl: String = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+
         val view = inflater.inflate(R.layout.fragment_new_character, container, false)
 
-        aventura = NewCharacterFragmentArgs.fromBundle(arguments).aventura
         personagemOld = NewCharacterFragmentArgs.fromBundle(arguments).personagem
         isNPC = NewCharacterFragmentArgs.fromBundle(arguments).isNpc
 
@@ -80,8 +77,6 @@ class NewCharacterFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
         storageReference = storage.reference
-
-        aventuraId = "${aventura?.creator}_${aventura?.title}"
 
         val arrayOfStats = ArrayList<Atributo>()
         adapter = StatsListAdapter(context!!, arrayOfStats)
@@ -142,19 +137,19 @@ class NewCharacterFragment : Fragment() {
         etClasse.setText(personagemOld.classe)
         etDescricao.setText(personagemOld.descricao)
 
-        if (personagemOld.healthMax != -1)
-            etHealth.setText(personagemOld.healthMax.toString(), TextView.BufferType.EDITABLE)
+        if (personagemOld.health_max != -1)
+            etHealth.setText(personagemOld.health_max.toString(), TextView.BufferType.EDITABLE)
 
         for (atributo in personagemOld.atributos) {
             adapter.add(atributo)
         }
 
-        if (personagemOld.imageUrl.isNotEmpty()) {
+        if (personagemOld.image_url.isNotEmpty()) {
             Glide.with(this)
-                    .load(personagemOld.imageUrl)
+                    .load(personagemOld.image_url)
                     .into(ivPhoto)
 
-            downloadUrl = personagemOld.imageUrl
+            downloadUrl = personagemOld.image_url
         }
     }
 
@@ -167,70 +162,63 @@ class NewCharacterFragment : Fragment() {
         personagem.descricao = etDescricao.text.toString()
 
         if (etHealth.text.isNotEmpty())
-            personagem.healthMax = Integer.valueOf(etHealth.text.toString())
+            personagem.health_max = Integer.valueOf(etHealth.text.toString())
 
         personagem.creator = LoginActivity.username
-        personagem.imageUrl = downloadUrl
-        personagem.isNpc = isNPC
-        personagem.isMaster = false
+        personagem.image_url = downloadUrl
+        personagem.isnpc = isNPC
 
-        Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.healthMax}")
+        Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.health_max}")
 
         for (i in 0 until adapter.count)
             personagem.atributos.add(adapter.getItem(i)!!)
 
-        personagem.aventuraId = aventuraId
+        personagem.aventura_id = AdventureFragment.aventura.id
 
         if (personagemOld.id.isEmpty()) {
-            personagem.created = System.currentTimeMillis() / 1000
-            personagem.health = personagem.healthMax
-            createCharacter(personagem)
+            personagem.created_at = System.currentTimeMillis()
+            personagem.id = "${personagem.creator}_${personagem.created_at}"
+            personagem.ismaster = false
+            personagem.health = personagem.health_max
+            createCharacter(personagem, false)
 
         } else {
+            personagem.ismaster = personagemOld.ismaster
             personagem.id = personagemOld.id
-            personagem.created = personagemOld.created
+            personagem.created_at = personagemOld.created_at
             personagem.health = personagemOld.health
-            editCharacter(personagem)
+            createCharacter(personagem, true)
         }
     }
 
-    private fun createCharacter(personagem: Personagem) {
-        db.collection("characters")
-                .add(personagem)
-                .addOnSuccessListener { documentReference ->
-                    Log.d(TAG, "Document ${documentReference.id} created successfully")
-                    Toast.makeText(context, "Personagem criado com sucesso!", Toast.LENGTH_SHORT).show()
-                    db.collection("characters").document(documentReference.id).update("id", documentReference.id)
-                    db.collection("adventures").document(aventuraId).update("players." + personagem.nome, true)
-                    NavHostFragment.findNavController(this).popBackStack()
-                }
-                .addOnFailureListener { e ->
-                    Log.w(TAG, "Error creating document", e)
-                    Toast.makeText(context, "Erro ao criar personagem", Toast.LENGTH_SHORT).show()
-                    progressBar.visibility = View.INVISIBLE
-                }
-    }
+    private fun createCharacter(personagem: Personagem, edit: Boolean) {
 
-    private fun editCharacter(personagem: Personagem) {
-        db.collection("characters")
-                .document(personagem.id)
-                .set(personagem)
+        val batch: WriteBatch = db.batch()
+
+        batch.set(db.collection("characters").document(personagem.id), personagem)
+
+        batch.update(db.collection("adventures").document(AdventureFragment.aventura.id), "players." + personagem.nome, true)
+
+        // Remove old name
+        if (edit && !isNPC && personagemOld.nome.isNotEmpty() && personagemOld.nome != personagem.nome)
+            batch.update(db.collection("adventures").document(AdventureFragment.aventura.id), "players." + personagemOld.nome, FieldValue.delete())
+
+        batch.commit()
                 .addOnSuccessListener {
-                    Log.d(TAG, "Document updated successfully")
-                    Toast.makeText(context, "Personagem atualizado com sucesso!", Toast.LENGTH_SHORT).show()
-
-                    if (!isNPC && personagemOld.nome != personagem.nome) {
-                        if (personagem.nome.isNotEmpty())
-                            db.collection("adventures").document(aventuraId).update("players." + personagem.nome, true)
-                        if (personagemOld.nome.isNotEmpty())
-                            db.collection("adventures").document(aventuraId).update("players." + personagemOld.nome, FieldValue.delete())
-                    }
-
+                    Log.d(TAG, "Document ${personagem.id} created_at successfully. Edit: $edit")
+                    if (edit)
+                        Toast.makeText(context, "Personagem atualizado com sucesso!", Toast.LENGTH_SHORT).show()
+                    else
+                        Toast.makeText(context, "Personagem criado com sucesso!", Toast.LENGTH_SHORT).show()
                     NavHostFragment.findNavController(this).popBackStack()
                 }
                 .addOnFailureListener { e ->
-                    Log.w(TAG, "Error updating document", e)
-                    Toast.makeText(context, "Erro ao atualizar personagem", Toast.LENGTH_SHORT).show()
+                    Log.w(TAG, "Error creating document. Edit: $edit", e)
+                    if (edit)
+                        Toast.makeText(context, "Erro ao editar personagem", Toast.LENGTH_SHORT).show()
+                    else
+                        Toast.makeText(context, "Erro ao criar personagem", Toast.LENGTH_SHORT).show()
+
                     progressBar.visibility = View.INVISIBLE
                 }
     }
@@ -244,7 +232,7 @@ class NewCharacterFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode === PICK_IMAGE_REQUEST && resultCode === RESULT_OK
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
                 && data != null && data.data != null) {
             filePath = data.data
             try {
@@ -258,29 +246,28 @@ class NewCharacterFragment : Fragment() {
     }
 
     private fun uploadImage() {
+        if (filePath == null) return
 
         btn_concluir.isEnabled = false
 
-        if (filePath != null) {
-            progressBar.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
 
-            val ref = storageReference.child("images/" + UUID.randomUUID().toString())
-            ref.putFile(filePath!!)
-                    .addOnSuccessListener { it ->
-                        Log.d(TAG, "Image upload successfully")
-                        ref.downloadUrl.addOnSuccessListener {
-                            Log.d(TAG, "DownloadUrl: $it")
-                            downloadUrl = it.toString()
-                            progressBar.visibility = View.INVISIBLE
-                            btn_concluir.isEnabled = true
-                        }
-                    }
-                    .addOnFailureListener { e ->
+        val ref = storageReference.child("images/" + UUID.randomUUID().toString())
+        ref.putFile(filePath!!)
+                .addOnSuccessListener { taskSnapshot ->
+                    Log.d(TAG, "Image upload successfully")
+                    ref.downloadUrl.addOnSuccessListener {
+                        Log.d(TAG, "DownloadUrl: $taskSnapshot")
+                        downloadUrl = taskSnapshot.toString()
                         progressBar.visibility = View.INVISIBLE
-                        Log.e(TAG, "Error: $e.message")
-                        Toast.makeText(context, "Erro ao enviar imagem " + e.message, Toast.LENGTH_SHORT).show()
                         btn_concluir.isEnabled = true
                     }
-        }
+                }
+                .addOnFailureListener { e ->
+                    progressBar.visibility = View.INVISIBLE
+                    Log.e(TAG, "Error: $e.message")
+                    Toast.makeText(context, "Erro ao enviar imagem " + e.message, Toast.LENGTH_SHORT).show()
+                    btn_concluir.isEnabled = true
+                }
     }
 }

@@ -37,7 +37,7 @@ class CombatFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+
         val view = inflater.inflate(R.layout.fragment_combat, container, false)
 
         mPlayersList = view.findViewById(R.id.rv_chars1)
@@ -49,10 +49,9 @@ class CombatFragment : Fragment() {
         val aventura = AdventureFragment.aventura
 
         val queryPlayers = db!!.collection("characters")
-                .whereEqualTo("aventuraId", "${aventura.creator}_${aventura.title}")
-                .whereEqualTo("npc", false)
-                .whereEqualTo("master", false)
-                .orderBy("created")
+                .whereEqualTo("aventura_id", aventura.id)
+                .whereEqualTo("isnpc", false)
+                .whereEqualTo("ismaster", false)
 
         val optionsPlayers = FirestoreRecyclerOptions.Builder<Personagem>()
                 .setQuery(queryPlayers, Personagem::class.java)
@@ -68,10 +67,9 @@ class CombatFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
 
         val queryEnemies = db!!.collection("characters")
-                .whereEqualTo("aventuraId", "${aventura.creator}_${aventura.title}")
-                .whereEqualTo("npc", true)
-                .whereEqualTo("master", false)
-                .orderBy("created")
+                .whereEqualTo("aventura_id", aventura.id)
+                .whereEqualTo("isnpc", true)
+                .whereEqualTo("ismaster", false)
 
         val optionsEnemies = FirestoreRecyclerOptions.Builder<Personagem>()
                 .setQuery(queryEnemies, Personagem::class.java)
@@ -362,7 +360,7 @@ class CombatFragment : Fragment() {
     private fun askRollDices(diceName: String, quantity: Int = Random.nextInt(1, 5)) {
         fun ask(batch: WriteBatch, playerDices: PlayerDices, charName: String) {
             batch.set(db!!.collection("adventures")
-                    .document(AdventureFragment.aventuraId)
+                    .document(AdventureFragment.aventura.id)
                     .collection("sessions")
                     .document(SessionFragment.sessionId)
                     .collection("dices")
@@ -408,7 +406,7 @@ class CombatFragment : Fragment() {
 
         val eventLogReference = db!!
                 .collection("adventures")
-                .document(AdventureFragment.aventuraId)
+                .document(AdventureFragment.aventura.id)
                 .collection("sessions")
                 .document(SessionFragment.sessionId)
                 .collection("events")
