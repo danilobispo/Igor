@@ -38,8 +38,6 @@ class HomeFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_home, container, false)
 
-        Log.d(TAG, "onCreateView: Started")
-
         setHasOptionsMenu(true)
 
         val mAuth: FirebaseAuth = FirebaseAuth.getInstance()

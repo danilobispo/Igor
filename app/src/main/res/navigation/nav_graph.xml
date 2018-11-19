@@ -129,9 +129,13 @@
         android:name="com.example.hal_9000.igor.fragment.CharacterProfileFragment"
         android:label="CharacterProfileFragment"
         tools:layout="@layout/fragment_character_profile">
-    <argument
-        android:name="character"
-        app:argType="com.example.hal_9000.igor.model.Personagem" />
+        <argument
+            android:name="character"
+            app:argType="com.example.hal_9000.igor.model.Personagem" />
+        <argument
+            android:name="readOnly"
+            android:defaultValue="false"
+            app:argType="boolean" />
     </fragment>
 
     <include app:graph="@navigation/sub_nav_graph" />

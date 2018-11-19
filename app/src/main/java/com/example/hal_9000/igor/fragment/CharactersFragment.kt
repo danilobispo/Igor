@@ -21,7 +21,6 @@ class CharactersFragment : Fragment() {
 
     private val TAG = "EventsFragment"
 
-    private lateinit var aventura: Aventura
     private lateinit var session: Session
 
     private lateinit var adapter: CharactersListAdapter
@@ -41,9 +40,8 @@ class CharactersFragment : Fragment() {
 
         db = FirebaseFirestore.getInstance()
 
-        val aventura = AdventureFragment.aventura
         val query = db.collection("characters")
-                .whereEqualTo("aventura_id", aventura.id)
+                .whereEqualTo("aventura_id", AdventureFragment.aventura.id)
 
         val options = FirestoreRecyclerOptions.Builder<Personagem>()
                 .setQuery(query, Personagem::class.java)
@@ -66,6 +64,7 @@ class CharactersFragment : Fragment() {
     private fun characterItemClicked(character: Personagem) {
         val action = SessionFragmentDirections.ActionSessionFragmentToCharacterProfileFragment(character)
         action.setCharacter(character)
+        action.setReadOnly(false)
         Navigation.findNavController(activity!!, R.id.nav_host).navigate(action)
     }
 

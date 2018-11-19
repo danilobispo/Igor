@@ -4,11 +4,12 @@ import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.ListView
 import android.widget.ProgressBar
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -16,9 +17,12 @@ import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.StatsListAdapter
 import com.example.hal_9000.igor.model.Atributo
 import com.example.hal_9000.igor.model.Personagem
+import com.google.firebase.firestore.FirebaseFirestore
 
 
 class CharacterProfileFragment : Fragment() {
+
+    private val TAG = "CharacterProfileFragt"
 
     private lateinit var ivImagem: ImageView
     private lateinit var tvName: TextView
@@ -27,13 +31,14 @@ class CharacterProfileFragment : Fragment() {
     private lateinit var tvSeeMore: TextView
     private lateinit var tvHpText: TextView
     private lateinit var progressBarHealth: ProgressBar
-    private lateinit var lvStats: ListView
+    private lateinit var rvStats: RecyclerView
 
-    private lateinit var hpBarRemaining: View
+    private lateinit var db: FirebaseFirestore
 
     private lateinit var character: Personagem
+    private var readOnly = false
 
-    private lateinit var adapter: StatsListAdapter
+    private lateinit var adapterStats: StatsListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -47,9 +52,12 @@ class CharacterProfileFragment : Fragment() {
         tvSeeMore = view.findViewById(R.id.tv_see_more)
         tvHpText = view.findViewById(R.id.tv_hp_text)
         progressBarHealth = view.findViewById(R.id.progress_bar_health)
-        lvStats = view.findViewById(R.id.lv_stats)
+        rvStats = view.findViewById(R.id.rv_stats)
+
+        db = FirebaseFirestore.getInstance()
 
         character = CharacterProfileFragmentArgs.fromBundle(arguments).character
+        readOnly = CharacterProfileFragmentArgs.fromBundle(arguments).readOnly
 
         tvName.text = character.nome
         tvClass.text = character.classe
@@ -90,12 +98,14 @@ class CharacterProfileFragment : Fragment() {
                     .into(ivImagem)
         }
 
-        val arrayOfStats = ArrayList<Atributo>()
-        adapter = StatsListAdapter(context!!, arrayOfStats)
-        lvStats.adapter = adapter
-
+        val arrayStats = ArrayList<Atributo>()
         for (atributo in character.atributos)
-            adapter.add(atributo)
+            arrayStats.add(atributo)
+
+        adapterStats = StatsListAdapter(arrayStats)
+        rvStats.layoutManager = LinearLayoutManager(context)
+        rvStats.setHasFixedSize(true)
+        rvStats.adapter = adapterStats
 
         return view
     }

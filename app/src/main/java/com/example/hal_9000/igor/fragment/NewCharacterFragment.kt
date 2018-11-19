@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
@@ -43,14 +45,14 @@ class NewCharacterFragment : Fragment() {
     private lateinit var etClasse: EditText
     private lateinit var etDescricao: EditText
     private lateinit var etHealth: EditText
-    private lateinit var lvStats: ListView
+    private lateinit var rvStats: RecyclerView
     private lateinit var ivPhoto: ImageView
     private lateinit var progressBar: ProgressBar
 
     private lateinit var adapter: StatsListAdapter
+    private val arrayStats = ArrayList<Atributo>()
 
     private lateinit var db: FirebaseFirestore
-
     private lateinit var storage: FirebaseStorage
     private lateinit var storageReference: StorageReference
 
@@ -70,7 +72,7 @@ class NewCharacterFragment : Fragment() {
         etClasse = view.findViewById(R.id.et_classe)
         etDescricao = view.findViewById(R.id.et_descricao)
         etHealth = view.findViewById(R.id.et_hp)
-        lvStats = view.findViewById(R.id.lv_stats)
+        rvStats = view.findViewById(R.id.rv_stats)
         ivPhoto = view.findViewById(R.id.iv_photo)
         progressBar = view.findViewById(R.id.progressBar)
 
@@ -78,9 +80,10 @@ class NewCharacterFragment : Fragment() {
         storage = FirebaseStorage.getInstance()
         storageReference = storage.reference
 
-        val arrayOfStats = ArrayList<Atributo>()
-        adapter = StatsListAdapter(context!!, arrayOfStats)
-        lvStats.adapter = adapter
+        adapter = StatsListAdapter(arrayStats)
+        rvStats.layoutManager = LinearLayoutManager(context)
+        rvStats.setHasFixedSize(true)
+        rvStats.adapter = adapter
 
         if (isNPC)
             etNome.hint = "Nome"
@@ -108,7 +111,8 @@ class NewCharacterFragment : Fragment() {
                     .setView(input)
                     .setPositiveButton("OK") { _, _ ->
                         stat.valor = input.text.toString()
-                        adapter.add(stat)
+                        arrayStats.add(stat)
+                        adapter.notifyItemInserted(arrayStats.size - 1)
                     }
                     .show()
         }
@@ -141,7 +145,8 @@ class NewCharacterFragment : Fragment() {
             etHealth.setText(personagemOld.health_max.toString(), TextView.BufferType.EDITABLE)
 
         for (atributo in personagemOld.atributos) {
-            adapter.add(atributo)
+            arrayStats.add(atributo)
+            adapter.notifyItemInserted(arrayStats.size - 1)
         }
 
         if (personagemOld.image_url.isNotEmpty()) {
@@ -167,13 +172,10 @@ class NewCharacterFragment : Fragment() {
         personagem.creator = LoginActivity.username
         personagem.image_url = downloadUrl
         personagem.isnpc = isNPC
-
-        Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.health_max}")
-
-        for (i in 0 until adapter.count)
-            personagem.atributos.add(adapter.getItem(i)!!)
-
+        personagem.atributos = arrayStats
         personagem.aventura_id = AdventureFragment.aventura.id
+
+        Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.health_max}, ${personagem.atributos}")
 
         if (personagemOld.id.isEmpty()) {
             personagem.created_at = System.currentTimeMillis()

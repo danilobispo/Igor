@@ -4,14 +4,12 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.JogadoresListAdapter
-import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Personagem
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
@@ -54,6 +52,7 @@ class JogadoresFragment : Fragment() {
     private fun personagemItemClicked(personagem: Personagem) {
         val action = AdventureFragmentDirections.ActionAdventureFragmentToCharacterProfileFragment(personagem)
         action.setCharacter(personagem)
+        action.setReadOnly(true)
         NavHostFragment.findNavController(this).navigate(action)
     }
 

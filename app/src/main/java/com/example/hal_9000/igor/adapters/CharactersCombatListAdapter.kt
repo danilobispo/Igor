@@ -48,7 +48,7 @@ class CharactersCombatListAdapter(options: FirestoreRecyclerOptions<Personagem>,
         Log.e(TAG, "Error: $e.message")
     }
 
-    private fun addIDIntoSelectedIds(index: Int) {
+    private fun toggleSelected(index: Int) {
         if (selectedIds.contains(index))
             selectedIds.remove(index)
         else
@@ -58,14 +58,14 @@ class CharactersCombatListAdapter(options: FirestoreRecyclerOptions<Personagem>,
     }
 
     override fun onTap(index: Int) {
-        addIDIntoSelectedIds(index)
+        toggleSelected(index)
     }
 
     override fun onLongTap(index: Int) {
-        addIDIntoSelectedIds(index)
+        toggleSelected(index)
     }
 
-    class CharactersViewHolder(itemView: View, private val r_tap: ViewHolderClickListerner) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class CharactersViewHolder(itemView: View, private val clickListener: ViewHolderClickListerner) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
         fun setCharacterNome(nomeCharacter: String) {
             val tvNome: TextView = itemView.findViewById(R.id.tv_name)
@@ -127,7 +127,7 @@ class CharactersCombatListAdapter(options: FirestoreRecyclerOptions<Personagem>,
         }
 
         override fun onClick(v: View?) {
-            r_tap.onTap(adapterPosition)
+            clickListener.onTap(adapterPosition)
         }
     }
 }

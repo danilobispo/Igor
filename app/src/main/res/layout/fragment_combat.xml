@@ -66,11 +66,13 @@
 
     <Button
         android:id="@+id/btn_action"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:background="@color/green_dark"
         android:text="Ação"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:textColor="#FFF"
+        app:layout_constraintEnd_toEndOf="@id/cardview"
+        app:layout_constraintStart_toStartOf="@id/cardview"
         app:layout_constraintTop_toBottomOf="@id/cardview" />
 
 </android.support.constraint.ConstraintLayout>

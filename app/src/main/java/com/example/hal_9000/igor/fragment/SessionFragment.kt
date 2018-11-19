@@ -33,8 +33,6 @@ class SessionFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_session, container, false)
 
-        Log.d(TAG, "onCreateView")
-
         session = SessionFragmentArgs.fromBundle(arguments).session
         sessionId = session.created_at.toString()
 

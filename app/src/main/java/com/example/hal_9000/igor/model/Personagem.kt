@@ -77,4 +77,12 @@ data class Personagem(
         }
         statCreate(statName, (0 - value).toString())
     }
+
+    fun maxHealthUp(value: Int) {
+        health_max += value
+    }
+
+    fun maxHealthDown(value: Int) {
+        health_max -= value
+    }
 }

@@ -41,6 +41,7 @@ class AndamentoFragment : Fragment() {
                 .collection("adventures")
                 .document(AdventureFragment.aventura.id)
                 .collection("sessions")
+                .orderBy("date")
 
         val options = FirestoreRecyclerOptions.Builder<Session>()
                 .setQuery(query, Session::class.java)

@@ -33,7 +33,6 @@ class AdventureFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "onCreate")
         openedTab = "andamento"
     }
 
@@ -41,8 +40,6 @@ class AdventureFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_adventure, container, false)
-
-        Log.d(TAG, "onCreateView")
 
         setHasOptionsMenu(true)
 

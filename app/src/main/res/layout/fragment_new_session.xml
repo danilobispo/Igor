@@ -20,7 +20,7 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/iv_close"
@@ -80,6 +80,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Resumo"
+                    android:maxLines="12"
                     android:textColor="@color/colorPrimary"
                     android:textColorHint="@color/colorPrimary"
                     app:layout_constraintTop_toBottomOf="@id/description2" />
