@@ -73,9 +73,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
-                    android:background="@color/green_dark"
                     android:text="Novo atributo"
-                    android:textColor="#FFF" />
+                    android:textColor="#FFF"
+                    app:backgroundTint="@color/green_dark" />
 
             </LinearLayout>
 
@@ -96,8 +96,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
-        android:background="@color/green_dark"
         android:text="Concluir"
-        android:textColor="#FFF" />
+        android:textColor="#FFF"
+        app:backgroundTint="@color/green_dark" />
 
 </RelativeLayout>
