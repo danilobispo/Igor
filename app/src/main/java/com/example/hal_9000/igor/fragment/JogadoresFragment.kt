@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.NavHostFragment
+import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.JogadoresListAdapter
 import com.example.hal_9000.igor.model.Personagem
@@ -19,9 +20,9 @@ class JogadoresFragment : Fragment() {
 
     private val TAG = "JogadoresFragment"
 
-    private var adapter: JogadoresListAdapter? = null
-    private var mJogadoresList: RecyclerView? = null
-    private var db: FirebaseFirestore? = null
+    private lateinit var adapter: JogadoresListAdapter
+    private lateinit var mJogadoresList: RecyclerView
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -29,13 +30,13 @@ class JogadoresFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_jogadores, container, false)
 
         mJogadoresList = view.findViewById(R.id.jogadores_rv)
-        mJogadoresList?.layoutManager = LinearLayoutManager(context)
-        mJogadoresList?.setHasFixedSize(true)
+        mJogadoresList.layoutManager = LinearLayoutManager(context)
+        mJogadoresList.setHasFixedSize(true)
 
         db = FirebaseFirestore.getInstance()
 
         val aventura = AdventureFragment.aventura
-        val query = db!!.collection("characters")
+        val query = db.collection("characters")
                 .whereEqualTo("aventura_id", aventura.id)
                 .whereEqualTo("isnpc", false)
 
@@ -44,7 +45,7 @@ class JogadoresFragment : Fragment() {
                 .build()
 
         adapter = JogadoresListAdapter(options, { personagem: Personagem -> personagemItemClicked(personagem) }, { personagem: Personagem -> personagemLongItemClicked(personagem) })
-        mJogadoresList?.adapter = adapter
+        mJogadoresList.adapter = adapter
 
         return view
     }
@@ -57,6 +58,9 @@ class JogadoresFragment : Fragment() {
     }
 
     private fun personagemLongItemClicked(personagem: Personagem) {
+        if (AdventureFragment.aventura.creator != LoginActivity.username)
+            return
+
         val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(personagem)
         action.setPersonagem(personagem)
         action.setIsNpc(false)
@@ -65,12 +69,12 @@ class JogadoresFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        adapter!!.startListening()
+        adapter.startListening()
     }
 
     override fun onStop() {
         super.onStop()
-        adapter!!.stopListening()
+        adapter.stopListening()
     }
 
     companion object {

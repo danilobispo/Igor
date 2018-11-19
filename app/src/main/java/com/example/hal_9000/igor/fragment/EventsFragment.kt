@@ -32,7 +32,9 @@ class EventsFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_events, container, false)
 
+        val fabNewNote = view.findViewById<FloatingActionButton>(R.id.fab_new_event)
         mRecyclerView = view.findViewById(R.id.eventos_rv)
+
         mRecyclerView.layoutManager = LinearLayoutManager(context)
         mRecyclerView.setHasFixedSize(true)
 
@@ -60,8 +62,12 @@ class EventsFragment : Fragment() {
             }
         })
 
-        val fab = view.findViewById<FloatingActionButton>(R.id.fab)
-        fab.setOnClickListener {
+        if (!AdventureFragment.isMaster) {
+            fabNewNote.hide()
+            return view
+        }
+
+        fabNewNote.setOnClickListener {
             enterNote()
         }
 
@@ -106,6 +112,8 @@ class EventsFragment : Fragment() {
     }
 
     private fun eventoItemClicked(evento: Evento) {
+        if (!AdventureFragment.isMaster) return
+
         val input = EditText(context)
         input.inputType = InputType.TYPE_CLASS_TEXT
 

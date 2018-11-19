@@ -25,7 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class SessionFragment : Fragment() {
 
     private val TAG = "SessionFragment"
-    private var db: FirebaseFirestore? = null
+    private lateinit var db: FirebaseFirestore
     private lateinit var navController: NavController
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -50,7 +50,7 @@ class SessionFragment : Fragment() {
 
         db = FirebaseFirestore.getInstance()
 
-        val docRef = db!!.collection("adventures")
+        val docRef = db.collection("adventures")
                 .document(AdventureFragment.aventura.id)
                 .collection("sessions")
                 .document(sessionId)
@@ -80,8 +80,7 @@ class SessionFragment : Fragment() {
     private fun rollDices() {
         Log.d(TAG, "User must roll dices")
 
-        if (context == null)
-            return
+        if (context == null) return
 
         AlertDialog.Builder(context!!)
                 .setTitle("Rolar dados")

@@ -21,8 +21,6 @@ class CharactersFragment : Fragment() {
 
     private val TAG = "EventsFragment"
 
-    private lateinit var session: Session
-
     private lateinit var adapter: CharactersListAdapter
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var db: FirebaseFirestore
@@ -32,7 +30,7 @@ class CharactersFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_characters, container, false)
 
-        session = SessionFragment.session
+        val fabNewCharacter = view.findViewById<FloatingActionButton>(R.id.fab_new_character)
 
         mRecyclerView = view.findViewById(R.id.eventos_rv)
         mRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -50,8 +48,12 @@ class CharactersFragment : Fragment() {
         adapter = CharactersListAdapter(options) { character: Personagem -> characterItemClicked(character) }
         mRecyclerView.adapter = adapter
 
-        val fab = view.findViewById<FloatingActionButton>(R.id.fab)
-        fab.setOnClickListener {
+        if (!AdventureFragment.isMaster) {
+            fabNewCharacter.hide()
+            return view
+        }
+
+        fabNewCharacter.setOnClickListener {
             val action = SessionFragmentDirections.ActionSessionFragmentToNewCharacterFragment(Personagem())
             action.setPersonagem(Personagem())
             action.setIsNpc(true)

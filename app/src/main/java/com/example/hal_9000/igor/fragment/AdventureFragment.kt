@@ -14,6 +14,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.fragment.NavHostFragment
+import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Personagem
@@ -44,12 +45,16 @@ class AdventureFragment : Fragment() {
         setHasOptionsMenu(true)
 
         aventura = AdventureFragmentArgs.fromBundle(arguments).aventura
+        isMaster = aventura.creator == LoginActivity.username
 
         fabNewCharacter = view.findViewById(R.id.fab_new_character)
         fabNewSession = view.findViewById(R.id.fab_new_session)
-
         ivTabLeft = view.findViewById(R.id.iv_tab_left)
         ivTabRight = view.findViewById(R.id.iv_tab_right)
+        val fabEditMode = view.findViewById<FloatingActionButton>(R.id.fab_edit_mode)
+        val fabEditSave = view.findViewById<FloatingActionButton>(R.id.fab_save_edit)
+        val fabNewSession = view.findViewById<FloatingActionButton>(R.id.fab_new_session)
+        val fabNewCharacter = view.findViewById<FloatingActionButton>(R.id.fab_new_character)
 
         if (openedTab == "jogadores")
             switchTab("jogadores")
@@ -94,24 +99,28 @@ class AdventureFragment : Fragment() {
                 switchTab("jogadores")
         }
 
-        val fabEditMode = view.findViewById<FloatingActionButton>(R.id.fab_edit_mode)
+        if (!isMaster) {
+            fabNewSession.hide()
+            fabNewCharacter.hide()
+            fabEditMode.hide()
+            fabEditSave.hide()
+            return view
+        }
+
         fabEditMode.setOnClickListener {
             setEditModeOff()
         }
 
-        val fabEditSave = view.findViewById<FloatingActionButton>(R.id.fab_save_edit)
         fabEditSave.setOnClickListener {
             setEditModeOff()
         }
 
-        val fab = view.findViewById<FloatingActionButton>(R.id.fab_new_session)
-        fab.setOnClickListener {
+        fabNewSession.setOnClickListener {
             val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(Session())
             action.setSession(Session())
             NavHostFragment.findNavController(this).navigate(action)
         }
 
-        val fabNewCharacter = view.findViewById<FloatingActionButton>(R.id.fab_new_character)
         fabNewCharacter.setOnClickListener {
             val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(Personagem())
             action.setPersonagem(Personagem())
@@ -129,16 +138,20 @@ class AdventureFragment : Fragment() {
             openedTab = "andamento"
             ivTabLeft.setImageResource(R.drawable.tab_l1)
             ivTabRight.setImageResource(R.drawable.tab_r2)
-            fabNewCharacter.hide()
-            fabNewSession.show()
+            if (isMaster) {
+                fabNewCharacter.hide()
+                fabNewSession.show()
+            }
             fragmentManager!!.beginTransaction().replace(R.id.frameAventura, AndamentoFragment()).commit()
 
         } else if (tab == "jogadores") {
             openedTab = "jogadores"
             ivTabLeft.setImageResource(R.drawable.tab_l2)
             ivTabRight.setImageResource(R.drawable.tab_r1)
-            fabNewCharacter.show()
-            fabNewSession.hide()
+            if (isMaster) {
+                fabNewCharacter.show()
+                fabNewSession.hide()
+            }
             fragmentManager!!.beginTransaction().replace(R.id.frameAventura, JogadoresFragment()).commit()
         }
     }
@@ -172,8 +185,10 @@ class AdventureFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_editar -> {
-                Toast.makeText(context, "Editar", Toast.LENGTH_SHORT).show()
-                setEditModeOn()
+                if (isMaster) {
+                    Toast.makeText(context, "Editar", Toast.LENGTH_SHORT).show()
+                    setEditModeOn()
+                }
             }
             R.id.menu_ordenar -> {
                 Toast.makeText(context, "Ordenar", Toast.LENGTH_SHORT).show()
@@ -184,6 +199,7 @@ class AdventureFragment : Fragment() {
 
     companion object {
         lateinit var aventura: Aventura
+        var isMaster: Boolean = false
         var editMode: Boolean = false
 
         @JvmStatic

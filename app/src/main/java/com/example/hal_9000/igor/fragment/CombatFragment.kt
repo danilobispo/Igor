@@ -84,6 +84,9 @@ class CombatFragment : Fragment() {
         adapterEnemies = CharactersCombatListAdapter(optionsEnemies, { personagem: Personagem -> enemyItemClicked(personagem) }, { mode: Boolean -> selectionModeChanged("adapterEnemies", mode) })
         mEnemiesList.adapter = adapterEnemies
 
+        if (!AdventureFragment.isMaster)
+            return view
+
         btnAction.setOnClickListener { showActionsDialog() }
 
         return view
@@ -124,6 +127,8 @@ class CombatFragment : Fragment() {
             adapterEnemies.selectionModeOther = mode
         else
             adapterPlayers.selectionModeOther = mode
+
+        if (!AdventureFragment.isMaster) return
 
         if (adapterPlayers.selectionModeOwn || adapterEnemies.selectionModeOwn)
             btnAction.visibility = View.VISIBLE
@@ -450,12 +455,14 @@ class CombatFragment : Fragment() {
 
     private fun enemyItemClicked(personagem: Personagem) {
         Log.d(TAG, "Clicked enemy ${personagem.nome}")
+        if (!AdventureFragment.isMaster) return
         characterSelected = personagem
         showActionsDialog()
     }
 
     private fun personagemItemClicked(personagem: Personagem) {
         Log.d(TAG, "Clicked player ${personagem.nome}")
+        if (!AdventureFragment.isMaster) return
         characterSelected = personagem
         showActionsDialog()
     }

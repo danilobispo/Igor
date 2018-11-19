@@ -8,19 +8,20 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestoreException
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, private val editMode: Boolean, private val itemClickListener: (Aventura) -> Unit, private val deleteClickListener: (Aventura) -> Unit) : FirestoreRecyclerAdapter<Aventura, AdventureRecyclerViewAdapter.AdventureViewHolder>(options) {
+class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, private val itemClickListener: (Aventura) -> Unit, private val deleteClickListener: (Aventura) -> Unit) : FirestoreRecyclerAdapter<Aventura, AdventureRecyclerViewAdapter.AdventureViewHolder>(options) {
 
     private val TAG = "AdventureRecyclrAdapter"
+    var editMode = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdventureViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.aventura_item_row, parent, false)
@@ -92,9 +93,7 @@ class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, 
         }
 
         fun setDeleteClickListener(aventura: Aventura, clickListener: (Aventura) -> Unit) {
-
-            val mAuth = FirebaseAuth.getInstance()
-            if (aventura.creator != mAuth.uid) {
+            if (aventura.creator != LoginActivity.username) {
                 val overlay: View = itemView.findViewById(R.id.overlay_image)
                 overlay.visibility = View.VISIBLE
                 return

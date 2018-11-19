@@ -126,7 +126,6 @@ class NewAdventure : Fragment() {
 
         adventure.title = et_title.text.toString()
         adventure.description = et_descricao.text.toString()
-        adventure.deleted = false
         adventure.players[adventure.creator] = true
 
         adventure.theme = when {

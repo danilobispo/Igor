@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.SessionsListAdapter
-import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Session
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
@@ -80,7 +79,7 @@ class AndamentoFragment : Fragment() {
     private fun sessionItemClicked(session: Session) {
         Log.d(TAG, "Clicked ${session.title}")
 
-        if (AdventureFragment.editMode) {
+        if (AdventureFragment.editMode && AdventureFragment.isMaster) {
             val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(session)
             action.setSession(session)
             NavHostFragment.findNavController(this).navigate(action)
