@@ -2,13 +2,16 @@ package com.example.hal_9000.igor.fragment
 
 
 import android.os.Bundle
+import android.support.constraint.ConstraintLayout
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -47,6 +50,31 @@ class SessionFragment : Fragment() {
 
         adventureTitle.text = AdventureFragment.aventura.title
         sessionTitle.text = session.title
+
+        val ivTheme = view.findViewById<ImageView>(R.id.iv_theme)
+        val layout = view.findViewById<ConstraintLayout>(R.id.contraint_layout)
+        when (AdventureFragment.aventura.theme) {
+            "krevast" -> {
+                ivTheme.setImageResource(R.drawable.miniatura_krevast)
+                layout.setBackgroundColor(ContextCompat.getColor(view.context, R.color.krevast_background))
+            }
+            "corvali" -> {
+                ivTheme.setImageResource(R.drawable.miniatura_corvali)
+                layout.setBackgroundColor(ContextCompat.getColor(view.context, R.color.corvali_background))
+            }
+            "heartlands" -> {
+                ivTheme.setImageResource(R.drawable.miniatura_heartlands)
+                layout.setBackgroundColor(ContextCompat.getColor(view.context, R.color.heartlands_background))
+            }
+            "coast" -> {
+                ivTheme.setImageResource(R.drawable.miniatura_coast)
+                layout.setBackgroundColor(ContextCompat.getColor(view.context, R.color.coast_background))
+            }
+            else -> {
+                ivTheme.setImageResource(R.drawable.miniatura_imagem_automatica)
+                layout.setBackgroundColor(ContextCompat.getColor(view.context, R.color.default_background))
+            }
+        }
 
         db = FirebaseFirestore.getInstance()
 
