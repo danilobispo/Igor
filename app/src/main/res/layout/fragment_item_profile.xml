@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginBottom="10dp">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,44 +33,33 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tv_class"
+                android:id="@+id/tv_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_name"
                 android:layout_marginStart="10dp"
                 android:layout_toEndOf="@id/iv_imagem"
-                android:text="Classe"
+                android:text="Categoria"
                 android:textSize="16sp"
                 android:textStyle="italic" />
 
             <TextView
-                android:id="@+id/tv_hp_label"
+                android:id="@+id/tv_owner"
                 android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:layout_marginEnd="2dp"
-                android:layout_toStartOf="@id/progress_bar_health"
-                android:gravity="center"
-                android:text="@string/hp_str"
-                android:textSize="16sp" />
-
-            <ProgressBar
-                android:id="@+id/progress_bar_health"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="120dp"
-                android:layout_height="25dp"
+                android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:progress="70"
-                android:progressDrawable="@drawable/health_bar" />
+                android:text="Usuário"
+                android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/tv_hp_text"
-                android:layout_width="match_parent"
-                android:layout_height="25dp"
-                android:layout_alignStart="@id/progress_bar_health"
-                android:layout_alignEnd="@id/progress_bar_health"
-                android:gravity="center"
-                android:text="00/00"
-                android:textSize="16sp" />
+                android:id="@+id/tv_state"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tv_owner"
+                android:layout_alignParentEnd="true"
+                android:text="Estado"
+                android:textSize="16sp"
+                android:textStyle="italic" />
 
         </RelativeLayout>
 
@@ -81,7 +69,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:maxLines="6"
-            android:text="Personagem sem descrição" />
+            android:text="Item sem descrição" />
 
         <TextView
             android:id="@+id/tv_see_more"
@@ -93,7 +81,7 @@
             android:visibility="gone" />
 
         <View
-            android:id="@+id/separator_stats"
+            android:id="@+id/separator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="20dp"
@@ -116,42 +104,45 @@
             android:layout_marginTop="8dp"
             android:clipToPadding="false" />
 
-        <View
-            android:id="@+id/separator_inventory"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="20dp"
-            android:background="@android:color/darker_gray" />
-
-        <TextView
-            android:id="@+id/tv_items_label"
+        <LinearLayout
+            android:id="@+id/buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="Inventário"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:visibility="invisible">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_inventory"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="8dp"
-            android:clipToPadding="false"
-            android:minHeight="105dp" />
+            <Button
+                android:id="@+id/btn_action"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/green_dark"
+                android:text="Ação"
+                android:textColor="#FFF" />
 
-        <Button
-            android:id="@+id/btn_create_item"
-            android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btn_give"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/green_dark"
+                android:text="Dar"
+                android:textColor="#FFF" />
+
+            <Button
+                android:id="@+id/btn_discard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/green_dark"
+                android:text="Descartar"
+                android:textColor="#FFF" />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@color/green_dark"
-            android:clipToPadding="false"
-            android:orientation="horizontal"
-            android:text="Criar item"
-            android:textColor="#FFF"
+            android:layout_gravity="center"
             android:visibility="invisible" />
 
     </LinearLayout>

@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "268640678490-r6ikurqlibsedn70rv06be1nf9j4u9jq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hal_9000.igor",
+            "certificate_hash": "7db6c3d36c95847928f929909e6ea8f47688198d"
+          }
+        },
+        {
           "client_id": "268640678490-kh4d6rb3as8m2qu2fiteghf60ch2a2jk.apps.googleusercontent.com",
           "client_type": 3
         }

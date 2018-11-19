@@ -4,19 +4,26 @@ import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
+import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
+import com.example.hal_9000.igor.adapters.ItemsListAdapter
 import com.example.hal_9000.igor.adapters.StatsListAdapter
 import com.example.hal_9000.igor.model.Atributo
+import com.example.hal_9000.igor.model.Item
 import com.example.hal_9000.igor.model.Personagem
+import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 
 
@@ -32,6 +39,8 @@ class CharacterProfileFragment : Fragment() {
     private lateinit var tvHpText: TextView
     private lateinit var progressBarHealth: ProgressBar
     private lateinit var rvStats: RecyclerView
+    private lateinit var rvInventory: RecyclerView
+    private lateinit var btnCreateItem: Button
 
     private lateinit var db: FirebaseFirestore
 
@@ -39,6 +48,7 @@ class CharacterProfileFragment : Fragment() {
     private var readOnly = false
 
     private lateinit var adapterStats: StatsListAdapter
+    private lateinit var adapterItems: ItemsListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -53,6 +63,8 @@ class CharacterProfileFragment : Fragment() {
         tvHpText = view.findViewById(R.id.tv_hp_text)
         progressBarHealth = view.findViewById(R.id.progress_bar_health)
         rvStats = view.findViewById(R.id.rv_stats)
+        rvInventory = view.findViewById(R.id.rv_inventory)
+        btnCreateItem = view.findViewById(R.id.btn_create_item)
 
         db = FirebaseFirestore.getInstance()
 
@@ -107,7 +119,45 @@ class CharacterProfileFragment : Fragment() {
         rvStats.setHasFixedSize(true)
         rvStats.adapter = adapterStats
 
+        val queryItems = db
+                .collection("adventures")
+                .document(AdventureFragment.aventura.id)
+                .collection("items")
+                .whereEqualTo("owner", character.nome)
+
+        val options = FirestoreRecyclerOptions.Builder<Item>()
+                .setQuery(queryItems, Item::class.java)
+                .build()
+
+        adapterItems = ItemsListAdapter(options) { item: Item -> itemItemClicked(item) }
+        rvInventory.layoutManager = GridLayoutManager(context, 4)
+        rvInventory.setHasFixedSize(true)
+
+        if (character.ismaster && LoginActivity.username != character.nome)
+            return view
+
+        rvInventory.adapter = adapterItems
+
+        if (!readOnly && LoginActivity.username == AdventureFragment.aventura.creator) {
+            btnCreateItem.visibility = View.VISIBLE
+
+            btnCreateItem.setOnClickListener {
+                val action = CharacterProfileFragmentDirections.ActionCharacterProfileFragmentToNewItemFragment(Item(), character.nome)
+                action.setItem(Item())
+                action.setNewOwner(character.nome)
+                NavHostFragment.findNavController(this).navigate(action)
+            }
+        }
+
         return view
+    }
+
+    private fun itemItemClicked(item: Item) {
+        val action = CharacterProfileFragmentDirections.ActionCharacterProfileFragmentToItemProfileFragment(item, character)
+        action.setItem(item)
+        action.setOwner(character)
+        action.setReadOnly(readOnly)
+        NavHostFragment.findNavController(this).navigate(action)
     }
 
     private fun setHealthBar() {
@@ -127,5 +177,15 @@ class CharacterProfileFragment : Fragment() {
         val progressDrawable = progressBarHealth.progressDrawable.mutate() as LayerDrawable
         progressDrawable.getDrawable(1).setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
         progressBarHealth.progressDrawable = progressDrawable
+    }
+
+    override fun onStart() {
+        super.onStart()
+        adapterItems.startListening()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        adapterItems.stopListening()
     }
 }

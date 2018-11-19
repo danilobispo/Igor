@@ -136,6 +136,42 @@
             android:name="readOnly"
             android:defaultValue="false"
             app:argType="boolean" />
+        <action
+            android:id="@+id/action_characterProfileFragment_to_newItemFragment"
+            app:destination="@id/newItemFragment" />
+        <action
+            android:id="@+id/action_characterProfileFragment_to_itemProfileFragment"
+            app:destination="@id/itemProfileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newItemFragment"
+        android:name="com.example.hal_9000.igor.fragment.NewItemFragment"
+        android:label="fragment_new_item"
+        tools:layout="@layout/fragment_new_item">
+        <argument
+            android:name="item"
+            app:argType="com.example.hal_9000.igor.model.Item" />
+        <argument
+            android:name="newOwner"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/itemProfileFragment"
+        android:name="com.example.hal_9000.igor.fragment.ItemProfileFragment"
+        android:label="ItemProfileFragment"
+        tools:layout="@layout/fragment_item_profile">
+        <argument
+            android:name="item"
+            app:argType="com.example.hal_9000.igor.model.Item" />
+        <argument
+            android:name="owner"
+            app:argType="com.example.hal_9000.igor.model.Personagem" />
+        <argument
+            android:name="readOnly"
+            android:defaultValue="false"
+            app:argType="boolean" />
     </fragment>
 
     <include app:graph="@navigation/sub_nav_graph" />

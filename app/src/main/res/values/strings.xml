@@ -11,4 +11,31 @@
     <string name="str_notificacoes">Notificações</string>
     <string name="str_logout">Log Out</string>
     <string name="hp_str">HP</string>
+
+    <string-array name="item_types">
+        <item>Equipamento</item>
+        <item>Consumível</item>
+    </string-array>
+
+    <string-array name="heal_names">
+        <item>vida</item>
+        <item>cura</item>
+        <item>health</item>
+        <item>heal</item>
+        <item>hp</item>
+    </string-array>
+
+    <string-array name="maxhealth_names">
+        <item>vida maxima</item>
+        <item>vida máxima</item>
+        <item>maxima vida</item>
+        <item>máxima vida</item>
+        <item>maximo hp</item>
+        <item>máximo hp</item>
+        <item>health max</item>
+        <item>max health</item>
+        <item>hp max</item>
+        <item>max hp</item>
+    </string-array>
+
 </resources>
