@@ -64,10 +64,11 @@ class SessionFragment : Fragment() {
             }
 
             if (snapshot != null && snapshot.exists()) {
-                Log.d(TAG, "Dices roll requested: " + snapshot.data!!)
                 val playerDices = snapshot.toObject(PlayerDices::class.java)!!
-                if (!playerDices.rolled && navController.currentDestination?.label != "DicesFragment")
+                if (!playerDices.rolled && navController.currentDestination?.label != "DicesFragment") {
+                    Log.d(TAG, "Dices roll requested: " + snapshot.data!!)
                     rollDices()
+                }
             } else {
                 Log.d(TAG, "Dices roll requested: null")
             }

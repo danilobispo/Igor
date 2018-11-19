@@ -27,11 +27,15 @@ class CombatFragment : Fragment() {
 
     private val TAG = "CombatFragment"
 
-    private var adapterPlayers: CharactersCombatListAdapter? = null
-    private var mPlayersList: RecyclerView? = null
+    private lateinit var btnAction: Button
 
-    private var adapterEnemies: CharactersCombatListAdapter? = null
-    private var mEnemiesList: RecyclerView? = null
+    private lateinit var adapterPlayers: CharactersCombatListAdapter
+    private lateinit var mPlayersList: RecyclerView
+
+    private lateinit var adapterEnemies: CharactersCombatListAdapter
+    private lateinit var mEnemiesList: RecyclerView
+
+    private var characterSelected: Personagem? = null
 
     private var db: FirebaseFirestore? = null
 
@@ -40,9 +44,11 @@ class CombatFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_combat, container, false)
 
-        mPlayersList = view.findViewById(R.id.rv_chars1)
-        mPlayersList?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        mPlayersList?.setHasFixedSize(true)
+        btnAction = view.findViewById(R.id.btn_action)
+
+        mPlayersList = view.findViewById(R.id.rv_players)
+        mPlayersList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        mPlayersList.setHasFixedSize(true)
 
         db = FirebaseFirestore.getInstance()
 
@@ -57,12 +63,12 @@ class CombatFragment : Fragment() {
                 .setQuery(queryPlayers, Personagem::class.java)
                 .build()
 
-        adapterPlayers = CharactersCombatListAdapter(optionsPlayers) { personagem: Personagem -> personagemItemClicked(personagem) }
-        mPlayersList?.adapter = adapterPlayers
+        adapterPlayers = CharactersCombatListAdapter(optionsPlayers, { personagem: Personagem -> personagemItemClicked(personagem) }, { mode: Boolean -> selectionModeChanged("adapterPlayers", mode) })
+        mPlayersList.adapter = adapterPlayers
 
-        mEnemiesList = view.findViewById(R.id.rv_chars2)
-        mEnemiesList?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-        mEnemiesList?.setHasFixedSize(true)
+        mEnemiesList = view.findViewById(R.id.rv_npcs)
+        mEnemiesList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        mEnemiesList.setHasFixedSize(true)
 
         db = FirebaseFirestore.getInstance()
 
@@ -75,43 +81,54 @@ class CombatFragment : Fragment() {
                 .setQuery(queryEnemies, Personagem::class.java)
                 .build()
 
-        adapterEnemies = CharactersCombatListAdapter(optionsEnemies) { personagem: Personagem -> enemyItemClicked(personagem) }
-        mEnemiesList?.adapter = adapterEnemies
+        adapterEnemies = CharactersCombatListAdapter(optionsEnemies, { personagem: Personagem -> enemyItemClicked(personagem) }, { mode: Boolean -> selectionModeChanged("adapterEnemies", mode) })
+        mEnemiesList.adapter = adapterEnemies
 
-        val btnAction = view.findViewById<Button>(R.id.btn_action)
-        btnAction.setOnClickListener {
-            val actions = arrayOf("Rolar dados", "Dar dano", "Curar", "Aumentar Atributo", "Diminuir Atributo", "Criar ou Alterar Atributo")
-
-            //TODO: Criar layout para o DialogAlert
-
-            val builder = AlertDialog.Builder(context!!)
-            builder.setTitle("Escolha uma ação")
-            builder.setItems(actions) { _, which ->
-                when (actions[which]) {
-                    "Rolar dados" -> {
-                        showDiceChooser()
-                    }
-                    "Dar dano" -> {
-                        showDamageDialog()
-                    }
-                    "Curar" -> {
-                        showHealDialog()
-                    }
-                    "Aumentar Atributo" -> {
-                        showStatChooserDialog("up")
-                    }
-                    "Diminuir Atributo" -> {
-                        showStatChooserDialog("down")
-                    }
-                    "Criar ou Alterar Atributo" -> {
-                        showStatChooserDialog("change")
-                    }
-                }
-            }
-            builder.show()
-        }
+        btnAction.setOnClickListener { showActionsDialog() }
 
         return view
+    }
+
+    private fun showActionsDialog() {
+        //TODO: Criar layout para o DialogAlert
+        val actions = arrayOf("Rolar dados", "Dar dano", "Curar", "Aumentar Atributo", "Diminuir Atributo", "Criar ou Alterar Atributo")
+        val builder = AlertDialog.Builder(context!!)
+        builder.setTitle("Escolha uma ação")
+        builder.setItems(actions) { _, which ->
+            when (actions[which]) {
+                "Rolar dados" -> {
+                    showDiceChooser()
+                }
+                "Dar dano" -> {
+                    showDamageDialog()
+                }
+                "Curar" -> {
+                    showHealDialog()
+                }
+                "Aumentar Atributo" -> {
+                    showStatChooserDialog("up")
+                }
+                "Diminuir Atributo" -> {
+                    showStatChooserDialog("down")
+                }
+                "Criar ou Alterar Atributo" -> {
+                    showStatChooserDialog("change")
+                }
+            }
+        }
+        builder.show()
+    }
+
+    private fun selectionModeChanged(adapter: String, mode: Boolean) {
+        if (adapter == "adapterPlayers")
+            adapterEnemies.selectionModeOther = mode
+        else
+            adapterPlayers.selectionModeOther = mode
+
+        if (adapterPlayers.selectionModeOwn || adapterEnemies.selectionModeOwn)
+            btnAction.visibility = View.VISIBLE
+        else
+            btnAction.visibility = View.INVISIBLE
     }
 
     private fun showDamageDialog() {
@@ -215,12 +232,15 @@ class CombatFragment : Fragment() {
         }
 
         val stats: ArrayList<Atributo> = when {
-            adapterPlayers!!.selectedIds.size > 0 ->
-                adapterPlayers!!.getItem(adapterPlayers!!.selectedIds[0]).atributos
-            adapterEnemies!!.selectedIds.size > 0 -> {
-                adapterEnemies!!.getItem(adapterEnemies!!.selectedIds[0]).atributos
-            }
-            else -> return
+            characterSelected != null -> characterSelected!!.atributos
+            adapterPlayers.selectedIds.size > 0 -> adapterPlayers.getItem(adapterPlayers.selectedIds[0]).atributos
+            adapterEnemies.selectedIds.size > 0 -> adapterEnemies.getItem(adapterEnemies.selectedIds[0]).atributos
+            else -> arrayListOf()
+        }
+
+        if (stats.size == 0) {
+            Toast.makeText(context, "Personagem sem atributos", Toast.LENGTH_SHORT).show();
+            return
         }
 
         val statsNames: ArrayList<String?> = arrayListOf()
@@ -263,15 +283,18 @@ class CombatFragment : Fragment() {
 
         val batch = db!!.batch()
 
-        val players = adapterPlayers!!.selectedIds
-        for (idx in players) {
-            val char = adapterPlayers!!.getItem(idx)
+        if (characterSelected != null) {
+            alterarVida(batch, characterSelected!!, action, value)
+            characterSelected = null
+        }
+
+        for (idx in adapterPlayers.selectedIds) {
+            val char = adapterPlayers.getItem(idx)
             alterarVida(batch, char, action, value)
         }
 
-        val enemies = adapterEnemies!!.selectedIds
-        for (idx in enemies) {
-            val char = adapterEnemies!!.getItem(idx)
+        for (idx in adapterEnemies.selectedIds) {
+            val char = adapterEnemies.getItem(idx)
             alterarVida(batch, char, action, value)
         }
 
@@ -308,15 +331,18 @@ class CombatFragment : Fragment() {
 
         val batch = db!!.batch()
 
-        val players = adapterPlayers!!.selectedIds
-        for (idx in players) {
-            val char = adapterPlayers!!.getItem(idx)
+        if (characterSelected != null) {
+            alterarAtributo(batch, characterSelected!!, stat, statIdx, value)
+            characterSelected = null
+        }
+
+        for (idx in adapterPlayers.selectedIds) {
+            val char = adapterPlayers.getItem(idx)
             alterarAtributo(batch, char, stat, statIdx, value)
         }
 
-        val enemies = adapterEnemies!!.selectedIds
-        for (idx in enemies) {
-            val char = adapterEnemies!!.getItem(idx)
+        for (idx in adapterEnemies.selectedIds) {
+            val char = adapterEnemies.getItem(idx)
             alterarAtributo(batch, char, stat, statIdx, value)
         }
 
@@ -373,16 +399,23 @@ class CombatFragment : Fragment() {
 
         val batch = db!!.batch()
 
-        val players = adapterPlayers!!.selectedIds
-        for (idx in players) {
-            val char = adapterPlayers!!.getItem(idx)
+        if (characterSelected != null) {
+            playerDices.character = characterSelected!!.nome
+            if (characterSelected!!.isnpc)
+                ask(batch, playerDices, LoginActivity.username)
+            else
+                ask(batch, playerDices, characterSelected!!.nome)
+            characterSelected = null
+        }
+
+        for (idx in adapterPlayers.selectedIds) {
+            val char = adapterPlayers.getItem(idx)
             playerDices.character = char.nome
             ask(batch, playerDices, char.nome)
         }
 
-        val enemies = adapterEnemies!!.selectedIds
-        for (idx in enemies) {
-            val char = adapterEnemies!!.getItem(idx)
+        for (idx in adapterEnemies.selectedIds) {
+            val char = adapterEnemies.getItem(idx)
             playerDices.character = char.nome
             ask(batch, playerDices, LoginActivity.username)
         }
@@ -417,21 +450,25 @@ class CombatFragment : Fragment() {
 
     private fun enemyItemClicked(personagem: Personagem) {
         Log.d(TAG, "Clicked enemy ${personagem.nome}")
+        characterSelected = personagem
+        showActionsDialog()
     }
 
     private fun personagemItemClicked(personagem: Personagem) {
         Log.d(TAG, "Clicked player ${personagem.nome}")
+        characterSelected = personagem
+        showActionsDialog()
     }
 
     override fun onStart() {
         super.onStart()
-        adapterPlayers!!.startListening()
-        adapterEnemies!!.startListening()
+        adapterPlayers.startListening()
+        adapterEnemies.startListening()
     }
 
     override fun onStop() {
         super.onStop()
-        adapterPlayers!!.stopListening()
-        adapterEnemies!!.stopListening()
+        adapterPlayers.stopListening()
+        adapterEnemies.stopListening()
     }
 }

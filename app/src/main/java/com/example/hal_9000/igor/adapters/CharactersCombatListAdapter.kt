@@ -20,11 +20,13 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestoreException
 import kotlinx.android.synthetic.main.character_item.view.*
 
-class CharactersCombatListAdapter(options: FirestoreRecyclerOptions<Personagem>, private val itemClickListener: (Personagem) -> Unit) : FirestoreRecyclerAdapter<Personagem, CharactersCombatListAdapter.CharactersViewHolder>(options), ViewHolderClickListerner {
+class CharactersCombatListAdapter(options: FirestoreRecyclerOptions<Personagem>, private val itemClickListener: (Personagem) -> Unit, private val syncSelectionListener: (Boolean) -> Unit) : FirestoreRecyclerAdapter<Personagem, CharactersCombatListAdapter.CharactersViewHolder>(options), ViewHolderClickListerner {
 
     private val TAG = "CharsCombatListAdapter"
 
     val selectedIds: MutableList<Int> = arrayListOf()
+    var selectionModeOwn = false
+    var selectionModeOther = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharactersViewHolder {
         return CharactersViewHolder(LayoutInflater.from(parent.context)
@@ -48,24 +50,42 @@ class CharactersCombatListAdapter(options: FirestoreRecyclerOptions<Personagem>,
         Log.e(TAG, "Error: $e.message")
     }
 
+    private fun setSelectionMode(mode: Boolean) {
+        if (selectionModeOwn != mode) {
+            selectionModeOwn = mode
+            syncSelectionListener(mode)
+        }
+    }
+
     private fun toggleSelected(index: Int) {
         if (selectedIds.contains(index))
             selectedIds.remove(index)
         else
             selectedIds.add(index)
+        setSelectionMode(selectedIds.count() > 0)
+        notifyItemChanged(index)
+    }
 
+    private fun setSelected(index: Int) {
+        if (selectedIds.contains(index))
+            return
+        selectedIds.add(index)
+        setSelectionMode(true)
         notifyItemChanged(index)
     }
 
     override fun onTap(index: Int) {
-        toggleSelected(index)
+        if (selectionModeOwn || selectionModeOther)
+            toggleSelected(index)
+        else
+            itemClickListener(getItem(index))
     }
 
     override fun onLongTap(index: Int) {
-        toggleSelected(index)
+        setSelected(index)
     }
 
-    class CharactersViewHolder(itemView: View, private val clickListener: ViewHolderClickListerner) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+    class CharactersViewHolder(itemView: View, private val clickListener: ViewHolderClickListerner) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
 
         fun setCharacterNome(nomeCharacter: String) {
             val tvNome: TextView = itemView.findViewById(R.id.tv_name)
@@ -124,10 +144,16 @@ class CharactersCombatListAdapter(options: FirestoreRecyclerOptions<Personagem>,
         fun setClickListener(personagem: Personagem, clickListener: (Personagem) -> Unit) {
             //itemView.setOnClickListener { clickListener(personagem) }
             itemView.setOnClickListener(this)
+            itemView.setOnLongClickListener(this)
         }
 
         override fun onClick(v: View?) {
             clickListener.onTap(adapterPosition)
+        }
+
+        override fun onLongClick(v: View?): Boolean {
+            clickListener.onLongTap(adapterPosition)
+            return true
         }
     }
 }

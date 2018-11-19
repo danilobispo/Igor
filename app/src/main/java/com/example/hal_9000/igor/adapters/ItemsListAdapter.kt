@@ -10,22 +10,18 @@ import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.hal_9000.igor.R
-import com.example.hal_9000.igor.`interface`.ViewHolderClickListerner
 import com.example.hal_9000.igor.model.Item
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestoreException
-import kotlinx.android.synthetic.main.character_item.view.*
 
-class ItemsListAdapter(options: FirestoreRecyclerOptions<Item>, private val itemClickListener: (Item) -> Unit) : FirestoreRecyclerAdapter<Item, ItemsListAdapter.CharactersViewHolder>(options), ViewHolderClickListerner {
+class ItemsListAdapter(options: FirestoreRecyclerOptions<Item>, private val itemClickListener: (Item) -> Unit) : FirestoreRecyclerAdapter<Item, ItemsListAdapter.CharactersViewHolder>(options) {
 
     private val TAG = "CharsCombatListAdapter"
 
-    val selectedIds: MutableList<Int> = arrayListOf()
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharactersViewHolder {
         return CharactersViewHolder(LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_item, parent, false), this)
+                .inflate(R.layout.item_item, parent, false))
     }
 
     override fun onBindViewHolder(holder: CharactersViewHolder, position: Int, model: Item) {
@@ -33,44 +29,13 @@ class ItemsListAdapter(options: FirestoreRecyclerOptions<Item>, private val item
         holder.setItemType(model.type)
         holder.setItemImage(model.image_url)
         holder.setClickListener(model, itemClickListener)
-
-        if (selectedIds.contains(position))
-            holder.itemView.selected_overlay.visibility = View.VISIBLE
-        else
-            holder.itemView.selected_overlay.visibility = View.INVISIBLE
     }
 
     override fun onError(e: FirebaseFirestoreException) {
         Log.e(TAG, "Error: $e.message")
     }
 
-    private fun toggleSelected(index: Int) {
-        if (selectedIds.contains(index))
-            selectedIds.remove(index)
-        else
-            selectedIds.add(index)
-        notifyItemChanged(index)
-    }
-
-    private fun setSelected(index: Int) {
-        if (selectedIds.contains(index))
-            return
-        selectedIds.add(index)
-        notifyItemChanged(index)
-    }
-
-    override fun onTap(index: Int) {
-        if (selectedIds.size > 0)
-            toggleSelected(index)
-        else
-            itemClickListener(getItem(index))
-    }
-
-    override fun onLongTap(index: Int) {
-        setSelected(index)
-    }
-
-    class CharactersViewHolder(itemView: View, private val clickListener: ViewHolderClickListerner) : RecyclerView.ViewHolder(itemView), View.OnClickListener, View.OnLongClickListener {
+    class CharactersViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun setItemName(characterName: String) {
             val tvName: TextView = itemView.findViewById(R.id.tv_name)
@@ -98,18 +63,7 @@ class ItemsListAdapter(options: FirestoreRecyclerOptions<Item>, private val item
         }
 
         fun setClickListener(item: Item, clickListener: (Item) -> Unit) {
-//            itemView.setOnClickListener { clickListener(item) }
-            itemView.setOnClickListener(this)
-            itemView.setOnLongClickListener(this)
-        }
-
-        override fun onClick(v: View?) {
-            clickListener.onTap(adapterPosition)
-        }
-
-        override fun onLongClick(v: View?): Boolean {
-            clickListener.onLongTap(adapterPosition)
-            return true
+            itemView.setOnClickListener { clickListener(item) }
         }
     }
 }
