@@ -40,6 +40,8 @@ class DicesFragment : Fragment() {
         mRecyclerView.layoutManager = GridLayoutManager(context, 2)
         mRecyclerView.setHasFixedSize(true)
 
+        mRecyclerView.adapter = DicesListAdapter(arrayListOf()) { position: Int -> diceItemClicked(position) }
+
         db = FirebaseFirestore.getInstance()
 
         documentReference = db.collection("adventures")
@@ -51,11 +53,8 @@ class DicesFragment : Fragment() {
 
         documentReference.get()
                 .addOnSuccessListener {
-                    if (it == null || !it.exists()) return@addOnSuccessListener
-
                     playerDices = it.toObject(PlayerDices::class.java)!!
                     adapter = DicesListAdapter(playerDices.dices) { position: Int -> diceItemClicked(position) }
-
                     mRecyclerView.adapter = adapter
                 }
                 .addOnFailureListener { e ->
