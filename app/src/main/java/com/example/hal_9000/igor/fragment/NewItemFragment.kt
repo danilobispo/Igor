@@ -263,7 +263,7 @@ class NewItemFragment : Fragment() {
                     Log.d(TAG, "Image upload successfully")
                     ref.downloadUrl.addOnSuccessListener {
                         Log.d(TAG, "DownloadUrl: $taskSnapshot")
-                        downloadUrl = taskSnapshot.toString()
+                        downloadUrl = it.toString()
                         progressBar.visibility = View.INVISIBLE
                         btn_concluir.isEnabled = true
                     }
