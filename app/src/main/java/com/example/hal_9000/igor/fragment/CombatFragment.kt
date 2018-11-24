@@ -13,7 +13,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.navigation.Navigation
 import com.example.hal_9000.igor.LoginActivity
+import com.example.hal_9000.igor.NavGraphDirections
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.CharactersCombatListAdapter
 import com.example.hal_9000.igor.model.*
@@ -96,11 +98,18 @@ class CombatFragment : Fragment() {
 
     private fun showActionsDialog() {
         //TODO: Criar layout para o DialogAlert
-        val actions = arrayOf("Rolar dados", "Dar dano", "Curar", "Aumentar Atributo", "Diminuir Atributo", "Criar ou Alterar Atributo")
+        val actions = if (adapterPlayers.selectionModeOwn || adapterEnemies.selectionModeOwn)
+            arrayOf("Rolar dados", "Dar dano", "Curar", "Aumentar Atributo", "Diminuir Atributo", "Criar ou Alterar Atributo")
+        else
+            arrayOf("Perfil", "Rolar dados", "Dar dano", "Curar", "Aumentar Atributo", "Diminuir Atributo", "Criar ou Alterar Atributo")
+
         val builder = AlertDialog.Builder(context!!)
         builder.setTitle("Escolha uma ação")
         builder.setItems(actions) { _, which ->
             when (actions[which]) {
+                "Perfil" -> {
+                    showProfile()
+                }
                 "Rolar dados" -> {
                     showDiceChooser()
                 }
@@ -124,18 +133,9 @@ class CombatFragment : Fragment() {
         builder.show()
     }
 
-    private fun selectionModeChanged(adapter: String, mode: Boolean) {
-        if (adapter == "adapterPlayers")
-            adapterEnemies.selectionModeOther = mode
-        else
-            adapterPlayers.selectionModeOther = mode
-
-        if (!AdventureFragment.isMaster) return
-
-        if (adapterPlayers.selectionModeOwn || adapterEnemies.selectionModeOwn)
-            btnAction.visibility = View.VISIBLE
-        else
-            btnAction.visibility = View.INVISIBLE
+    private fun showProfile() {
+        val action = NavGraphDirections.actionGlobalCharacterProfileFragment(characterSelected!!)
+        Navigation.findNavController(activity!!, R.id.nav_host).navigate(action)
     }
 
     private fun showDamageDialog() {
@@ -457,16 +457,38 @@ class CombatFragment : Fragment() {
 
     private fun enemyItemClicked(personagem: Personagem) {
         Log.d(TAG, "Clicked enemy ${personagem.nome}")
-        if (!AdventureFragment.isMaster) return
-        characterSelected = personagem
-        showActionsDialog()
+        if (AdventureFragment.isMaster) {
+            characterSelected = personagem
+            showActionsDialog()
+        } else {
+            val action = NavGraphDirections.actionGlobalCharacterProfileFragment(personagem)
+            Navigation.findNavController(activity!!, R.id.nav_host).navigate(action)
+        }
     }
 
     private fun personagemItemClicked(personagem: Personagem) {
         Log.d(TAG, "Clicked player ${personagem.nome}")
+        if (AdventureFragment.isMaster) {
+            characterSelected = personagem
+            showActionsDialog()
+        } else {
+            val action = NavGraphDirections.actionGlobalCharacterProfileFragment(personagem)
+            Navigation.findNavController(activity!!, R.id.nav_host).navigate(action)
+        }
+    }
+
+    private fun selectionModeChanged(adapter: String, mode: Boolean) {
+        if (adapter == "adapterPlayers")
+            adapterEnemies.selectionModeOther = mode
+        else
+            adapterPlayers.selectionModeOther = mode
+
         if (!AdventureFragment.isMaster) return
-        characterSelected = personagem
-        showActionsDialog()
+
+        if (adapterPlayers.selectionModeOwn || adapterEnemies.selectionModeOwn)
+            btnAction.visibility = View.VISIBLE
+        else
+            btnAction.visibility = View.INVISIBLE
     }
 
     override fun onStart() {
