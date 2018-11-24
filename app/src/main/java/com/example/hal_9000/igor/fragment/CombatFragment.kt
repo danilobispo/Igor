@@ -58,6 +58,7 @@ class CombatFragment : Fragment() {
                 .whereEqualTo("aventura_id", aventura.id)
                 .whereEqualTo("isnpc", false)
                 .whereEqualTo("ismaster", false)
+                .whereEqualTo("hidden", false)
 
         val optionsPlayers = FirestoreRecyclerOptions.Builder<Personagem>()
                 .setQuery(queryPlayers, Personagem::class.java)
@@ -76,6 +77,7 @@ class CombatFragment : Fragment() {
                 .whereEqualTo("aventura_id", aventura.id)
                 .whereEqualTo("isnpc", true)
                 .whereEqualTo("ismaster", false)
+                .whereEqualTo("hidden", false)
 
         val optionsEnemies = FirestoreRecyclerOptions.Builder<Personagem>()
                 .setQuery(queryEnemies, Personagem::class.java)

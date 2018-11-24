@@ -11,9 +11,7 @@ import android.view.ViewGroup
 import androidx.navigation.Navigation
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.CharactersListAdapter
-import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Personagem
-import com.example.hal_9000.igor.model.Session
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -38,8 +36,13 @@ class CharactersFragment : Fragment() {
 
         db = FirebaseFirestore.getInstance()
 
-        val query = db.collection("characters")
-                .whereEqualTo("aventura_id", AdventureFragment.aventura.id)
+        val query = if (AdventureFragment.isMaster)
+            db.collection("characters")
+                    .whereEqualTo("aventura_id", AdventureFragment.aventura.id)
+        else
+            db.collection("characters")
+                    .whereEqualTo("aventura_id", AdventureFragment.aventura.id)
+                    .whereEqualTo("hidden", false)
 
         val options = FirestoreRecyclerOptions.Builder<Personagem>()
                 .setQuery(query, Personagem::class.java)

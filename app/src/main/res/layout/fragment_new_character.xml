@@ -63,6 +63,12 @@
                     android:hint="HP"
                     android:inputType="number" />
 
+                <Switch
+                    android:id="@+id/swith_hidden"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="Escondido" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -14,6 +14,7 @@ data class Personagem(
         var created_at: Long = 0,
         var creator: String = "",
         var image_url: String = "",
+        var hidden: Boolean = false,
         var isnpc: Boolean = false,
         var ismaster: Boolean = false,
         var aventura_id: String = "",

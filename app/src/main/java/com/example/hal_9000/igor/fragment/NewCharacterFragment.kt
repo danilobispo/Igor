@@ -47,6 +47,7 @@ class NewCharacterFragment : Fragment() {
     private lateinit var etHealth: EditText
     private lateinit var rvStats: RecyclerView
     private lateinit var ivPhoto: ImageView
+    private lateinit var switchHidden: Switch
     private lateinit var progressBar: ProgressBar
 
     private lateinit var adapter: StatsListAdapter
@@ -74,6 +75,7 @@ class NewCharacterFragment : Fragment() {
         etHealth = view.findViewById(R.id.et_hp)
         rvStats = view.findViewById(R.id.rv_stats)
         ivPhoto = view.findViewById(R.id.iv_photo)
+        switchHidden = view.findViewById(R.id.swith_hidden)
         progressBar = view.findViewById(R.id.progressBar)
 
         db = FirebaseFirestore.getInstance()
@@ -140,6 +142,7 @@ class NewCharacterFragment : Fragment() {
         etNome.setText(personagemOld.nome)
         etClasse.setText(personagemOld.classe)
         etDescricao.setText(personagemOld.descricao)
+        switchHidden.isChecked = personagemOld.hidden
 
         if (personagemOld.health_max != -1)
             etHealth.setText(personagemOld.health_max.toString(), TextView.BufferType.EDITABLE)
@@ -165,6 +168,7 @@ class NewCharacterFragment : Fragment() {
         personagem.nome = etNome.text.toString()
         personagem.classe = etClasse.text.toString()
         personagem.descricao = etDescricao.text.toString()
+        personagem.hidden = switchHidden.isChecked
 
         if (etHealth.text.isNotEmpty())
             personagem.health_max = Integer.valueOf(etHealth.text.toString())

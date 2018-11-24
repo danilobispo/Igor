@@ -239,15 +239,43 @@ class ItemProfileFragment : Fragment() {
         }
 
         fun selectUser() {
-            val actions = AdventureFragment.aventura.players.keys.toTypedArray()
+            progressBar.visibility = View.VISIBLE
 
-            val builder = AlertDialog.Builder(context!!)
-            builder.setTitle("Para quem deseja transferir?")
-            builder.setItems(actions) { _, which ->
-                item.owner = actions[which]
-                transfer()
-            }
-            builder.show()
+            val query = if (AdventureFragment.isMaster)
+                db.collection("characters")
+                        .whereEqualTo("aventura_id", AdventureFragment.aventura.id)
+            else
+                db.collection("characters")
+                        .whereEqualTo("aventura_id", AdventureFragment.aventura.id)
+                        .whereEqualTo("hidden", false)
+
+            query.get()
+                    .addOnSuccessListener {
+                        Log.d(TAG, "Documents queried successfully")
+                        progressBar.visibility = View.GONE
+
+                        val charTextsArray: ArrayList<String> = arrayListOf()
+                        val charNamesArray: ArrayList<String> = arrayListOf()
+
+                        for (document in it.documents) {
+                            val char = document.toObject(Personagem::class.java)!!
+                            charTextsArray.add("${char.nome} (${char.classe})")
+                            charNamesArray.add(char.nome)
+                        }
+
+                        val builder = AlertDialog.Builder(context!!)
+                        builder.setTitle("Para quem deseja transferir?")
+                        builder.setItems(charTextsArray.toTypedArray()) { _, which ->
+                            item.owner = charNamesArray[which]
+                            transfer()
+                        }
+                        builder.show()
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error querying documents", e)
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(context, "Erro ao buscar jogadores", Toast.LENGTH_SHORT).show()
+                    }
         }
 
         selectUser()
