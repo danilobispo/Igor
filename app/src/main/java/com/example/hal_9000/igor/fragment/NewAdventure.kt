@@ -1,7 +1,6 @@
 package com.example.hal_9000.igor.fragment
 
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
@@ -48,7 +47,6 @@ class NewAdventure : Fragment() {
 
         val buttonFinish = view.findViewById<Button>(R.id.btn_finish)
         val imageClose = view.findViewById<ImageView>(R.id.iv_close)
-        val fabEditMode = view.findViewById<FloatingActionButton>(R.id.fab_edit_mode)
 
         rb1.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked)
@@ -86,7 +84,6 @@ class NewAdventure : Fragment() {
 
         buttonFinish.setOnClickListener { saveAdventure() }
         imageClose.setOnClickListener { exitFragment() }
-        fabEditMode.setOnClickListener { exitFragment() }
 
         return view
     }

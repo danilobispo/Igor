@@ -32,11 +32,8 @@ class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, 
         holder.setAdventureTitle(model.title)
         holder.setAdventureNextSession(model.next_session)
         holder.setAdventureTheme(model.theme)
-
-        if (editMode)
-            holder.setDeleteClickListener(model, deleteClickListener)
-        else
-            holder.setClickListener(model, itemClickListener)
+        holder.setClickListener(model, editMode, itemClickListener)
+        holder.setEditMode(model, editMode, deleteClickListener)
     }
 
     override fun onError(e: FirebaseFirestoreException) {
@@ -88,20 +85,32 @@ class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, 
             }
         }
 
-        fun setClickListener(aventura: Aventura, clickListener: (Aventura) -> Unit) {
-            itemView.setOnClickListener { clickListener(aventura) }
+        fun setClickListener(aventura: Aventura, editMode: Boolean, clickListener: (Aventura) -> Unit) {
+            if (editMode)
+                itemView.setOnClickListener {}
+            else
+                itemView.setOnClickListener { clickListener(aventura) }
         }
 
-        fun setDeleteClickListener(aventura: Aventura, clickListener: (Aventura) -> Unit) {
-            if (aventura.creator != LoginActivity.username) {
-                val overlay: View = itemView.findViewById(R.id.overlay_image)
-                overlay.visibility = View.VISIBLE
-                return
-            }
+        fun setEditMode(aventura: Aventura, editMode: Boolean, clickListener: (Aventura) -> Unit) {
+            val overlay: View = itemView.findViewById(R.id.overlay_image)
+            val deleteIcon: ImageView = itemView.findViewById(R.id.iv_delete)
 
-            val image: ImageView = itemView.findViewById(R.id.iv_delete)
-            image.visibility = View.VISIBLE
-            image.setOnClickListener { clickListener(aventura) }
+            if (editMode) {
+                if (aventura.creator == LoginActivity.username) {
+                    overlay.visibility = View.GONE
+                    deleteIcon.visibility = View.VISIBLE
+                    deleteIcon.setOnClickListener { clickListener(aventura) }
+                } else {
+                    overlay.visibility = View.VISIBLE
+                    deleteIcon.visibility = View.GONE
+                    deleteIcon.setOnClickListener {}
+                }
+            } else {
+                overlay.visibility = View.GONE
+                deleteIcon.visibility = View.GONE
+                deleteIcon.setOnClickListener {}
+            }
         }
     }
 }

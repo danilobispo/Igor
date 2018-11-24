@@ -83,11 +83,6 @@ class NewSession : Fragment() {
             exitFragment()
         }
 
-        val fabEditMode = view.findViewById<FloatingActionButton>(R.id.fab_edit_mode)
-        fabEditMode.setOnClickListener {
-            exitFragment()
-        }
-
         return view
     }
 

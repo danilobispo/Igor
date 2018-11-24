@@ -29,12 +29,13 @@ class HomeFragment : Fragment() {
     private val TAG = "HomeFragment"
 
     private lateinit var fabNovaAventura: FloatingActionButton
-    private lateinit var fabEditMode: FloatingActionButton
     private lateinit var fabSaveEdit: FloatingActionButton
 
     private lateinit var adapter: AdventureRecyclerViewAdapter
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var db: FirebaseFirestore
+
+    private var editMode = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -44,7 +45,6 @@ class HomeFragment : Fragment() {
         setHasOptionsMenu(true)
 
         fabNovaAventura = view.findViewById(R.id.fab_nova_aventura)
-        fabEditMode = view.findViewById(R.id.fab_edit_mode)
         fabSaveEdit = view.findViewById(R.id.fab_save_edit)
 
         val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
@@ -73,14 +73,12 @@ class HomeFragment : Fragment() {
             NavHostFragment.findNavController(this).navigate(action)
         }
 
-        fabEditMode.setOnClickListener { setEditModeOff() }
         fabSaveEdit.setOnClickListener { setEditModeOff() }
 
         return view
     }
 
     private fun aventuraItemClicked(aventura: Aventura) {
-        Log.d(TAG, "Clicked: ${aventura.title}")
         val action = HomeFragmentDirections.ActionHomeFragmentToAdventureFragment(aventura)
         action.setAventura(aventura)
         findNavController(this).navigate(action)
@@ -124,8 +122,8 @@ class HomeFragment : Fragment() {
 
     private fun setEditModeOn() {
         Log.d(TAG, "Edit mode on")
+        editMode = true
         fabNovaAventura.hide()
-        fabEditMode.show()
         fabSaveEdit.show()
         adapter.editMode = true
         adapter.notifyDataSetChanged()
@@ -133,8 +131,8 @@ class HomeFragment : Fragment() {
 
     private fun setEditModeOff() {
         Log.d(TAG, "Edit mode off")
+        editMode = false
         fabNovaAventura.show()
-        fabEditMode.hide()
         fabSaveEdit.hide()
         adapter.editMode = false
         adapter.notifyDataSetChanged()

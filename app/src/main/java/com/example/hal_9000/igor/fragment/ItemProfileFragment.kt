@@ -7,12 +7,14 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
 import com.example.hal_9000.igor.LoginActivity
+import com.example.hal_9000.igor.NavGraphDirections
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.StatsListAdapter
 import com.example.hal_9000.igor.model.Atributo
@@ -71,6 +73,8 @@ class ItemProfileFragment : Fragment() {
         btnGive = view.findViewById(R.id.btn_give)
         btnDiscard = view.findViewById(R.id.btn_discard)
         progressBar = view.findViewById(R.id.progressBar)
+
+        setHasOptionsMenu(true)
 
         db = FirebaseFirestore.getInstance()
 
@@ -341,5 +345,22 @@ class ItemProfileFragment : Fragment() {
                     Toast.makeText(context, "Erro ao criar aventura", Toast.LENGTH_SHORT).show()
                     progressBar.visibility = View.INVISIBLE
                 }
+    }
+
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        if (!AdventureFragment.isMaster)
+            return super.onOptionsItemSelected(menuItem)
+
+        when (menuItem.itemId) {
+            R.id.menu_editar -> {
+                val action = NavGraphDirections.ActionGlobalNewItemFragment(item, item.owner)
+                action.setItem(item)
+                action.setNewOwner(item.owner)
+                NavHostFragment.findNavController(this).navigate(action)
+            }
+            R.id.menu_ordenar -> {
+            }
+        }
+        return super.onOptionsItemSelected(menuItem)
     }
 }

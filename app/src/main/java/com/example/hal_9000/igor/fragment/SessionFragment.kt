@@ -9,12 +9,14 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
@@ -35,6 +37,8 @@ class SessionFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_session, container, false)
+
+        setHasOptionsMenu(true)
 
         session = SessionFragmentArgs.fromBundle(arguments).session
         sessionId = session.created_at.toString()
@@ -119,6 +123,22 @@ class SessionFragment : Fragment() {
                 .setNegativeButton("Cancelar") { _, _ ->
                 }
                 .show()
+    }
+
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        if (!AdventureFragment.isMaster)
+            return super.onOptionsItemSelected(menuItem)
+
+        when (menuItem.itemId) {
+            R.id.menu_editar -> {
+                val action = SessionFragmentDirections.ActionSessionFragmentToNewSession(session)
+                action.setSession(session)
+                NavHostFragment.findNavController(this).navigate(action)
+            }
+            R.id.menu_ordenar -> {
+            }
+        }
+        return super.onOptionsItemSelected(menuItem)
     }
 
     companion object {

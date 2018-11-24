@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.navigation.fragment.NavHostFragment
 import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
@@ -51,8 +50,6 @@ class AdventureFragment : Fragment() {
         fabNewSession = view.findViewById(R.id.fab_new_session)
         ivTabLeft = view.findViewById(R.id.iv_tab_left)
         ivTabRight = view.findViewById(R.id.iv_tab_right)
-        val fabEditMode = view.findViewById<FloatingActionButton>(R.id.fab_edit_mode)
-        val fabEditSave = view.findViewById<FloatingActionButton>(R.id.fab_save_edit)
         val fabNewSession = view.findViewById<FloatingActionButton>(R.id.fab_new_session)
         val fabNewCharacter = view.findViewById<FloatingActionButton>(R.id.fab_new_character)
 
@@ -102,17 +99,7 @@ class AdventureFragment : Fragment() {
         if (!isMaster) {
             fabNewSession.hide()
             fabNewCharacter.hide()
-            fabEditMode.hide()
-            fabEditSave.hide()
             return view
-        }
-
-        fabEditMode.setOnClickListener {
-            setEditModeOff()
-        }
-
-        fabEditSave.setOnClickListener {
-            setEditModeOff()
         }
 
         fabNewSession.setOnClickListener {
@@ -156,42 +143,16 @@ class AdventureFragment : Fragment() {
         }
     }
 
-    private fun setEditModeOn() {
-        Log.d(TAG, "Edit mode on")
-        editMode = true
-
-        fab_new_session.hide()
-        fab_save_edit.show()
-        fab_edit_mode.show()
-
-        tv_adventure_title.setOnClickListener {
-            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(aventura)
-            action.setAventura(aventura)
-            NavHostFragment.findNavController(this).navigate(action)
-        }
-    }
-
-    private fun setEditModeOff() {
-        Log.d(TAG, "Edit mode off")
-        editMode = false
-
-        fab_new_session.show()
-        fab_save_edit.hide()
-        fab_edit_mode.hide()
-
-        tv_adventure_title.setOnClickListener(null)
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (!isMaster)
+            return super.onOptionsItemSelected(item)
+
         when (item.itemId) {
             R.id.menu_editar -> {
-                if (isMaster) {
-                    Toast.makeText(context, "Editar", Toast.LENGTH_SHORT).show()
-                    setEditModeOn()
-                }
+                val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(aventura)
+                NavHostFragment.findNavController(this).navigate(action)
             }
             R.id.menu_ordenar -> {
-                Toast.makeText(context, "Ordenar", Toast.LENGTH_SHORT).show()
             }
         }
         return super.onOptionsItemSelected(item)

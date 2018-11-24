@@ -8,6 +8,7 @@ import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -17,6 +18,7 @@ import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
 import com.example.hal_9000.igor.LoginActivity
+import com.example.hal_9000.igor.NavGraphDirections
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.ItemsListAdapter
 import com.example.hal_9000.igor.adapters.StatsListAdapter
@@ -67,6 +69,8 @@ class CharacterProfileFragment : Fragment() {
         btnCreateItem = view.findViewById(R.id.btn_create_item)
 
         db = FirebaseFirestore.getInstance()
+
+        setHasOptionsMenu(true)
 
         character = CharacterProfileFragmentArgs.fromBundle(arguments).character
         readOnly = CharacterProfileFragmentArgs.fromBundle(arguments).readOnly
@@ -177,6 +181,23 @@ class CharacterProfileFragment : Fragment() {
         val progressDrawable = progressBarHealth.progressDrawable.mutate() as LayerDrawable
         progressDrawable.getDrawable(1).setColorFilter(color, android.graphics.PorterDuff.Mode.SRC_IN)
         progressBarHealth.progressDrawable = progressDrawable
+    }
+
+    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
+        if (!AdventureFragment.isMaster)
+            return super.onOptionsItemSelected(menuItem)
+
+        when (menuItem.itemId) {
+            R.id.menu_editar -> {
+                val action = NavGraphDirections.ActionGlobalNewCharacterFragment(character)
+                action.setPersonagem(character)
+                action.setIsNpc(character.isnpc)
+                NavHostFragment.findNavController(this).navigate(action)
+            }
+            R.id.menu_ordenar -> {
+            }
+        }
+        return super.onOptionsItemSelected(menuItem)
     }
 
     override fun onStart() {

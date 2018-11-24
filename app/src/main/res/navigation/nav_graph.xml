@@ -122,6 +122,9 @@
         <action
             android:id="@+id/action_sessionFragment_to_characterProfileFragment"
             app:destination="@id/characterProfileFragment" />
+        <action
+            android:id="@+id/action_sessionFragment_to_newSession"
+            app:destination="@id/newSession" />
     </fragment>
 
     <fragment
@@ -142,6 +145,9 @@
         <action
             android:id="@+id/action_characterProfileFragment_to_itemProfileFragment"
             app:destination="@id/itemProfileFragment" />
+        <action
+            android:id="@+id/action_characterProfileFragment_to_newCharacterFragment"
+            app:destination="@id/newCharacterFragment" />
     </fragment>
 
     <fragment
@@ -172,7 +178,17 @@
             android:name="readOnly"
             android:defaultValue="false"
             app:argType="boolean" />
+        <action
+            android:id="@+id/action_itemProfileFragment_to_newItemFragment"
+            app:destination="@id/newItemFragment" />
     </fragment>
+
+    <action
+        android:id="@+id/action_global_newCharacterFragment"
+        app:destination="@id/newCharacterFragment"/>
+    <action
+        android:id="@+id/action_global_newItemFragment"
+        app:destination="@id/newItemFragment"/>
 
     <include app:graph="@navigation/sub_nav_graph" />
 

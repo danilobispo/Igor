@@ -44,7 +44,7 @@ class JogadoresFragment : Fragment() {
                 .setQuery(query, Personagem::class.java)
                 .build()
 
-        adapter = JogadoresListAdapter(options, { personagem: Personagem -> personagemItemClicked(personagem) }, { personagem: Personagem -> personagemLongItemClicked(personagem) })
+        adapter = JogadoresListAdapter(options, { personagem: Personagem -> personagemItemClicked(personagem) })
         mJogadoresList.adapter = adapter
 
         return view
@@ -54,16 +54,6 @@ class JogadoresFragment : Fragment() {
         val action = AdventureFragmentDirections.ActionAdventureFragmentToCharacterProfileFragment(personagem)
         action.setCharacter(personagem)
         action.setReadOnly(true)
-        NavHostFragment.findNavController(this).navigate(action)
-    }
-
-    private fun personagemLongItemClicked(personagem: Personagem) {
-        if (AdventureFragment.aventura.creator != LoginActivity.username)
-            return
-
-        val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(personagem)
-        action.setPersonagem(personagem)
-        action.setIsNpc(false)
         NavHostFragment.findNavController(this).navigate(action)
     }
 
