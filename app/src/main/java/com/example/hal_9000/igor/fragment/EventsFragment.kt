@@ -1,5 +1,6 @@
 package com.example.hal_9000.igor.fragment
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
@@ -13,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.EventsListAdapter
 import com.example.hal_9000.igor.model.Evento
@@ -27,6 +29,8 @@ class EventsFragment : Fragment() {
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var db: FirebaseFirestore
 
+    private lateinit var model: MainViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -35,17 +39,21 @@ class EventsFragment : Fragment() {
         val fabNewNote = view.findViewById<FloatingActionButton>(R.id.fab_new_event)
         mRecyclerView = view.findViewById(R.id.eventos_rv)
 
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
+
         mRecyclerView.layoutManager = LinearLayoutManager(context)
         mRecyclerView.setHasFixedSize(true)
 
         db = FirebaseFirestore.getInstance()
 
-        val aventura = AdventureFragment.aventura
+        val aventura = model.getAdventure()!!
         val query = db
                 .collection("adventures")
                 .document(aventura.id)
                 .collection("sessions")
-                .document(SessionFragment.sessionId)
+                .document(model.getSessionId()!!)
                 .collection("events")
 
         val options = FirestoreRecyclerOptions.Builder<Evento>()
@@ -62,7 +70,7 @@ class EventsFragment : Fragment() {
             }
         })
 
-        if (!AdventureFragment.isMaster) {
+        if (!model.getIsMaster()!!) {
             fabNewNote.hide()
             return view
         }
@@ -90,9 +98,9 @@ class EventsFragment : Fragment() {
 
                     db
                             .collection("adventures")
-                            .document(AdventureFragment.aventura.id)
+                            .document(model.getAdventure()!!.id)
                             .collection("sessions")
-                            .document(SessionFragment.sessionId)
+                            .document(model.getSessionId()!!)
                             .collection("events")
                             .document(event.date.toString())
                             .set(event)
@@ -112,7 +120,7 @@ class EventsFragment : Fragment() {
     }
 
     private fun eventoItemClicked(evento: Evento) {
-        if (!AdventureFragment.isMaster) return
+        if (!model.getIsMaster()!!) return
 
         val input = EditText(context)
         input.inputType = InputType.TYPE_CLASS_TEXT
@@ -127,9 +135,9 @@ class EventsFragment : Fragment() {
 
                     db
                             .collection("adventures")
-                            .document(AdventureFragment.aventura.id)
+                            .document(model.getAdventure()!!.id)
                             .collection("sessions")
-                            .document(SessionFragment.sessionId)
+                            .document(model.getSessionId()!!)
                             .collection("events")
                             .document(evento.date.toString())
                             .set(evento)
@@ -148,9 +156,9 @@ class EventsFragment : Fragment() {
                 .setNeutralButton("Deletar") { _, _ ->
                     db
                             .collection("adventures")
-                            .document(AdventureFragment.aventura.id)
+                            .document(model.getAdventure()!!.id)
                             .collection("sessions")
-                            .document(SessionFragment.sessionId)
+                            .document(model.getSessionId()!!)
                             .collection("events")
                             .document(evento.date.toString())
                             .delete()

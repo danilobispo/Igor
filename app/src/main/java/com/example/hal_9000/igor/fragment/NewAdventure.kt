@@ -1,5 +1,6 @@
 package com.example.hal_9000.igor.fragment
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.Log
@@ -8,12 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Personagem
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.WriteBatch
 import kotlinx.android.synthetic.main.fragment_new_adventure.*
+
 
 class NewAdventure : Fragment() {
 
@@ -31,6 +34,8 @@ class NewAdventure : Fragment() {
     private lateinit var rb5: RadioButton
     private lateinit var mProgressBar: ProgressBar
 
+    private lateinit var model: MainViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -46,6 +51,10 @@ class NewAdventure : Fragment() {
 
         val buttonFinish = view.findViewById<Button>(R.id.btn_finish)
         val imageClose = view.findViewById<ImageView>(R.id.iv_close)
+
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
 
         rb1.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked)
@@ -115,7 +124,7 @@ class NewAdventure : Fragment() {
             adventure.created_at = adventureOld.created_at
             adventure.id = adventureOld.id
         } else {
-            adventure.creator = LoginFragment.username
+            adventure.creator = model.getUsername()!!
             adventure.created_at = System.currentTimeMillis()
             adventure.id = "${adventure.creator}_${adventure.created_at}"
         }

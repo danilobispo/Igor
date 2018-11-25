@@ -1,6 +1,6 @@
 package com.example.hal_9000.igor.fragment
 
-
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.BottomNavigationView
@@ -18,6 +18,7 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.PlayerDices
 import com.example.hal_9000.igor.model.Session
@@ -25,12 +26,15 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 
-
 class SessionFragment : Fragment() {
 
     private val TAG = "SessionFragment"
     private lateinit var db: FirebaseFirestore
     private lateinit var navController: NavController
+
+    private lateinit var session: Session
+
+    private lateinit var model: MainViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -39,8 +43,13 @@ class SessionFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
+
         session = SessionFragmentArgs.fromBundle(arguments).session
-        sessionId = session.created_at.toString()
+
+        model.setSessionId(session.created_at.toString())
 
         val fragmentContainer = view.findViewById<View>(R.id.nav_host_session)
         navController = Navigation.findNavController(fragmentContainer)
@@ -51,12 +60,12 @@ class SessionFragment : Fragment() {
 
         bottomNavigationView.setupWithNavController(navController)
 
-        adventureTitle.text = AdventureFragment.aventura.title
+        adventureTitle.text = model.getAdventure()!!.title
         sessionTitle.text = session.title
 
         val ivTheme = view.findViewById<ImageView>(R.id.iv_theme)
         val layout = view.findViewById<ConstraintLayout>(R.id.contraint_layout)
-        when (AdventureFragment.aventura.theme) {
+        when (model.getAdventure()!!.theme) {
             "krevast" -> {
                 ivTheme.setImageResource(R.drawable.miniatura_krevast)
                 layout.setBackgroundColor(ContextCompat.getColor(view.context, R.color.krevast_background))
@@ -82,11 +91,11 @@ class SessionFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
 
         val docRef = db.collection("adventures")
-                .document(AdventureFragment.aventura.id)
+                .document(model.getAdventure()!!.id)
                 .collection("sessions")
-                .document(sessionId)
+                .document(model.getSessionId()!!)
                 .collection("dices")
-                .document(LoginFragment.username)
+                .document(model.getUsername()!!)
 
         docRef.addSnapshotListener(EventListener<DocumentSnapshot> { snapshot, e ->
             if (e != null) {
@@ -125,7 +134,7 @@ class SessionFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        if (!AdventureFragment.isMaster)
+        if (!model.getIsMaster()!!)
             return super.onOptionsItemSelected(menuItem)
 
         when (menuItem.itemId) {
@@ -138,10 +147,5 @@ class SessionFragment : Fragment() {
             }
         }
         return super.onOptionsItemSelected(menuItem)
-    }
-
-    companion object {
-        lateinit var session: Session
-        lateinit var sessionId: String
     }
 }

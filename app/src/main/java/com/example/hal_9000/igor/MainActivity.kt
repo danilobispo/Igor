@@ -21,6 +21,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar_layout.*
+import android.arch.lifecycle.ViewModelProviders
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 
 
 class MainActivity : AppCompatActivity() {
@@ -29,6 +31,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mAuth: FirebaseAuth
 
     private val listItems = arrayListOf<Categoria>()
+
+    private lateinit var model: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,13 +44,20 @@ class MainActivity : AppCompatActivity() {
                 .build()
         FirebaseFirestore.getInstance().firestoreSettings = settings
 
+        model = this.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
+
         mAuth = FirebaseAuth.getInstance()
 
-        if (mAuth.currentUser == null)
+        if (mAuth.currentUser == null) {
             nav_host.findNavController().navigate(
                     R.id.loginFragment,
                     null,
                     NavOptions.Builder().setPopUpTo(R.id.homeFragment, true).build())
+        } else {
+            model.setUsername(FirebaseAuth.getInstance().currentUser?.displayName.toString())
+        }
 
         setupMenu()
 

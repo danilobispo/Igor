@@ -1,5 +1,6 @@
 package com.example.hal_9000.igor.fragment
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -10,12 +11,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.SessionsListAdapter
 import com.example.hal_9000.igor.model.Session
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_andamento.*
+
 
 class AndamentoFragment : Fragment() {
 
@@ -25,12 +28,19 @@ class AndamentoFragment : Fragment() {
     private lateinit var mRecyclerView: RecyclerView
     private lateinit var db: FirebaseFirestore
 
+    private lateinit var model: MainViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_andamento, container, false)
 
         mRecyclerView = view.findViewById(R.id.rv_next_sessions)
+
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
+
         mRecyclerView.layoutManager = LinearLayoutManager(context)
         mRecyclerView.setHasFixedSize(true)
 
@@ -38,7 +48,7 @@ class AndamentoFragment : Fragment() {
 
         val query = db
                 .collection("adventures")
-                .document(AdventureFragment.aventura.id)
+                .document(model.getAdventure()!!.id)
                 .collection("sessions")
                 .orderBy("date")
 
@@ -51,10 +61,10 @@ class AndamentoFragment : Fragment() {
 
         val tvDescription = view.findViewById<TextView>(R.id.tv_description)
 
-        if (AdventureFragment.aventura.description.isEmpty())
+        if (model.getAdventure()!!.description.isEmpty())
             tvDescription.text = "Aventura sem descrição"
         else
-            tvDescription.text = AdventureFragment.aventura.description
+            tvDescription.text = model.getAdventure()!!.description
 
         tvDescription.post {
             if (tvDescription.lineCount > 6) {
@@ -79,7 +89,7 @@ class AndamentoFragment : Fragment() {
     private fun sessionItemClicked(session: Session) {
         Log.d(TAG, "Clicked ${session.title}")
 
-        if (AdventureFragment.editMode && AdventureFragment.isMaster) {
+        if (AdventureFragment.editMode && model.getIsMaster()!!) {
             val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(session)
             action.setSession(session)
             NavHostFragment.findNavController(this).navigate(action)

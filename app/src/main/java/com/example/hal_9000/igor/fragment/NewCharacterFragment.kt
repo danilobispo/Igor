@@ -1,6 +1,7 @@
 package com.example.hal_9000.igor.fragment
 
 import android.app.Activity.RESULT_OK
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -17,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.StatsListAdapter
 import com.example.hal_9000.igor.model.Atributo
@@ -60,6 +62,8 @@ class NewCharacterFragment : Fragment() {
     private var filePath: Uri? = null
     private var downloadUrl: String = ""
 
+    private lateinit var model: MainViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -76,6 +80,10 @@ class NewCharacterFragment : Fragment() {
         ivPhoto = view.findViewById(R.id.iv_photo)
         switchHidden = view.findViewById(R.id.swith_hidden)
         progressBar = view.findViewById(R.id.progressBar)
+
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
 
         db = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
@@ -172,11 +180,11 @@ class NewCharacterFragment : Fragment() {
         if (etHealth.text.isNotEmpty())
             personagem.health_max = Integer.valueOf(etHealth.text.toString())
 
-        personagem.creator = LoginFragment.username
+        personagem.creator = model.getUsername()!!
         personagem.image_url = downloadUrl
         personagem.isnpc = isNPC
         personagem.atributos = arrayStats
-        personagem.aventura_id = AdventureFragment.aventura.id
+        personagem.aventura_id = model.getAdventure()!!.id
 
         Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.health_max}, ${personagem.atributos}")
 
@@ -202,11 +210,11 @@ class NewCharacterFragment : Fragment() {
 
         batch.set(db.collection("characters").document(personagem.id), personagem)
 
-        batch.update(db.collection("adventures").document(AdventureFragment.aventura.id), "players." + personagem.nome, true)
+        batch.update(db.collection("adventures").document(model.getAdventure()!!.id), "players." + personagem.nome, true)
 
         // Remove old name
         if (edit && !isNPC && personagemOld.nome.isNotEmpty() && personagemOld.nome != personagem.nome)
-            batch.update(db.collection("adventures").document(AdventureFragment.aventura.id), "players." + personagemOld.nome, FieldValue.delete())
+            batch.update(db.collection("adventures").document(model.getAdventure()!!.id), "players." + personagemOld.nome, FieldValue.delete())
 
         batch.commit()
                 .addOnSuccessListener {

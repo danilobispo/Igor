@@ -1,5 +1,6 @@
 package com.example.hal_9000.igor.fragment
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
@@ -13,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.NavGraphDirections
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.StatsListAdapter
@@ -54,6 +56,8 @@ class ItemProfileFragment : Fragment() {
 
     private lateinit var db: FirebaseFirestore
 
+    private lateinit var model: MainViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -74,6 +78,10 @@ class ItemProfileFragment : Fragment() {
         progressBar = view.findViewById(R.id.progressBar)
 
         setHasOptionsMenu(true)
+
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
 
         db = FirebaseFirestore.getInstance()
 
@@ -142,8 +150,8 @@ class ItemProfileFragment : Fragment() {
 
         if (readOnly) return view
 
-        if (LoginFragment.username == AdventureFragment.aventura.creator
-                || LoginFragment.username == item.owner) {
+        if (model.getUsername()!! == model.getAdventure()!!.creator
+                || model.getUsername()!! == item.owner) {
             buttons.visibility = View.VISIBLE
 
             btnAction.setOnClickListener { use() }
@@ -152,14 +160,14 @@ class ItemProfileFragment : Fragment() {
         }
 
         itemRef = db.collection("adventures")
-                .document(AdventureFragment.aventura.id)
+                .document(model.getAdventure()!!.id)
                 .collection("items")
                 .document(item.id)
 
         eventsRef = db.collection("adventures")
-                .document(AdventureFragment.aventura.id)
+                .document(model.getAdventure()!!.id)
                 .collection("sessions")
-                .document(SessionFragment.sessionId)
+                .document(model.getSessionId()!!)
                 .collection("events")
 
         return view
@@ -168,12 +176,12 @@ class ItemProfileFragment : Fragment() {
     private fun discard() {
         progressBar.visibility = View.VISIBLE
 
-        item.owner = AdventureFragment.aventura.creator
+        item.owner = model.getAdventure()!!.creator
 
         if (item.equipped)
             use(false)
 
-        if (item.owner == AdventureFragment.aventura.creator) {
+        if (item.owner == model.getAdventure()!!.creator) {
             itemRef.delete()
                     .addOnSuccessListener {
                         Log.d(TAG, "Document ${item.id} deleted successfully")
@@ -215,7 +223,7 @@ class ItemProfileFragment : Fragment() {
 
             val event = Evento(type = "item", date = System.currentTimeMillis())
 
-            if (owner.nome == AdventureFragment.aventura.creator)
+            if (owner.nome == model.getAdventure()!!.creator)
                 event.event = "${item.owner} recebeu ${item.name}"
             else
                 event.event = "${owner.nome} transferiu ${item.name} para ${item.owner}"
@@ -240,12 +248,12 @@ class ItemProfileFragment : Fragment() {
         fun selectUser() {
             progressBar.visibility = View.VISIBLE
 
-            val query = if (AdventureFragment.isMaster)
+            val query = if (model.getIsMaster()!!)
                 db.collection("characters")
-                        .whereEqualTo("aventura_id", AdventureFragment.aventura.id)
+                        .whereEqualTo("aventura_id", model.getAdventure()!!.id)
             else
                 db.collection("characters")
-                        .whereEqualTo("aventura_id", AdventureFragment.aventura.id)
+                        .whereEqualTo("aventura_id", model.getAdventure()!!.id)
                         .whereEqualTo("hidden", false)
 
             query.get()
@@ -343,7 +351,7 @@ class ItemProfileFragment : Fragment() {
             item.equipped = !item.equipped
         } else if (item.type == "Consumível") {
             equip()
-            item.owner = AdventureFragment.aventura.creator
+            item.owner = model.getAdventure()!!.creator
             event.event = "${owner.nome} consumiu ${item.name}"
         }
 
@@ -375,7 +383,7 @@ class ItemProfileFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        if (!AdventureFragment.isMaster)
+        if (!model.getIsMaster()!!)
             return super.onOptionsItemSelected(menuItem)
 
         when (menuItem.itemId) {

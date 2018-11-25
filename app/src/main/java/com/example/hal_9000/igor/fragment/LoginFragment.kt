@@ -1,5 +1,6 @@
 package com.example.hal_9000.igor.fragment
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -11,6 +12,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.google.firebase.auth.FirebaseAuth
 
@@ -26,9 +28,7 @@ class LoginFragment : Fragment() {
 
     private lateinit var mAuth: FirebaseAuth
 
-    companion object {
-        var username: String = ""
-    }
+    private lateinit var model: MainViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -40,10 +40,16 @@ class LoginFragment : Fragment() {
         etEmail = view.findViewById(R.id.et_email)
         etPassword = view.findViewById(R.id.et_password)
 
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
+
         mAuth = FirebaseAuth.getInstance()
 
-        if (mAuth.currentUser != null)
+        if (mAuth.currentUser != null) {
+            model.setUsername(FirebaseAuth.getInstance().currentUser?.displayName.toString())
             exitFragment()
+        }
 
         btnLogin.setOnClickListener {
 
@@ -94,6 +100,7 @@ class LoginFragment : Fragment() {
             if (task.isSuccessful) {
                 Log.d(TAG, "Login Successful")
                 Toast.makeText(context, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show()
+                model.setUsername(FirebaseAuth.getInstance().currentUser?.displayName.toString())
                 exitFragment()
             } else {
                 Log.d(TAG, "Login Error")

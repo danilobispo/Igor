@@ -1,5 +1,6 @@
 package com.example.hal_9000.igor.fragment
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
@@ -14,6 +15,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.navigation.Navigation
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.NavGraphDirections
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.CharactersCombatListAdapter
@@ -40,6 +42,8 @@ class CombatFragment : Fragment() {
 
     private var db: FirebaseFirestore? = null
 
+    private lateinit var model: MainViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -47,13 +51,17 @@ class CombatFragment : Fragment() {
 
         btnAction = view.findViewById(R.id.btn_action)
 
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
+
         mPlayersList = view.findViewById(R.id.rv_players)
         mPlayersList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         mPlayersList.setHasFixedSize(true)
 
         db = FirebaseFirestore.getInstance()
 
-        val aventura = AdventureFragment.aventura
+        val aventura = model.getAdventure()!!
 
         val queryPlayers = db!!.collection("characters")
                 .whereEqualTo("aventura_id", aventura.id)
@@ -87,7 +95,7 @@ class CombatFragment : Fragment() {
         adapterEnemies = CharactersCombatListAdapter(optionsEnemies, { personagem: Personagem -> enemyItemClicked(personagem) }, { mode: Boolean -> selectionModeChanged("adapterEnemies", mode) })
         mEnemiesList.adapter = adapterEnemies
 
-        if (!AdventureFragment.isMaster)
+        if (!model.getIsMaster()!!)
             return view
 
         btnAction.setOnClickListener { showActionsDialog() }
@@ -392,9 +400,9 @@ class CombatFragment : Fragment() {
     private fun askRollDices(diceName: String, quantity: Int = Random.nextInt(1, 5)) {
         fun ask(batch: WriteBatch, playerDices: PlayerDices, charName: String) {
             batch.set(db!!.collection("adventures")
-                    .document(AdventureFragment.aventura.id)
+                    .document(model.getAdventure()!!.id)
                     .collection("sessions")
-                    .document(SessionFragment.sessionId)
+                    .document(model.getSessionId()!!)
                     .collection("dices")
                     .document(charName)
                     , playerDices)
@@ -408,7 +416,7 @@ class CombatFragment : Fragment() {
         if (characterSelected != null) {
             playerDices.character = characterSelected!!.nome
             if (characterSelected!!.isnpc)
-                ask(batch, playerDices, LoginFragment.username)
+                ask(batch, playerDices, model.getUsername()!!)
             else
                 ask(batch, playerDices, characterSelected!!.nome)
             characterSelected = null
@@ -423,7 +431,7 @@ class CombatFragment : Fragment() {
         for (idx in adapterEnemies.selectedIds) {
             val char = adapterEnemies.getItem(idx)
             playerDices.character = char.nome
-            ask(batch, playerDices, LoginFragment.username)
+            ask(batch, playerDices, model.getUsername()!!)
         }
 
         batch.commit()
@@ -445,9 +453,9 @@ class CombatFragment : Fragment() {
 
         val eventLogReference = db!!
                 .collection("adventures")
-                .document(AdventureFragment.aventura.id)
+                .document(model.getAdventure()!!.id)
                 .collection("sessions")
-                .document(SessionFragment.sessionId)
+                .document(model.getSessionId()!!)
                 .collection("events")
                 .document(event.date.toString())
 
@@ -456,7 +464,7 @@ class CombatFragment : Fragment() {
 
     private fun enemyItemClicked(personagem: Personagem) {
         Log.d(TAG, "Clicked enemy ${personagem.nome}")
-        if (AdventureFragment.isMaster) {
+        if (model.getIsMaster()!!) {
             characterSelected = personagem
             showActionsDialog()
         } else {
@@ -467,7 +475,7 @@ class CombatFragment : Fragment() {
 
     private fun personagemItemClicked(personagem: Personagem) {
         Log.d(TAG, "Clicked player ${personagem.nome}")
-        if (AdventureFragment.isMaster) {
+        if (model.getIsMaster()!!) {
             characterSelected = personagem
             showActionsDialog()
         } else {
@@ -482,7 +490,7 @@ class CombatFragment : Fragment() {
         else
             adapterPlayers.selectionModeOther = mode
 
-        if (!AdventureFragment.isMaster) return
+        if (!model.getIsMaster()!!) return
 
         if (adapterPlayers.selectionModeOwn || adapterEnemies.selectionModeOwn)
             btnAction.visibility = View.VISIBLE

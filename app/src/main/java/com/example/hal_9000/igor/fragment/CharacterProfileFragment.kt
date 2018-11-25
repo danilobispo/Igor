@@ -1,5 +1,6 @@
 package com.example.hal_9000.igor.fragment
 
+import android.arch.lifecycle.ViewModelProviders
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -17,6 +18,7 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.NavGraphDirections
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.ItemsListAdapter
@@ -51,6 +53,8 @@ class CharacterProfileFragment : Fragment() {
     private lateinit var adapterStats: StatsListAdapter
     private lateinit var adapterItems: ItemsListAdapter
 
+    private lateinit var model: MainViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -66,6 +70,10 @@ class CharacterProfileFragment : Fragment() {
         rvStats = view.findViewById(R.id.rv_stats)
         rvInventory = view.findViewById(R.id.rv_inventory)
         btnCreateItem = view.findViewById(R.id.btn_create_item)
+
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
 
         db = FirebaseFirestore.getInstance()
 
@@ -124,7 +132,7 @@ class CharacterProfileFragment : Fragment() {
 
         val queryItems = db
                 .collection("adventures")
-                .document(AdventureFragment.aventura.id)
+                .document(model.getAdventure()!!.id)
                 .collection("items")
                 .whereEqualTo("owner", character.nome)
 
@@ -136,12 +144,12 @@ class CharacterProfileFragment : Fragment() {
         rvInventory.layoutManager = GridLayoutManager(context, 4)
         rvInventory.setHasFixedSize(true)
 
-        if (character.ismaster && LoginFragment.username != character.nome)
+        if (character.ismaster && model.getUsername()!! != character.nome)
             return view
 
         rvInventory.adapter = adapterItems
 
-        if (!readOnly && LoginFragment.username == AdventureFragment.aventura.creator) {
+        if (!readOnly && model.getUsername()!! == model.getAdventure()!!.creator) {
             btnCreateItem.visibility = View.VISIBLE
 
             btnCreateItem.setOnClickListener {
@@ -183,7 +191,7 @@ class CharacterProfileFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        if (!AdventureFragment.isMaster)
+        if (!model.getIsMaster()!!)
             return super.onOptionsItemSelected(menuItem)
 
         when (menuItem.itemId) {

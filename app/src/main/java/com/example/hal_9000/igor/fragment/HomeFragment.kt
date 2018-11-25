@@ -1,6 +1,7 @@
 package com.example.hal_9000.igor.fragment
 
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
@@ -15,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.AdventureRecyclerViewAdapter
 import com.example.hal_9000.igor.model.Aventura
@@ -36,6 +38,8 @@ class HomeFragment : Fragment() {
 
     private var editMode = false
 
+    private lateinit var model: MainViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -46,8 +50,11 @@ class HomeFragment : Fragment() {
         fabNovaAventura = view.findViewById(R.id.fab_nova_aventura)
         fabSaveEdit = view.findViewById(R.id.fab_save_edit)
 
-        val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
-        LoginFragment.username = mAuth.currentUser?.displayName.toString()
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
+
+        model.setUsername(FirebaseAuth.getInstance().currentUser?.displayName.toString())
 
         mRecyclerView = view.findViewById(R.id.rv_adventures_list)
         mRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -56,13 +63,13 @@ class HomeFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
         val query = db
                 .collection("adventures")
-                .whereEqualTo("players.${LoginFragment.username}", true)
+                .whereEqualTo("players.${model.getUsername()!!}", true)
 
         val options = FirestoreRecyclerOptions.Builder<Aventura>()
                 .setQuery(query, Aventura::class.java)
                 .build()
 
-        adapter = AdventureRecyclerViewAdapter(options, { aventura: Aventura -> aventuraItemClicked(aventura) }, { aventura: Aventura -> aventuraDeleteItemClicked(aventura) })
+        adapter = AdventureRecyclerViewAdapter(options, model.getUsername()!!, { aventura: Aventura -> aventuraItemClicked(aventura) }, { aventura: Aventura -> aventuraDeleteItemClicked(aventura) })
         mRecyclerView.adapter = adapter
 
         fabNovaAventura.setOnClickListener {

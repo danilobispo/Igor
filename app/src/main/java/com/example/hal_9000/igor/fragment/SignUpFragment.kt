@@ -1,5 +1,6 @@
 package com.example.hal_9000.igor.fragment
 
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -14,6 +15,7 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.navigation.fragment.NavHostFragment
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Usuario
 import com.google.firebase.auth.FirebaseAuth
@@ -41,6 +43,8 @@ class SignUpFragment : Fragment() {
     private lateinit var db: FirebaseFirestore
     private lateinit var mAuth: FirebaseAuth
 
+    private var model: MainViewModel? = null
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.signup_fragment, container, false)
@@ -55,6 +59,10 @@ class SignUpFragment : Fragment() {
 
         db = FirebaseFirestore.getInstance()
         mAuth = FirebaseAuth.getInstance()
+
+        model = activity?.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
 
         btnCreateAccount.setOnClickListener { signUp() }
 
@@ -89,7 +97,7 @@ class SignUpFragment : Fragment() {
                         Log.d(TAG, "signUp: success")
                         Toast.makeText(context, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
                         storeUserData()
-                        LoginFragment.username = username
+                        model?.setUsername(username)
                         NavHostFragment.findNavController(this).popBackStack()
                     } else {
                         Log.w(TAG, "signUp: fail", task.exception)

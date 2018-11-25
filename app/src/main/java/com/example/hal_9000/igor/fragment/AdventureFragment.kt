@@ -1,5 +1,6 @@
 package com.example.hal_9000.igor.fragment
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.FloatingActionButton
@@ -13,11 +14,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Personagem
 import com.example.hal_9000.igor.model.Session
-import kotlinx.android.synthetic.main.fragment_adventure.*
 
 
 class AdventureFragment : Fragment() {
@@ -29,6 +30,10 @@ class AdventureFragment : Fragment() {
 
     private lateinit var fabNewCharacter: FloatingActionButton
     private lateinit var fabNewSession: FloatingActionButton
+
+    private lateinit var adventure: Aventura
+
+    private lateinit var model: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +47,15 @@ class AdventureFragment : Fragment() {
 
         setHasOptionsMenu(true)
 
-        aventura = AdventureFragmentArgs.fromBundle(arguments).aventura
-        isMaster = aventura.creator == LoginFragment.username
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
+
+        adventure = AdventureFragmentArgs.fromBundle(arguments).aventura
+        val isMaster = adventure.creator == model.getUsername()
+
+        model.setAdventure(adventure)
+        model.setIsMaster(isMaster)
 
         fabNewCharacter = view.findViewById(R.id.fab_new_character)
         fabNewSession = view.findViewById(R.id.fab_new_session)
@@ -58,11 +70,11 @@ class AdventureFragment : Fragment() {
             switchTab("andamento")
 
         val tvTitle = view.findViewById<TextView>(R.id.tv_adventure_title)
-        tvTitle.text = aventura.title
+        tvTitle.text = adventure.title
 
         val ivTheme = view.findViewById<ImageView>(R.id.iv_theme)
         val layout = view.findViewById<ConstraintLayout>(R.id.contraint_layout)
-        when (aventura.theme) {
+        when (adventure.theme) {
             "krevast" -> {
                 ivTheme.setImageResource(R.drawable.miniatura_krevast)
                 layout.setBackgroundColor(ContextCompat.getColor(view.context, R.color.krevast_background))
@@ -124,7 +136,7 @@ class AdventureFragment : Fragment() {
             openedTab = "andamento"
             ivTabLeft.setImageResource(R.drawable.tab_l1)
             ivTabRight.setImageResource(R.drawable.tab_r2)
-            if (isMaster) {
+            if (model.getIsMaster()!!) {
                 fabNewCharacter.hide()
                 fabNewSession.show()
             }
@@ -134,7 +146,7 @@ class AdventureFragment : Fragment() {
             openedTab = "jogadores"
             ivTabLeft.setImageResource(R.drawable.tab_l2)
             ivTabRight.setImageResource(R.drawable.tab_r1)
-            if (isMaster) {
+            if (model.getIsMaster()!!) {
                 fabNewCharacter.show()
                 fabNewSession.hide()
             }
@@ -143,12 +155,12 @@ class AdventureFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (!isMaster)
+        if (!model.getIsMaster()!!)
             return super.onOptionsItemSelected(item)
 
         when (item.itemId) {
             R.id.menu_editar -> {
-                val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(aventura)
+                val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(adventure)
                 NavHostFragment.findNavController(this).navigate(action)
             }
             R.id.menu_ordenar -> {
@@ -158,8 +170,6 @@ class AdventureFragment : Fragment() {
     }
 
     companion object {
-        lateinit var aventura: Aventura
-        var isMaster: Boolean = false
         var editMode: Boolean = false
 
         @JvmStatic

@@ -1,8 +1,8 @@
 package com.example.hal_9000.igor.fragment
 
 import android.app.DatePickerDialog
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Session
 import com.google.firebase.firestore.FirebaseFirestore
@@ -33,6 +34,8 @@ class NewSession : Fragment() {
 
     private var date: Long = 0L
 
+    private lateinit var model: MainViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -41,6 +44,10 @@ class NewSession : Fragment() {
         etTitle = view.findViewById(R.id.et_title)
         etSummary = view.findViewById(R.id.et_summary)
         btnDate = view.findViewById(R.id.btn_date)
+
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
 
         sessionOld = NewSessionArgs.fromBundle(arguments).session
 
@@ -134,14 +141,14 @@ class NewSession : Fragment() {
 
         batch.set(db
                 .collection("adventures")
-                .document(AdventureFragment.aventura.id)
+                .document(model.getAdventure()!!.id)
                 .collection("sessions")
                 .document(session.created_at.toString()), session)
 
-        if (AdventureFragment.aventura.next_session == 0L || session.date < AdventureFragment.aventura.next_session)
+        if (model.getAdventure()!!.next_session == 0L || session.date < model.getAdventure()!!.next_session)
             batch.update(db
                     .collection("adventures")
-                    .document(AdventureFragment.aventura.id), "next_session", session.date)
+                    .document(model.getAdventure()!!.id), "next_session", session.date)
 
         batch.commit()
                 .addOnSuccessListener {
@@ -160,8 +167,8 @@ class NewSession : Fragment() {
 
     private fun exitFragment() {
 
-        val action = NewSessionDirections.ActionNewSessionToAdventureFragment(AdventureFragment.aventura)
-        action.setAventura(AdventureFragment.aventura)
+        val action = NewSessionDirections.ActionNewSessionToAdventureFragment(model.getAdventure()!!)
+        action.setAventura(model.getAdventure()!!)
 
         val navBuilder = NavOptions.Builder()
         val navOptions = navBuilder.setPopUpTo(R.id.adventureFragment, true).build()

@@ -9,7 +9,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.example.hal_9000.igor.R
-import com.example.hal_9000.igor.fragment.LoginFragment
 import com.example.hal_9000.igor.model.Aventura
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -17,8 +16,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import java.text.SimpleDateFormat
 import java.util.*
 
-
-class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, private val itemClickListener: (Aventura) -> Unit, private val deleteClickListener: (Aventura) -> Unit) : FirestoreRecyclerAdapter<Aventura, AdventureRecyclerViewAdapter.AdventureViewHolder>(options) {
+class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, private val username: String, private val itemClickListener: (Aventura) -> Unit, private val deleteClickListener: (Aventura) -> Unit) : FirestoreRecyclerAdapter<Aventura, AdventureRecyclerViewAdapter.AdventureViewHolder>(options) {
 
     private val TAG = "AdventureRecyclrAdapter"
     var editMode = false
@@ -33,7 +31,7 @@ class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, 
         holder.setAdventureNextSession(model.next_session)
         holder.setAdventureTheme(model.theme)
         holder.setClickListener(model, editMode, itemClickListener)
-        holder.setEditMode(model, editMode, deleteClickListener)
+        holder.setEditMode(model, editMode, username, deleteClickListener)
     }
 
     override fun onError(e: FirebaseFirestoreException) {
@@ -92,12 +90,12 @@ class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, 
                 itemView.setOnClickListener { clickListener(aventura) }
         }
 
-        fun setEditMode(aventura: Aventura, editMode: Boolean, clickListener: (Aventura) -> Unit) {
+        fun setEditMode(aventura: Aventura, editMode: Boolean, username: String, clickListener: (Aventura) -> Unit) {
             val overlay: View = itemView.findViewById(R.id.overlay_image)
             val deleteIcon: ImageView = itemView.findViewById(R.id.iv_delete)
 
             if (editMode) {
-                if (aventura.creator == LoginFragment.username) {
+                if (aventura.creator == username) {
                     overlay.visibility = View.GONE
                     deleteIcon.visibility = View.VISIBLE
                     deleteIcon.setOnClickListener { clickListener(aventura) }

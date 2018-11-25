@@ -1,5 +1,6 @@
 package com.example.hal_9000.igor.fragment
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.GridLayoutManager
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.DicesListAdapter
 import com.example.hal_9000.igor.model.Evento
@@ -30,12 +32,19 @@ class DicesFragment : Fragment() {
     private lateinit var documentReference: DocumentReference
     private lateinit var batch: WriteBatch
 
+    private lateinit var model: MainViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_dices, container, false)
 
         mRecyclerView = view.findViewById(R.id.recyclerview)
+
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
+
         mRecyclerView.layoutManager = GridLayoutManager(context, 2)
         mRecyclerView.setHasFixedSize(true)
 
@@ -44,11 +53,11 @@ class DicesFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
 
         documentReference = db.collection("adventures")
-                .document(AdventureFragment.aventura.id)
+                .document(model.getAdventure()!!.id)
                 .collection("sessions")
-                .document(SessionFragment.sessionId)
+                .document(model.getSessionId()!!)
                 .collection("dices")
-                .document(LoginFragment.username)
+                .document(model.getUsername()!!)
 
         documentReference.get()
                 .addOnSuccessListener {
@@ -111,9 +120,9 @@ class DicesFragment : Fragment() {
 
         val eventLogReference = db
                 .collection("adventures")
-                .document(AdventureFragment.aventura.id)
+                .document(model.getAdventure()!!.id)
                 .collection("sessions")
-                .document(SessionFragment.sessionId)
+                .document(model.getSessionId()!!)
                 .collection("events")
                 .document(event.date.toString())
 

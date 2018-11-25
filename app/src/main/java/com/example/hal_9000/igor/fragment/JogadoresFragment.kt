@@ -1,5 +1,6 @@
 package com.example.hal_9000.igor.fragment
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.NavHostFragment
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.JogadoresListAdapter
 import com.example.hal_9000.igor.model.Personagem
@@ -23,18 +25,25 @@ class JogadoresFragment : Fragment() {
     private lateinit var mJogadoresList: RecyclerView
     private lateinit var db: FirebaseFirestore
 
+    private lateinit var model: MainViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
         val view = inflater.inflate(R.layout.fragment_jogadores, container, false)
 
         mJogadoresList = view.findViewById(R.id.jogadores_rv)
+
+        model = activity!!.run {
+            ViewModelProviders.of(this).get(MainViewModel::class.java)
+        }
+
         mJogadoresList.layoutManager = LinearLayoutManager(context)
         mJogadoresList.setHasFixedSize(true)
 
         db = FirebaseFirestore.getInstance()
 
-        val aventura = AdventureFragment.aventura
+        val aventura = model.getAdventure()!!
         val query = db.collection("characters")
                 .whereEqualTo("aventura_id", aventura.id)
                 .whereEqualTo("isnpc", false)
