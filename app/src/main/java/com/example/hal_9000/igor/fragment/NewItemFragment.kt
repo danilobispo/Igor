@@ -18,7 +18,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
-import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.StatsListAdapter
 import com.example.hal_9000.igor.model.Atributo
@@ -169,7 +168,7 @@ class NewItemFragment : Fragment() {
         item.stats = arrayStats
 
         if (owner.isEmpty())
-            item.owner = LoginActivity.username
+            item.owner = LoginFragment.username
         else
             item.owner = owner
 

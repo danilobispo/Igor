@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.DicesListAdapter
 import com.example.hal_9000.igor.model.Evento
@@ -49,7 +48,7 @@ class DicesFragment : Fragment() {
                 .collection("sessions")
                 .document(SessionFragment.sessionId)
                 .collection("dices")
-                .document(LoginActivity.username)
+                .document(LoginFragment.username)
 
         documentReference.get()
                 .addOnSuccessListener {

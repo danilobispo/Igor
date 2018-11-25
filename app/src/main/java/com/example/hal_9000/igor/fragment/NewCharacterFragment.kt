@@ -17,7 +17,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
-import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.StatsListAdapter
 import com.example.hal_9000.igor.model.Atributo
@@ -173,7 +172,7 @@ class NewCharacterFragment : Fragment() {
         if (etHealth.text.isNotEmpty())
             personagem.health_max = Integer.valueOf(etHealth.text.toString())
 
-        personagem.creator = LoginActivity.username
+        personagem.creator = LoginFragment.username
         personagem.image_url = downloadUrl
         personagem.isnpc = isNPC
         personagem.atributos = arrayStats

@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
-import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Personagem
@@ -116,7 +115,7 @@ class NewAdventure : Fragment() {
             adventure.created_at = adventureOld.created_at
             adventure.id = adventureOld.id
         } else {
-            adventure.creator = LoginActivity.username
+            adventure.creator = LoginFragment.username
             adventure.created_at = System.currentTimeMillis()
             adventure.id = "${adventure.creator}_${adventure.created_at}"
         }

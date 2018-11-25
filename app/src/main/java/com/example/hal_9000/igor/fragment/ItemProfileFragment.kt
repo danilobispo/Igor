@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
-import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.NavGraphDirections
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.StatsListAdapter
@@ -143,8 +142,8 @@ class ItemProfileFragment : Fragment() {
 
         if (readOnly) return view
 
-        if (LoginActivity.username == AdventureFragment.aventura.creator
-                || LoginActivity.username == item.owner) {
+        if (LoginFragment.username == AdventureFragment.aventura.creator
+                || LoginFragment.username == item.owner) {
             buttons.visibility = View.VISIBLE
 
             btnAction.setOnClickListener { use() }

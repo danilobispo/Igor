@@ -15,7 +15,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.NavHostFragment.findNavController
-import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.AdventureRecyclerViewAdapter
 import com.example.hal_9000.igor.model.Aventura
@@ -48,7 +47,7 @@ class HomeFragment : Fragment() {
         fabSaveEdit = view.findViewById(R.id.fab_save_edit)
 
         val mAuth: FirebaseAuth = FirebaseAuth.getInstance()
-        LoginActivity.username = mAuth.currentUser?.displayName.toString()
+        LoginFragment.username = mAuth.currentUser?.displayName.toString()
 
         mRecyclerView = view.findViewById(R.id.rv_adventures_list)
         mRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -57,7 +56,7 @@ class HomeFragment : Fragment() {
         db = FirebaseFirestore.getInstance()
         val query = db
                 .collection("adventures")
-                .whereEqualTo("players.${LoginActivity.username}", true)
+                .whereEqualTo("players.${LoginFragment.username}", true)
 
         val options = FirestoreRecyclerOptions.Builder<Aventura>()
                 .setQuery(query, Aventura::class.java)

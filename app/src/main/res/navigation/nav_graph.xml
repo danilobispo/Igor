@@ -16,20 +16,32 @@
         <action
             android:id="@+id/action_homeFragment_to_adventureFragment"
             app:destination="@id/adventureFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
 
     <fragment
-        android:id="@+id/newAdventure"
-        android:name="com.example.hal_9000.igor.fragment.NewAdventure"
-        android:label="NewAdventure"
-        tools:layout="@layout/fragment_new_adventure">
-        <argument
-            android:name="aventura"
-            app:argType="com.example.hal_9000.igor.model.Aventura" />
+        android:id="@+id/signUpFragment"
+        android:name="com.example.hal_9000.igor.fragment.SignUpFragment"
+        android:label="signup_fragment"
+        tools:layout="@layout/signup_fragment" >
         <action
-            android:id="@+id/action_newAdventure_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@+id/homeFragment" />
+            android:id="@+id/action_signupFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.hal_9000.igor.fragment.LoginFragment"
+        android:label="login_fragment"
+        tools:layout="@layout/login_fragment" >
+        <action
+            android:id="@+id/action_loginFragment_to_signupFragment"
+            app:destination="@id/signUpFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
     </fragment>
 
     <fragment
@@ -55,6 +67,20 @@
         android:name="com.example.hal_9000.igor.fragment.ConfiguracoesFragment"
         android:label="fragment_configuracoes"
         tools:layout="@layout/fragment_configuracoes" />
+
+    <fragment
+        android:id="@+id/newAdventure"
+        android:name="com.example.hal_9000.igor.fragment.NewAdventure"
+        android:label="NewAdventure"
+        tools:layout="@layout/fragment_new_adventure">
+        <argument
+            android:name="aventura"
+            app:argType="com.example.hal_9000.igor.model.Aventura" />
+        <action
+            android:id="@+id/action_newAdventure_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@+id/homeFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/adventureFragment"
@@ -95,20 +121,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/newCharacterFragment"
-        android:name="com.example.hal_9000.igor.fragment.NewCharacterFragment"
-        android:label="fragment_new_character"
-        tools:layout="@layout/fragment_new_character">
-        <argument
-            android:name="personagem"
-            app:argType="com.example.hal_9000.igor.model.Personagem" />
-        <argument
-            android:name="isNpc"
-            android:defaultValue="false"
-            app:argType="boolean" />
-    </fragment>
-
-    <fragment
         android:id="@+id/sessionFragment"
         android:name="com.example.hal_9000.igor.fragment.SessionFragment"
         android:label="fragment_session"
@@ -125,6 +137,20 @@
         <action
             android:id="@+id/action_sessionFragment_to_newSession"
             app:destination="@id/newSession" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/newCharacterFragment"
+        android:name="com.example.hal_9000.igor.fragment.NewCharacterFragment"
+        android:label="fragment_new_character"
+        tools:layout="@layout/fragment_new_character">
+        <argument
+            android:name="personagem"
+            app:argType="com.example.hal_9000.igor.model.Personagem" />
+        <argument
+            android:name="isNpc"
+            android:defaultValue="false"
+            app:argType="boolean" />
     </fragment>
 
     <fragment

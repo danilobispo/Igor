@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
-import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Personagem
@@ -44,7 +43,7 @@ class AdventureFragment : Fragment() {
         setHasOptionsMenu(true)
 
         aventura = AdventureFragmentArgs.fromBundle(arguments).aventura
-        isMaster = aventura.creator == LoginActivity.username
+        isMaster = aventura.creator == LoginFragment.username
 
         fabNewCharacter = view.findViewById(R.id.fab_new_character)
         fabNewSession = view.findViewById(R.id.fab_new_session)

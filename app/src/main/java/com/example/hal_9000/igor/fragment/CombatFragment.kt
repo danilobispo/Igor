@@ -14,7 +14,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.navigation.Navigation
-import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.NavGraphDirections
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.CharactersCombatListAdapter
@@ -409,7 +408,7 @@ class CombatFragment : Fragment() {
         if (characterSelected != null) {
             playerDices.character = characterSelected!!.nome
             if (characterSelected!!.isnpc)
-                ask(batch, playerDices, LoginActivity.username)
+                ask(batch, playerDices, LoginFragment.username)
             else
                 ask(batch, playerDices, characterSelected!!.nome)
             characterSelected = null
@@ -424,7 +423,7 @@ class CombatFragment : Fragment() {
         for (idx in adapterEnemies.selectedIds) {
             val char = adapterEnemies.getItem(idx)
             playerDices.character = char.nome
-            ask(batch, playerDices, LoginActivity.username)
+            ask(batch, playerDices, LoginFragment.username)
         }
 
         batch.commit()

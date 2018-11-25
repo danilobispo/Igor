@@ -17,7 +17,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
-import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.NavGraphDirections
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.ItemsListAdapter
@@ -137,12 +136,12 @@ class CharacterProfileFragment : Fragment() {
         rvInventory.layoutManager = GridLayoutManager(context, 4)
         rvInventory.setHasFixedSize(true)
 
-        if (character.ismaster && LoginActivity.username != character.nome)
+        if (character.ismaster && LoginFragment.username != character.nome)
             return view
 
         rvInventory.adapter = adapterItems
 
-        if (!readOnly && LoginActivity.username == AdventureFragment.aventura.creator) {
+        if (!readOnly && LoginFragment.username == AdventureFragment.aventura.creator) {
             btnCreateItem.visibility = View.VISIBLE
 
             btnCreateItem.setOnClickListener {

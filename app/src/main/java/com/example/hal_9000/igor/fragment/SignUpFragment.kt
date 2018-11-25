@@ -1,28 +1,28 @@
-package com.example.hal_9000.igor
+package com.example.hal_9000.igor.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.app.Fragment
 import android.text.TextUtils
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.navigation.fragment.NavHostFragment
+import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Usuario
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 
+class SignUpFragment : Fragment() {
 
-class SignUpActivity : AppCompatActivity() {
-
-    private val TAG = "SignUpActivity"
-
-    private var db: FirebaseFirestore? = null
-    private var mAuth: FirebaseAuth? = null
+    private val TAG = "SignUpFragment"
 
     private lateinit var etUsername: EditText
     private lateinit var etEmail: EditText
@@ -38,33 +38,33 @@ class SignUpActivity : AppCompatActivity() {
     private lateinit var birthday: String
     private lateinit var genre: String
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_up)
+    private lateinit var db: FirebaseFirestore
+    private lateinit var mAuth: FirebaseAuth
 
-        initialize()
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(R.layout.signup_fragment, container, false)
 
-    private fun initialize() {
-        etEmail = findViewById(R.id.et_email)
-        etPassword = findViewById(R.id.et_password)
-        etUsername = findViewById(R.id.et_username)
-        etBirthday = findViewById(R.id.et_birthday)
-        etGenre = findViewById(R.id.et_genre)
-        btnCreateAccount = findViewById(R.id.btn_signUp)
-        mProgressBar = findViewById(R.id.progressBar)
+        etEmail = view.findViewById(R.id.et_email)
+        etPassword = view.findViewById(R.id.et_password)
+        etUsername = view.findViewById(R.id.et_username)
+        etBirthday = view.findViewById(R.id.et_birthday)
+        etGenre = view.findViewById(R.id.et_genre)
+        btnCreateAccount = view.findViewById(R.id.btn_signUp)
+        mProgressBar = view.findViewById(R.id.progressBar)
 
         db = FirebaseFirestore.getInstance()
         mAuth = FirebaseAuth.getInstance()
 
         btnCreateAccount.setOnClickListener { signUp() }
+
+        return view
     }
 
     private fun signUp() {
 
-        val view = this.findViewById<View>(android.R.id.content)
-        val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
 
         email = etEmail.text.toString()
         password = etPassword.text.toString()
@@ -74,26 +74,26 @@ class SignUpActivity : AppCompatActivity() {
 
         val errorMessage = checkData(email, password, username, birthday, genre)
         if (errorMessage.isNotEmpty()) {
-            Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             return
         }
 
         mProgressBar.visibility = View.VISIBLE
 
-        mAuth!!
+        mAuth
                 .createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this) { task ->
+                .addOnCompleteListener { task ->
                     mProgressBar.visibility = View.INVISIBLE
 
                     if (task.isSuccessful) {
                         Log.d(TAG, "signUp: success")
-                        Toast.makeText(this@SignUpActivity, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Cadastro realizado com sucesso!", Toast.LENGTH_SHORT).show()
                         storeUserData()
-                        LoginActivity.username = username
-                        finish()
+                        LoginFragment.username = username
+                        NavHostFragment.findNavController(this).popBackStack()
                     } else {
                         Log.w(TAG, "signUp: fail", task.exception)
-                        Toast.makeText(this@SignUpActivity, "Falha ao cadastrar", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Falha ao cadastrar", Toast.LENGTH_SHORT).show()
                     }
                 }
     }
@@ -104,9 +104,9 @@ class SignUpActivity : AppCompatActivity() {
         user.birthday = birthday
         user.genre = genre
         user.email = email
-        user.uid = mAuth!!.currentUser!!.uid
+        user.uid = mAuth.currentUser!!.uid
 
-        db!!.collection("users")
+        db.collection("users")
                 .document(username)
                 .set(user)
                 .addOnSuccessListener {
@@ -114,7 +114,7 @@ class SignUpActivity : AppCompatActivity() {
                     val profileUpdates = UserProfileChangeRequest.Builder()
                             .setDisplayName(user.username)
                             .build()
-                    mAuth?.currentUser?.updateProfile(profileUpdates)
+                    mAuth.currentUser?.updateProfile(profileUpdates)
                 }
                 .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
     }

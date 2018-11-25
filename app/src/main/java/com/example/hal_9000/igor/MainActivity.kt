@@ -1,28 +1,32 @@
 package com.example.hal_9000.igor
 
-import android.content.Intent
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
+import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.ListView
 import android.widget.Toast
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.example.hal_9000.igor.adapters.ListDrawerAdapter
-import com.example.hal_9000.igor.fragment.HomeFragment
 import com.example.hal_9000.igor.model.Categoria
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar_layout.*
 
 
 class MainActivity : AppCompatActivity() {
-
     private val TAG = "MainActivity"
+
+    private lateinit var mAuth: FirebaseAuth
 
     private val listItems = arrayListOf<Categoria>()
 
@@ -30,7 +34,38 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val settings = FirebaseFirestoreSettings.Builder()
+                .setTimestampsInSnapshotsEnabled(true)
+                .setPersistenceEnabled(true)
+                .build()
+        FirebaseFirestore.getInstance().firestoreSettings = settings
+
+        mAuth = FirebaseAuth.getInstance()
+
+        if (mAuth.currentUser == null)
+            nav_host.findNavController().navigate(
+                    R.id.loginFragment,
+                    null,
+                    NavOptions.Builder().setPopUpTo(R.id.homeFragment, true).build())
+
         setupMenu()
+
+        NavHostFragment.findNavController(nav_host).addOnNavigatedListener { _, destination ->
+            when (destination.id) {
+                R.id.loginFragment -> {
+                    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                    toolbar.visibility = View.GONE
+                }
+                R.id.signUpFragment -> {
+                    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                    toolbar.visibility = View.GONE
+                }
+                else -> {
+                    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                    toolbar.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
     private fun setupMenu() {
@@ -80,11 +115,12 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.configuracoesFragment, null, navOptions)
                 }
                 5 -> {
-                    val mAuth = FirebaseAuth.getInstance()
-                    if (mAuth!!.currentUser != null) {
+                    if (mAuth.currentUser != null) {
                         mAuth.signOut()
-                        startActivity(Intent(this, LoginActivity::class.java))
-                        finish()
+                        nav_host.findNavController().navigate(
+                                R.id.loginFragment,
+                                null,
+                                NavOptions.Builder().setPopUpTo(R.id.homeFragment, true).build())
                     }
                 }
             }

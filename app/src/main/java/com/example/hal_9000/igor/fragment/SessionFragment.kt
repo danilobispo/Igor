@@ -18,7 +18,6 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.PlayerDices
 import com.example.hal_9000.igor.model.Session
@@ -87,7 +86,7 @@ class SessionFragment : Fragment() {
                 .collection("sessions")
                 .document(sessionId)
                 .collection("dices")
-                .document(LoginActivity.username)
+                .document(LoginFragment.username)
 
         docRef.addSnapshotListener(EventListener<DocumentSnapshot> { snapshot, e ->
             if (e != null) {

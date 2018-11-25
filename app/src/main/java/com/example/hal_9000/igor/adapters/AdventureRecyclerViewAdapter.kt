@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.example.hal_9000.igor.LoginActivity
 import com.example.hal_9000.igor.R
+import com.example.hal_9000.igor.fragment.LoginFragment
 import com.example.hal_9000.igor.model.Aventura
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -97,7 +97,7 @@ class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, 
             val deleteIcon: ImageView = itemView.findViewById(R.id.iv_delete)
 
             if (editMode) {
-                if (aventura.creator == LoginActivity.username) {
+                if (aventura.creator == LoginFragment.username) {
                     overlay.visibility = View.GONE
                     deleteIcon.visibility = View.VISIBLE
                     deleteIcon.setOnClickListener { clickListener(aventura) }
