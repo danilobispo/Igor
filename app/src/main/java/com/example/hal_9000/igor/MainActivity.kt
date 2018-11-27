@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.homeFragment, null, navOptions)
                 }
                 1 -> {
-                    navController.navigate(R.id.livrosFragment, null, navOptions)
+                    navController.navigate(R.id.booksFragment, null, navOptions)
                 }
                 2 -> {
                     navController.navigate(R.id.contaFragment, null, navOptions)

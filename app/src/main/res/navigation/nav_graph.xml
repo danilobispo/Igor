@@ -45,10 +45,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/livrosFragment"
-        android:name="com.example.hal_9000.igor.fragment.LivrosFragment"
-        android:label="fragment_livros"
-        tools:layout="@layout/fragment_livros" />
+        android:id="@+id/booksFragment"
+        android:name="com.example.hal_9000.igor.fragment.BooksFragment"
+        android:label="fragment_books"
+        tools:layout="@layout/fragment_books" />
 
     <fragment
         android:id="@+id/contaFragment"
