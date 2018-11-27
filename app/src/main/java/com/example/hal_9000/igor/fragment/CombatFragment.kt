@@ -2,6 +2,7 @@ package com.example.hal_9000.igor.fragment
 
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.support.v7.widget.LinearLayoutManager
@@ -11,15 +12,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.navigation.Navigation
-import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.NavGraphDirections
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.CharactersCombatListAdapter
 import com.example.hal_9000.igor.model.*
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.WriteBatch
@@ -30,7 +30,7 @@ class CombatFragment : Fragment() {
 
     private val TAG = "CombatFragment"
 
-    private lateinit var btnAction: Button
+    private lateinit var fabAction: FloatingActionButton
 
     private lateinit var adapterPlayers: CharactersCombatListAdapter
     private lateinit var mPlayersList: RecyclerView
@@ -49,7 +49,7 @@ class CombatFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_combat, container, false)
 
-        btnAction = view.findViewById(R.id.btn_action)
+        fabAction = view.findViewById(R.id.fab_action)
 
         model = activity!!.run {
             ViewModelProviders.of(this).get(MainViewModel::class.java)
@@ -98,7 +98,7 @@ class CombatFragment : Fragment() {
         if (!model.getIsMaster()!!)
             return view
 
-        btnAction.setOnClickListener { showActionsDialog() }
+        fabAction.setOnClickListener { showActionsDialog() }
 
         return view
     }
@@ -493,9 +493,9 @@ class CombatFragment : Fragment() {
         if (!model.getIsMaster()!!) return
 
         if (adapterPlayers.selectionModeOwn || adapterEnemies.selectionModeOwn)
-            btnAction.visibility = View.VISIBLE
+            fabAction.show()
         else
-            btnAction.visibility = View.INVISIBLE
+            fabAction.hide()
     }
 
     override fun onStart() {

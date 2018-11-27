@@ -9,7 +9,8 @@
     <android.support.v7.widget.CardView
         android:id="@+id/cardview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="28dp"
         app:cardBackgroundColor="#E2E2E1"
         app:cardCornerRadius="5dp">
 
@@ -62,16 +63,17 @@
 
     </android.support.v7.widget.CardView>
 
-    <Button
-        android:id="@+id/btn_action"
-        android:layout_width="0dp"
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_action"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Ação"
-        android:textColor="#FFF"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/ic_check"
         android:visibility="invisible"
-        app:backgroundTint="@color/green_dark"
-        app:layout_constraintEnd_toEndOf="@id/cardview"
-        app:layout_constraintStart_toStartOf="@id/cardview"
-        app:layout_constraintTop_toBottomOf="@id/cardview" />
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="@+id/cardview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardview" />
 
 </android.support.constraint.ConstraintLayout>
