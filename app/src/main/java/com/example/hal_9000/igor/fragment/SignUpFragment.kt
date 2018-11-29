@@ -30,7 +30,7 @@ class SignUpFragment : Fragment() {
     private lateinit var etEmail: EditText
     private lateinit var etPassword: EditText
     private lateinit var etBirthday: EditText
-    private lateinit var etGenre: EditText
+    private lateinit var etGender: EditText
     private lateinit var btnCreateAccount: Button
     private lateinit var mProgressBar: ProgressBar
 
@@ -38,7 +38,7 @@ class SignUpFragment : Fragment() {
     private lateinit var password: String
     private lateinit var username: String
     private lateinit var birthday: String
-    private lateinit var genre: String
+    private lateinit var gender: String
 
     private lateinit var db: FirebaseFirestore
     private lateinit var mAuth: FirebaseAuth
@@ -53,7 +53,7 @@ class SignUpFragment : Fragment() {
         etPassword = view.findViewById(R.id.et_password)
         etUsername = view.findViewById(R.id.et_username)
         etBirthday = view.findViewById(R.id.et_birthday)
-        etGenre = view.findViewById(R.id.et_genre)
+        etGender = view.findViewById(R.id.et_gender)
         btnCreateAccount = view.findViewById(R.id.btn_signUp)
         mProgressBar = view.findViewById(R.id.progressBar)
 
@@ -78,9 +78,9 @@ class SignUpFragment : Fragment() {
         password = etPassword.text.toString()
         username = etUsername.text.toString()
         birthday = etBirthday.text.toString()
-        genre = etGenre.text.toString()
+        gender = etGender.text.toString()
 
-        val errorMessage = checkData(email, password, username, birthday, genre)
+        val errorMessage = checkData(email, password, username, birthday, gender)
         if (errorMessage.isNotEmpty()) {
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             return
@@ -110,7 +110,7 @@ class SignUpFragment : Fragment() {
         val user = Usuario()
         user.username = username
         user.birthday = birthday
-        user.genre = genre
+        user.gender = gender
         user.email = email
         user.uid = mAuth.currentUser!!.uid
 
@@ -127,11 +127,11 @@ class SignUpFragment : Fragment() {
                 .addOnFailureListener { e -> Log.w(TAG, "Error adding document", e) }
     }
 
-    private fun checkData(email: String, password: String, username: String, birthday: String, genre: String): String {
+    private fun checkData(email: String, password: String, username: String, birthday: String, gender: String): String {
 
         if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)
                 || TextUtils.isEmpty(username) || TextUtils.isEmpty(birthday)
-                || TextUtils.isEmpty(genre))
+                || TextUtils.isEmpty(gender))
             return "Preencha todas as informações"
         if (!email.contains('@'))
             return "E-mail inválido"

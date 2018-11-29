@@ -91,7 +91,7 @@
             android:textColorHint="#000" />
 
         <EditText
-            android:id="@+id/et_genre"
+            android:id="@+id/et_gender"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="#000"
