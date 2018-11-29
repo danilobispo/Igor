@@ -17,6 +17,7 @@ data class Personagem(
         var hidden: Boolean = false,
         var isnpc: Boolean = false,
         var ismaster: Boolean = false,
+        var aventura: String = "",
         var aventura_id: String = "",
         var atributos: ArrayList<Atributo> = arrayListOf()) : Parcelable {
 

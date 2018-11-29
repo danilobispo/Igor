@@ -184,6 +184,7 @@ class NewCharacterFragment : Fragment() {
         personagem.image_url = downloadUrl
         personagem.isnpc = isNPC
         personagem.atributos = arrayStats
+        personagem.aventura = model.getAdventure()!!.title
         personagem.aventura_id = model.getAdventure()!!.id
 
         Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.health_max}, ${personagem.atributos}")

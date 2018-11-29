@@ -3,11 +3,13 @@ package com.example.hal_9000.igor.viewmodel
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.example.hal_9000.igor.model.Aventura
+import com.example.hal_9000.igor.model.Usuario
 
 class MainViewModel : ViewModel() {
     private var adventure: MutableLiveData<Aventura> = MutableLiveData()
     private var sessionId: MutableLiveData<String> = MutableLiveData()
     private var username: MutableLiveData<String> = MutableLiveData()
+    private var user: MutableLiveData<Usuario> = MutableLiveData()
     private var isMaster: MutableLiveData<Boolean> = MutableLiveData()
 
     fun setAdventure(adventure: Aventura) {
@@ -20,6 +22,10 @@ class MainViewModel : ViewModel() {
 
     fun setUsername(username: String) {
         this.username.value = username
+    }
+
+    fun setUser(user: Usuario) {
+        this.user.value = user
     }
 
     fun setIsMaster(isMaster: Boolean) {
@@ -36,6 +42,10 @@ class MainViewModel : ViewModel() {
 
     fun getUsername(): String? {
         return username.value
+    }
+
+    fun getUser(): Usuario? {
+        return user.value
     }
 
     fun getIsMaster(): Boolean? {

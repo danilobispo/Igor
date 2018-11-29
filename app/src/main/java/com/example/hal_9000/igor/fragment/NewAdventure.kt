@@ -149,6 +149,7 @@ class NewAdventure : Fragment() {
                 creator = "System",
                 ismaster = true,
                 isnpc = false,
+                aventura = adventure.title,
                 aventura_id = adventure.id)
 
         val db: FirebaseFirestore = FirebaseFirestore.getInstance()
