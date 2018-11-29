@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/ic_main_icon"
-        android:drawable="@drawable/configuracoes_icone"
+        android:drawable="@drawable/ic_settings"
         android:gravity="center"/>
 
     <item

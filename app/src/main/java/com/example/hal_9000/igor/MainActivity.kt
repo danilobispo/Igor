@@ -1,36 +1,42 @@
 package com.example.hal_9000.igor
 
+import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ListView
 import android.widget.Toast
+import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavOptions
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
-import com.example.hal_9000.igor.adapters.ListDrawerAdapter
-import com.example.hal_9000.igor.model.Categoria
+import com.example.hal_9000.igor.adapters.DrawerListAdapter
+import com.example.hal_9000.igor.model.DrawerItem
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar_layout.*
-import android.arch.lifecycle.ViewModelProviders
-import com.example.hal_9000.igor.viewmodel.MainViewModel
 
 
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
 
+    private lateinit var lvDrawer: ListView
+    private lateinit var navController: NavController
     private lateinit var mAuth: FirebaseAuth
 
-    private val listItems = arrayListOf<Categoria>()
+    private val drawerItemList = arrayListOf<DrawerItem>()
+    private var lastItemSelected = 0
 
     private lateinit var model: MainViewModel
 
@@ -48,6 +54,10 @@ class MainActivity : AppCompatActivity() {
             ViewModelProviders.of(this).get(MainViewModel::class.java)
         }
 
+        lvDrawer = findViewById(R.id.lst_menu_items)
+
+        navController = findNavController(this, R.id.nav_host)
+
         mAuth = FirebaseAuth.getInstance()
 
         if (mAuth.currentUser == null) {
@@ -62,20 +72,7 @@ class MainActivity : AppCompatActivity() {
         setupMenu()
 
         NavHostFragment.findNavController(nav_host).addOnNavigatedListener { _, destination ->
-            when (destination.id) {
-                R.id.loginFragment -> {
-                    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                    toolbar.visibility = View.GONE
-                }
-                R.id.signUpFragment -> {
-                    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-                    toolbar.visibility = View.GONE
-                }
-                else -> {
-                    drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
-                    toolbar.visibility = View.VISIBLE
-                }
-            }
+            onNavigatedListener(destination)
         }
     }
 
@@ -92,39 +89,26 @@ class MainActivity : AppCompatActivity() {
         drawer.addDrawerListener(drawerToggle)
         drawerToggle.syncState()
 
-        listItems.add(Categoria("Aventuras", true, false))
-        listItems.add(Categoria("Livros", false, false))
-        listItems.add(Categoria("Conta", false, false))
-        listItems.add(Categoria("Notificações", false, false))
-        listItems.add(Categoria("Configurações", false, false))
-        listItems.add(Categoria("Log Out", false, false))
+        drawerItemList.add(DrawerItem(getString(R.string.str_aventuras), true, false))
+        drawerItemList.add(DrawerItem(getString(R.string.str_livros), false, false))
+        drawerItemList.add(DrawerItem(getString(R.string.str_conta), false, false))
+        drawerItemList.add(DrawerItem(getString(R.string.str_configuracoes), false, false))
+        drawerItemList.add(DrawerItem(getString(R.string.str_notificacoes), false, false))
+        drawerItemList.add(DrawerItem(getString(R.string.str_logout), false, false))
 
-        val adapter = ListDrawerAdapter(this, listItems)
-        val listView = findViewById<ListView>(R.id.lst_menu_items)
-        listView.adapter = adapter
+        val adapter = DrawerListAdapter(this, drawerItemList)
+        lvDrawer.adapter = adapter
 
-        listView.setOnItemClickListener { _, _, position, _ ->
-
-            val navController = findNavController(this, R.id.nav_host)
+        lvDrawer.setOnItemClickListener { _, _, position, _ ->
             val navBuilder = NavOptions.Builder()
             val navOptions = navBuilder.setPopUpTo(R.id.homeFragment, false).build()
 
             when (position) {
-                0 -> {
-                    navController.navigate(R.id.homeFragment, null, navOptions)
-                }
-                1 -> {
-                    navController.navigate(R.id.booksFragment, null, navOptions)
-                }
-                2 -> {
-                    navController.navigate(R.id.accountFragment, null, navOptions)
-                }
-                3 -> {
-                    navController.navigate(R.id.notificacoesFragment, null, navOptions)
-                }
-                4 -> {
-                    navController.navigate(R.id.configuracoesFragment, null, navOptions)
-                }
+                0 -> navController.navigate(R.id.homeFragment, null, navOptions)
+                1 -> navController.navigate(R.id.booksFragment, null, navOptions)
+                2 -> navController.navigate(R.id.accountFragment, null, navOptions)
+                3 -> navController.navigate(R.id.notificacoesFragment, null, navOptions)
+                4 -> navController.navigate(R.id.configuracoesFragment, null, navOptions)
                 5 -> {
                     if (mAuth.currentUser != null) {
                         mAuth.signOut()
@@ -136,21 +120,78 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            listItems[0] = Categoria(listItems[0].nome, false, listItems[0].notification)
-            listItems[1] = Categoria(listItems[1].nome, false, listItems[1].notification)
-            listItems[2] = Categoria(listItems[2].nome, false, listItems[2].notification)
-            listItems[3] = Categoria(listItems[3].nome, false, listItems[3].notification)
-            listItems[4] = Categoria(listItems[4].nome, false, listItems[4].notification)
-            listItems[5] = Categoria(listItems[5].nome, false, listItems[5].notification)
-
-            listItems[position] = Categoria(listItems[position].nome, true, false)
+            for (item in drawerItemList)
+                item.selected = false
+            drawerItemList[position].selected = true
+            drawerItemList[position].notification = false
             adapter.notifyDataSetChanged()
 
-            if (!listItems[0].notification!! && !listItems[1].notification!! && !listItems[2].notification!! && !listItems[3].notification!! && !listItems[4].notification!!)
+            if (!drawerItemList[0].notification && !drawerItemList[1].notification && !drawerItemList[2].notification && !drawerItemList[3].notification && !drawerItemList[4].notification)
                 supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_menu)
 
             drawer.closeDrawer(GravityCompat.START)
         }
+    }
+
+    private fun onNavigatedListener(destination: NavDestination) {
+        Log.d(TAG, "onNavigatedListener: ${destination.label}")
+        when (destination.id) {
+            R.id.loginFragment -> {
+                drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                toolbar.visibility = View.GONE
+                lastItemSelected = -1
+                return
+            }
+            R.id.signUpFragment -> {
+                drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                toolbar.visibility = View.GONE
+                lastItemSelected = -1
+                return
+            }
+        }
+
+        val idx = when (destination.id) {
+            R.id.booksFragment -> 1
+            R.id.accountFragment -> 2
+            R.id.notificacoesFragment -> 3
+            R.id.configuracoesFragment -> 4
+            else -> 0
+        }
+
+        if (idx == lastItemSelected) return
+
+        if (lastItemSelected == -1) {
+            drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+            toolbar.visibility = View.VISIBLE
+        }
+
+        Log.d(TAG, "onNavigatedListener: updating drawer")
+
+        for (item in drawerItemList)
+            item.selected = false
+        drawerItemList[idx].selected = true
+        drawerItemList[idx].notification = false
+        (lvDrawer.adapter as DrawerListAdapter).notifyDataSetChanged()
+
+        lastItemSelected = idx
+    }
+
+    fun setNotificationIndicator(drawerItemName: String) {
+        when (drawerItemName) {
+            "adventures" -> drawerItemList[0] =
+                    DrawerItem(drawerItemList[0].name, drawerItemList[0].selected, true)
+            "books" -> drawerItemList[1] =
+                    DrawerItem(drawerItemList[1].name, drawerItemList[1].selected, true)
+            "account" -> drawerItemList[2] =
+                    DrawerItem(drawerItemList[2].name, drawerItemList[2].selected, true)
+            "notifications" -> drawerItemList[3] =
+                    DrawerItem(drawerItemList[3].name, drawerItemList[3].selected, true)
+            "settings" -> drawerItemList[4] =
+                    DrawerItem(drawerItemList[4].name, drawerItemList[4].selected, true)
+            else -> return
+        }
+        (lvDrawer.adapter as DrawerListAdapter).notifyDataSetChanged()
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.nav_menu)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -160,39 +201,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.menu_editar -> {
+            R.id.menu_editar ->
                 Toast.makeText(this, "Editar", Toast.LENGTH_SHORT).show()
-            }
-            R.id.menu_ordenar -> {
+            R.id.menu_ordenar ->
                 Toast.makeText(this, "Ordenar", Toast.LENGTH_SHORT).show()
-            }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    fun setNotificationIndicator(categoria: String) {
-
-        val adapter = ListDrawerAdapter(this, listItems)
-
-        when (categoria) {
-            "Aventuras" -> {
-                listItems[0] = Categoria(listItems[0].nome, listItems[0].selected, true)
-            }
-            "Livros" -> {
-                listItems[1] = Categoria(listItems[1].nome, listItems[1].selected, true)
-            }
-            "Conta" -> {
-                listItems[2] = Categoria(listItems[2].nome, listItems[2].selected, true)
-            }
-            "Notificações" -> {
-                listItems[3] = Categoria(listItems[3].nome, listItems[3].selected, true)
-            }
-            "Configurações" -> {
-                listItems[4] = Categoria(listItems[4].nome, listItems[4].selected, true)
-            }
-            else -> return
-        }
-        adapter.notifyDataSetChanged()
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.nav_menu)
     }
 }
