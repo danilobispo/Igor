@@ -25,8 +25,8 @@ class CharactersListAdapter(options: FirestoreRecyclerOptions<Personagem>, priva
     }
 
     override fun onBindViewHolder(holder: CharactersViewHolder, position: Int, model: Personagem) {
-        holder.setCharacterRole(model.classe)
         holder.setCharacterNome(model.nome)
+        holder.setCharacterRole(model.classe)
         holder.setCharacterDescricao(model.descricao)
         holder.setCharacterImagem(model.image_url, model.isnpc)
         holder.setClickListener(model, itemClickListener)
@@ -39,12 +39,12 @@ class CharactersListAdapter(options: FirestoreRecyclerOptions<Personagem>, priva
     class CharactersViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun setCharacterNome(nomeCharacter: String) {
-            val tvNome: TextView = itemView.findViewById(R.id.tv_class)
+            val tvNome: TextView = itemView.findViewById(R.id.tv_name)
             tvNome.text = nomeCharacter
         }
 
         fun setCharacterRole(roleCharacter: String) {
-            val tvClasse: TextView = itemView.findViewById(R.id.tv_name)
+            val tvClasse: TextView = itemView.findViewById(R.id.tv_class)
             tvClasse.text = roleCharacter
         }
 

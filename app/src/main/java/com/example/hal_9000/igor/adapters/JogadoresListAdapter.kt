@@ -25,8 +25,8 @@ class JogadoresListAdapter(options: FirestoreRecyclerOptions<Personagem>, privat
     }
 
     override fun onBindViewHolder(holder: JogadoresViewHolder, position: Int, model: Personagem) {
-        holder.setJogadorRole(model.classe)
         holder.setJogadorNome(model.nome)
+        holder.setJogadorRole(model.classe)
         holder.setJogadorDescricao(model.descricao)
         holder.setJogadorImagem(model.image_url, model.isnpc)
         holder.setClickListener(model, itemClickListener)
@@ -39,12 +39,12 @@ class JogadoresListAdapter(options: FirestoreRecyclerOptions<Personagem>, privat
     class JogadoresViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         fun setJogadorNome(nomeJogador: String) {
-            val tvNome: TextView = itemView.findViewById(R.id.tv_class)
+            val tvNome: TextView = itemView.findViewById(R.id.tv_name)
             tvNome.text = nomeJogador
         }
 
         fun setJogadorRole(roleJogador: String) {
-            val tvClasse: TextView = itemView.findViewById(R.id.tv_name)
+            val tvClasse: TextView = itemView.findViewById(R.id.tv_class)
             tvClasse.text = roleJogador
         }
 

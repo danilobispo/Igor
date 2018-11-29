@@ -142,7 +142,6 @@ class CharacterProfileFragment : Fragment() {
 
         adapterItems = ItemsListAdapter(options) { item: Item -> itemItemClicked(item) }
         rvInventory.layoutManager = GridLayoutManager(context, 4)
-        rvInventory.setHasFixedSize(true)
 
         if (character.ismaster && model.getUsername()!! != character.nome)
             return view
