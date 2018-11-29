@@ -19,9 +19,7 @@ import com.google.firebase.firestore.WriteBatch
 import kotlinx.android.synthetic.main.fragment_new_session.*
 import java.util.*
 
-
 class NewSession : Fragment() {
-
     private val TAG = "NewSession"
 
     private lateinit var sessionOld: Session
@@ -169,10 +167,5 @@ class NewSession : Fragment() {
         val navOptions = navBuilder.setPopUpTo(R.id.adventureFragment, true).build()
 
         NavHostFragment.findNavController(this).navigate(action, navOptions)
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() = NewSession()
     }
 }

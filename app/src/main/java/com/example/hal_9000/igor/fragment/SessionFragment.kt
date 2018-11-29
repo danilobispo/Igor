@@ -27,8 +27,8 @@ import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 
 class SessionFragment : Fragment() {
-
     private val TAG = "SessionFragment"
+
     private lateinit var db: FirebaseFirestore
     private lateinit var navController: NavController
 

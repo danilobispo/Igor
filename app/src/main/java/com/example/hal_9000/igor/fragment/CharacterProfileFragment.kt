@@ -29,9 +29,7 @@ import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 
-
 class CharacterProfileFragment : Fragment() {
-
     private val TAG = "CharacterProfileFragt"
 
     private lateinit var ivImagem: ImageView

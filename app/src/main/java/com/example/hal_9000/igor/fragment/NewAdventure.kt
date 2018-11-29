@@ -17,9 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.WriteBatch
 import kotlinx.android.synthetic.main.fragment_new_adventure.*
 
-
 class NewAdventure : Fragment() {
-
     private val TAG = "NewAdventure"
 
     private lateinit var adventureOld: Aventura
@@ -186,10 +184,5 @@ class NewAdventure : Fragment() {
         if (rb != 3) rb3.isChecked = false
         if (rb != 4) rb4.isChecked = false
         if (rb != 5) rb5.isChecked = false
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() = NewAdventure()
     }
 }

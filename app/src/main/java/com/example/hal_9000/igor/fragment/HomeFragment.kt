@@ -1,6 +1,5 @@
 package com.example.hal_9000.igor.fragment
 
-
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -24,9 +23,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-
 class HomeFragment : Fragment() {
-
     private val TAG = "HomeFragment"
 
     private lateinit var fabNovaAventura: FloatingActionButton
@@ -150,10 +147,5 @@ class HomeFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         adapter.stopListening()
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() = HomeFragment()
     }
 }

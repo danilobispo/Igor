@@ -23,7 +23,6 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
 
 class SignUpFragment : Fragment() {
-
     private val TAG = "SignUpFragment"
 
     private lateinit var etUsername: EditText
@@ -47,7 +46,7 @@ class SignUpFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.signup_fragment, container, false)
+        val view = inflater.inflate(R.layout.fragment_signup, container, false)
 
         etEmail = view.findViewById(R.id.et_email)
         etPassword = view.findViewById(R.id.et_password)

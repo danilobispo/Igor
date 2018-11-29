@@ -34,9 +34,7 @@ import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 class NewCharacterFragment : Fragment() {
-
     private val TAG = "NewCharacterFragment"
 
     private lateinit var personagemOld: Personagem

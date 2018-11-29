@@ -27,7 +27,6 @@ import com.google.firebase.firestore.FirebaseFirestoreSettings
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.appbar_layout.*
 
-
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
 

@@ -25,9 +25,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.WriteBatch
 import kotlin.random.Random
 
-
 class CombatFragment : Fragment() {
-
     private val TAG = "CombatFragment"
 
     private lateinit var fabAction: FloatingActionButton
@@ -253,7 +251,7 @@ class CombatFragment : Fragment() {
         }
 
         if (stats.size == 0) {
-            Toast.makeText(context, "Personagem sem atributos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Personagem sem atributos", Toast.LENGTH_SHORT).show()
             return
         }
 

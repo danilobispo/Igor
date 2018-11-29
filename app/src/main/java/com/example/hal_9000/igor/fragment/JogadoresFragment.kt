@@ -16,9 +16,7 @@ import com.example.hal_9000.igor.model.Personagem
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 
-
 class JogadoresFragment : Fragment() {
-
     private val TAG = "JogadoresFragment"
 
     private lateinit var adapter: JogadoresListAdapter
@@ -52,7 +50,7 @@ class JogadoresFragment : Fragment() {
                 .setQuery(query, Personagem::class.java)
                 .build()
 
-        adapter = JogadoresListAdapter(options, { personagem: Personagem -> personagemItemClicked(personagem) })
+        adapter = JogadoresListAdapter(options) { personagem: Personagem -> personagemItemClicked(personagem) }
         mJogadoresList.adapter = adapter
 
         return view
@@ -73,10 +71,5 @@ class JogadoresFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         adapter.stopListening()
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() = JogadoresFragment()
     }
 }

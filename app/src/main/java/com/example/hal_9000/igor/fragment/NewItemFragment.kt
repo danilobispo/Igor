@@ -33,9 +33,7 @@ import java.io.IOException
 import java.util.*
 import kotlin.collections.ArrayList
 
-
 class NewItemFragment : Fragment() {
-
     private val TAG = "NewItemFragment"
 
     private lateinit var itemOld: Item
@@ -161,7 +159,7 @@ class NewItemFragment : Fragment() {
     private fun concluirCriacao() {
 
         if (etName.text.isEmpty()) {
-            Toast.makeText(context, "Preencha ao menos o nome do item", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Preencha ao menos o nome do item", Toast.LENGTH_SHORT).show()
             return
         }
 

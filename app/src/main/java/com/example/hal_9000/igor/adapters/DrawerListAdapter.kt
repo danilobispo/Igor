@@ -15,6 +15,7 @@ import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.DrawerItem
 
 class DrawerListAdapter(context: Context, private val dataSource: ArrayList<DrawerItem>) : BaseAdapter() {
+    private val TAG = "DrawerListAdapter"
 
     private val inflater: LayoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 

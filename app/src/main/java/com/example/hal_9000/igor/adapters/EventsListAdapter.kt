@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class EventsListAdapter(options: FirestoreRecyclerOptions<Evento>, private val itemClickListener: (Evento) -> Unit) : FirestoreRecyclerAdapter<Evento, EventsListAdapter.EventosViewHolder>(options) {
-
     private val TAG = "EventsListAdapter"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EventosViewHolder {

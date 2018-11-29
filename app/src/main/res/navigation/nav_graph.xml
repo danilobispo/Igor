@@ -25,7 +25,7 @@
         android:id="@+id/signUpFragment"
         android:name="com.example.hal_9000.igor.fragment.SignUpFragment"
         android:label="signup_fragment"
-        tools:layout="@layout/signup_fragment">
+        tools:layout="@layout/fragment_signup">
         <action
             android:id="@+id/action_signupFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -35,7 +35,7 @@
         android:id="@+id/loginFragment"
         android:name="com.example.hal_9000.igor.fragment.LoginFragment"
         android:label="login_fragment"
-        tools:layout="@layout/login_fragment">
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_signupFragment"
             app:destination="@id/signUpFragment" />

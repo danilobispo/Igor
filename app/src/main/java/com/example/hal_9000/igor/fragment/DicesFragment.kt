@@ -20,9 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.WriteBatch
 import kotlin.random.Random
 
-
 class DicesFragment : Fragment() {
-
     private val TAG = "DicesFragment"
 
     private lateinit var playerDices: PlayerDices
@@ -127,10 +125,5 @@ class DicesFragment : Fragment() {
                 .document(event.date.toString())
 
         batch.set(eventLogReference, event)
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() = DicesFragment()
     }
 }

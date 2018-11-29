@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class SessionsListAdapter(options: FirestoreRecyclerOptions<Session>, private val itemClickListener: (Session) -> Unit) : FirestoreRecyclerAdapter<Session, SessionsListAdapter.SessionsViewHolder>(options) {
-
     private val TAG = "SessionsListAdapter"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionsViewHolder {

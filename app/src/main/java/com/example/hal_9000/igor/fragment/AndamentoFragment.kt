@@ -19,9 +19,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_andamento.*
 
-
 class AndamentoFragment : Fragment() {
-
     private val TAG = "AndamentoFragment"
 
     private lateinit var adapter: SessionsListAdapter

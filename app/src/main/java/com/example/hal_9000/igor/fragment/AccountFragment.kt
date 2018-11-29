@@ -24,7 +24,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AccountFragment : Fragment() {
-
     private val TAG = "AccountFragment"
 
     private lateinit var tvName: TextView

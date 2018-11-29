@@ -21,7 +21,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import kotlinx.android.synthetic.main.character_item.view.*
 
 class CharactersCombatListAdapter(options: FirestoreRecyclerOptions<Personagem>, private val itemClickListener: (Personagem) -> Unit, private val syncSelectionListener: (Boolean) -> Unit) : FirestoreRecyclerAdapter<Personagem, CharactersCombatListAdapter.CharactersViewHolder>(options), ViewHolderClickListerner {
-
     private val TAG = "CharsCombatListAdapter"
 
     val selectedIds: MutableList<Int> = arrayListOf()

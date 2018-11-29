@@ -65,6 +65,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Nome da aventura"
+                        android:inputType="text"
                         android:textColor="@color/colorPrimary"
                         android:textColorHint="@color/colorPrimary" />
 
@@ -81,6 +82,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Descrição"
+                        android:inputType="text"
                         android:textColor="@color/colorPrimary"
                         android:textColorHint="@color/colorPrimary" />
 

@@ -17,7 +17,6 @@ import com.example.hal_9000.igor.R
 import com.google.firebase.auth.FirebaseAuth
 
 class LoginFragment : Fragment() {
-
     private val TAG = "LoginFragment"
 
     private lateinit var mProgressBar: ProgressBar
@@ -32,7 +31,7 @@ class LoginFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.login_fragment, container, false)
+        val view = inflater.inflate(R.layout.fragment_login, container, false)
 
         mProgressBar = view.findViewById(R.id.progressBar)
         btnLogin = view.findViewById(R.id.btn_login)

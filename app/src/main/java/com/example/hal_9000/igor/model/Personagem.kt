@@ -33,7 +33,7 @@ data class Personagem(
             health = health_max
     }
 
-    fun statCreate(statName: String, value: String) {
+    private fun statCreate(statName: String, value: String) {
         atributos.add(Atributo(statName, value))
     }
 

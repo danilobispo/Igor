@@ -17,10 +17,8 @@ import com.example.hal_9000.igor.model.Personagem
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 
-
 class CharactersFragment : Fragment() {
-
-    private val TAG = "EventsFragment"
+    private val TAG = "CharactersFragment"
 
     private lateinit var adapter: CharactersListAdapter
     private lateinit var mRecyclerView: RecyclerView
@@ -90,10 +88,5 @@ class CharactersFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         adapter.stopListening()
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() = CharactersFragment()
     }
 }

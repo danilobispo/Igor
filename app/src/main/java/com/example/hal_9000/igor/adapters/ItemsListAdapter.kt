@@ -16,7 +16,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestoreException
 
 class ItemsListAdapter(options: FirestoreRecyclerOptions<Item>, private val itemClickListener: (Item) -> Unit) : FirestoreRecyclerAdapter<Item, ItemsListAdapter.CharactersViewHolder>(options) {
-
     private val TAG = "CharsCombatListAdapter"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CharactersViewHolder {

@@ -14,16 +14,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
-import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
-import com.example.hal_9000.igor.model.Personagem
-import com.example.hal_9000.igor.model.Session
-
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 
 class AdventureFragment : Fragment() {
-
     private val TAG = "AdventureFragment"
+
     private lateinit var openedTab: String
     private lateinit var ivTabLeft: ImageView
     private lateinit var ivTabRight: ImageView
@@ -170,8 +167,5 @@ class AdventureFragment : Fragment() {
 
     companion object {
         var editMode: Boolean = false
-
-        @JvmStatic
-        fun newInstance() = AdventureFragment()
     }
 }

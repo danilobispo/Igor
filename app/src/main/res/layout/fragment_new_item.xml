@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -42,7 +41,8 @@
                     android:id="@+id/et_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nome do item" />
+                    android:hint="Nome do item"
+                    android:inputType="text" />
 
                 <Spinner
                     android:id="@+id/spinner_type"
@@ -54,7 +54,8 @@
                     android:id="@+id/et_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Descrição" />
+                    android:hint="Descrição"
+                    android:inputType="text" />
 
                 <TextView
                     android:layout_width="match_parent"

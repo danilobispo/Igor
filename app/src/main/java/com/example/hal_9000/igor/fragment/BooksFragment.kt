@@ -1,6 +1,5 @@
 package com.example.hal_9000.igor.fragment
 
-
 import android.app.Activity
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
@@ -30,7 +29,6 @@ import com.google.firebase.storage.StorageReference
 import java.util.*
 
 class BooksFragment : Fragment() {
-
     private val TAG = "BooksFragment"
     private val PICK_DOCUMENT_REQUEST = 72
 

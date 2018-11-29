@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class BooksListAdapter(options: FirestoreRecyclerOptions<Book>, private val itemClickListener: (Book) -> Unit) : FirestoreRecyclerAdapter<Book, BooksListAdapter.BookViewHolder>(options) {
-
     private val TAG = "BooksListAdapter"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BookViewHolder {

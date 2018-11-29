@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -42,19 +41,22 @@
                     android:id="@+id/et_nome"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Nome do usuário" />
+                    android:hint="Nome do usuário"
+                    android:inputType="text" />
 
                 <EditText
                     android:id="@+id/et_classe"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Classe" />
+                    android:hint="Classe"
+                    android:inputType="text" />
 
                 <EditText
                     android:id="@+id/et_descricao"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Descrição" />
+                    android:hint="Descrição"
+                    android:inputType="text" />
 
                 <EditText
                     android:id="@+id/et_hp"

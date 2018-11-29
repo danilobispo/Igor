@@ -8,8 +8,8 @@ import android.widget.TextView
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Atributo
 
-
 class StatsListAdapter(private val myDataset: ArrayList<Atributo>) : RecyclerView.Adapter<StatsListAdapter.StatsViewHolder>() {
+    private val TAG = "StatsListAdapter"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StatsViewHolder {
         return StatsViewHolder(LayoutInflater.from(parent.context)

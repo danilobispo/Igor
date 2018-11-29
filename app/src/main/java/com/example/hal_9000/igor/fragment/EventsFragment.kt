@@ -22,7 +22,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 
 class EventsFragment : Fragment() {
-
     private val TAG = "EventsFragment"
 
     private lateinit var adapter: EventsListAdapter
@@ -183,10 +182,5 @@ class EventsFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         adapter.stopListening()
-    }
-
-    companion object {
-        @JvmStatic
-        fun newInstance() = EventsFragment()
     }
 }
