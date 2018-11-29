@@ -9,10 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
-import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Aventura
 import com.example.hal_9000.igor.model.Personagem
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.WriteBatch
 import kotlinx.android.synthetic.main.fragment_new_adventure.*
@@ -49,8 +49,21 @@ class NewAdventure : Fragment() {
 
         mProgressBar = view.findViewById(R.id.progressBar)
 
-        val buttonFinish = view.findViewById<Button>(R.id.btn_finish)
-        val imageClose = view.findViewById<ImageView>(R.id.iv_close)
+        val buttonFinish: Button = view.findViewById(R.id.btn_finish)
+        val imageClose: ImageView = view.findViewById(R.id.iv_close)
+
+        if (NewAdventureArgs.fromBundle(arguments).aventura != null) {
+            adventureOld = NewAdventureArgs.fromBundle(arguments).aventura!!
+
+            editMode = true
+            val tvHeaderTitle = view.findViewById<TextView>(R.id.tv_header_title)
+            tvHeaderTitle.text = "Editar Aventura"
+            etTitle = view.findViewById(R.id.et_title)
+            etDescription = view.findViewById(R.id.et_descricao)
+            completeFields()
+        } else {
+            editMode = false
+        }
 
         model = activity!!.run {
             ViewModelProviders.of(this).get(MainViewModel::class.java)
@@ -77,21 +90,8 @@ class NewAdventure : Fragment() {
                 clearOthersRadioButtons(5)
         }
 
-        adventureOld = AdventureFragmentArgs.fromBundle(arguments).aventura
-
-        if (adventureOld.id.isEmpty()) {
-            editMode = false
-        } else {
-            editMode = true
-            val tvHeaderTitle = view.findViewById<TextView>(R.id.tv_header_title)
-            tvHeaderTitle.text = "Editar Aventura"
-            etTitle = view.findViewById(R.id.et_title)
-            etDescription = view.findViewById(R.id.et_descricao)
-            completeFields()
-        }
-
-        buttonFinish.setOnClickListener { saveAdventure() }
         imageClose.setOnClickListener { exitFragment() }
+        buttonFinish.setOnClickListener { saveAdventure() }
 
         return view
     }

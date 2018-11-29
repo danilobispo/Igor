@@ -114,14 +114,12 @@ class AdventureFragment : Fragment() {
         }
 
         fabNewSession.setOnClickListener {
-            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(Session())
-            action.setSession(Session())
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession()
             NavHostFragment.findNavController(this).navigate(action)
         }
 
         fabNewCharacter.setOnClickListener {
-            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment(Personagem())
-            action.setPersonagem(Personagem())
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewCharacterFragment()
             action.setIsNpc(false)
             NavHostFragment.findNavController(this).navigate(action)
         }
@@ -160,7 +158,8 @@ class AdventureFragment : Fragment() {
 
         when (item.itemId) {
             R.id.menu_editar -> {
-                val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure(adventure)
+                val action = AdventureFragmentDirections.ActionAdventureFragmentToNewAdventure()
+                action.setAventura(adventure)
                 NavHostFragment.findNavController(this).navigate(action)
             }
             R.id.menu_ordenar -> {

@@ -67,8 +67,7 @@ class CharactersFragment : Fragment() {
         }
 
         fabNewCharacter.setOnClickListener {
-            val action = SessionFragmentDirections.ActionSessionFragmentToNewCharacterFragment(Personagem())
-            action.setPersonagem(Personagem())
+            val action = SessionFragmentDirections.ActionSessionFragmentToNewCharacterFragment()
             action.setIsNpc(true)
             Navigation.findNavController(activity!!, R.id.nav_host).navigate(action)
         }

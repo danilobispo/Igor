@@ -11,9 +11,9 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
-import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.model.Session
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.WriteBatch
 import kotlinx.android.synthetic.main.fragment_new_session.*
@@ -23,8 +23,8 @@ import java.util.*
 class NewSession : Fragment() {
 
     private val TAG = "NewSession"
-    private lateinit var sessionOld: Session
 
+    private lateinit var sessionOld: Session
     private var editMode = false
 
     private lateinit var etTitle: EditText
@@ -44,14 +44,16 @@ class NewSession : Fragment() {
         etTitle = view.findViewById(R.id.et_title)
         etSummary = view.findViewById(R.id.et_summary)
         btnDate = view.findViewById(R.id.btn_date)
+        val buttonFinish = view.findViewById<Button>(R.id.btn_finish)
+        val imageClose = view.findViewById<ImageView>(R.id.iv_close)
 
         model = activity!!.run {
             ViewModelProviders.of(this).get(MainViewModel::class.java)
         }
 
-        sessionOld = NewSessionArgs.fromBundle(arguments).session
+        if (NewSessionArgs.fromBundle(arguments).session != null) {
+            sessionOld = NewSessionArgs.fromBundle(arguments).session!!
 
-        if (sessionOld.created_at != 0L) {
             editMode = true
             val tvHeaderTitle = view.findViewById<TextView>(R.id.tv_header_title)
             tvHeaderTitle.text = "Editar Aventura"
@@ -80,15 +82,8 @@ class NewSession : Fragment() {
             datePickerDialog.show()
         }
 
-        val buttonFinish = view.findViewById<Button>(R.id.btn_finish)
-        buttonFinish.setOnClickListener {
-            saveSession()
-        }
-
-        val imageClose = view.findViewById<ImageView>(R.id.iv_close)
-        imageClose.setOnClickListener {
-            exitFragment()
-        }
+        imageClose.setOnClickListener { exitFragment() }
+        buttonFinish.setOnClickListener { saveSession() }
 
         return view
     }

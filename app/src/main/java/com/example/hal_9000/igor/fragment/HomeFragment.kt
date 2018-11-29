@@ -49,6 +49,8 @@ class HomeFragment : Fragment() {
 
         fabNovaAventura = view.findViewById(R.id.fab_nova_aventura)
         fabSaveEdit = view.findViewById(R.id.fab_save_edit)
+        mRecyclerView = view.findViewById(R.id.rv_adventures_list)
+        db = FirebaseFirestore.getInstance()
 
         model = activity!!.run {
             ViewModelProviders.of(this).get(MainViewModel::class.java)
@@ -56,11 +58,9 @@ class HomeFragment : Fragment() {
 
         model.setUsername(FirebaseAuth.getInstance().currentUser?.displayName.toString())
 
-        mRecyclerView = view.findViewById(R.id.rv_adventures_list)
         mRecyclerView.layoutManager = LinearLayoutManager(context)
         mRecyclerView.setHasFixedSize(true)
 
-        db = FirebaseFirestore.getInstance()
         val query = db
                 .collection("adventures")
                 .whereEqualTo("players.${model.getUsername()!!}", true)
@@ -73,9 +73,7 @@ class HomeFragment : Fragment() {
         mRecyclerView.adapter = adapter
 
         fabNovaAventura.setOnClickListener {
-            val aventura = Aventura()
-            val action = HomeFragmentDirections.ActionHomeFragmentToNewAdventure(Aventura())
-            action.setAventura(aventura)
+            val action = HomeFragmentDirections.ActionHomeFragmentToNewAdventure()
             NavHostFragment.findNavController(this).navigate(action)
         }
 

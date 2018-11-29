@@ -388,7 +388,7 @@ class ItemProfileFragment : Fragment() {
 
         when (menuItem.itemId) {
             R.id.menu_editar -> {
-                val action = NavGraphDirections.ActionGlobalNewItemFragment(item, item.owner)
+                val action = NavGraphDirections.ActionGlobalNewItemFragment(item.owner)
                 action.setItem(item)
                 action.setNewOwner(item.owner)
                 NavHostFragment.findNavController(this).navigate(action)

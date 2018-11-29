@@ -37,8 +37,10 @@ import kotlin.collections.ArrayList
 class NewItemFragment : Fragment() {
 
     private val TAG = "NewItemFragment"
+
     private lateinit var itemOld: Item
     private lateinit var owner: String
+    private var editMode = false
 
     private lateinit var etName: EditText
     private lateinit var spinnerType: Spinner
@@ -80,7 +82,6 @@ class NewItemFragment : Fragment() {
         storage = FirebaseStorage.getInstance()
         storageReference = storage.reference
 
-        itemOld = NewItemFragmentArgs.fromBundle(arguments).item
         owner = NewItemFragmentArgs.fromBundle(arguments).newOwner
 
         adapter = StatsListAdapter(arrayStats)
@@ -88,14 +89,16 @@ class NewItemFragment : Fragment() {
         rvStats.setHasFixedSize(true)
         rvStats.adapter = adapter
 
-        if (itemOld.name.isNotEmpty())
+        if (NewItemFragmentArgs.fromBundle(arguments).item != null) {
+            itemOld = NewItemFragmentArgs.fromBundle(arguments).item!!
+
+            editMode = true
             completeFields()
-
-        view.btn_add_stat.setOnClickListener { newStat() }
-
-        view.btn_concluir.setOnClickListener { concluirCriacao() }
+        }
 
         view.iv_photo.setOnClickListener { chooseImage() }
+        view.btn_add_stat.setOnClickListener { newStat() }
+        view.btn_concluir.setOnClickListener { concluirCriacao() }
 
         return view
     }
@@ -179,14 +182,14 @@ class NewItemFragment : Fragment() {
         else
             item.owner = owner
 
-        if (itemOld.name.isEmpty()) {
-            item.id = "${item.name}_${System.currentTimeMillis()}"
-            item.equipped = false
-            createItem(item, false)
-        } else {
+        if (editMode) {
             item.id = itemOld.id
             item.equipped = itemOld.equipped
             createItem(item, true)
+        } else {
+            item.id = "${item.name}_${System.currentTimeMillis()}"
+            item.equipped = false
+            createItem(item, false)
         }
     }
 

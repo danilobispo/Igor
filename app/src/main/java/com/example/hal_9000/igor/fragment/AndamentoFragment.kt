@@ -90,7 +90,7 @@ class AndamentoFragment : Fragment() {
         Log.d(TAG, "Clicked ${session.title}")
 
         if (AdventureFragment.editMode && model.getIsMaster()!!) {
-            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession(session)
+            val action = AdventureFragmentDirections.ActionAdventureFragmentToNewSession()
             action.setSession(session)
             NavHostFragment.findNavController(this).navigate(action)
         } else {

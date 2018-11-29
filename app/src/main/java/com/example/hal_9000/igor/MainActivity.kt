@@ -112,6 +112,8 @@ class MainActivity : AppCompatActivity() {
                 5 -> {
                     if (mAuth.currentUser != null) {
                         mAuth.signOut()
+                        model.clearUser()
+                        model.clearUsername()
                         nav_host.findNavController().navigate(
                                 R.id.loginFragment,
                                 null,
@@ -148,6 +150,11 @@ class MainActivity : AppCompatActivity() {
                 lastItemSelected = -1
                 return
             }
+            R.id.homeFragment -> {
+                model.clearAdventure()
+                model.clearSessionId()
+                model.clearIsMaster()
+            }
         }
 
         val idx = when (destination.id) {
@@ -155,6 +162,10 @@ class MainActivity : AppCompatActivity() {
             R.id.accountFragment -> 2
             R.id.notificacoesFragment -> 3
             R.id.configuracoesFragment -> 4
+            R.id.characterProfileFragment -> lastItemSelected
+            R.id.newCharacterFragment -> lastItemSelected
+            R.id.itemProfileFragment -> lastItemSelected
+            R.id.newItemFragment -> lastItemSelected
             else -> 0
         }
 
@@ -164,8 +175,6 @@ class MainActivity : AppCompatActivity() {
             drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
             toolbar.visibility = View.VISIBLE
         }
-
-        Log.d(TAG, "onNavigatedListener: updating drawer")
 
         for (item in drawerItemList)
             item.selected = false

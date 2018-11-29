@@ -18,11 +18,11 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
-import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.StatsListAdapter
 import com.example.hal_9000.igor.model.Atributo
 import com.example.hal_9000.igor.model.Personagem
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.WriteBatch
@@ -41,6 +41,7 @@ class NewCharacterFragment : Fragment() {
 
     private lateinit var personagemOld: Personagem
     private var isNPC: Boolean = false
+    private var editMode = false
 
     private lateinit var etNome: EditText
     private lateinit var etClasse: EditText
@@ -69,9 +70,6 @@ class NewCharacterFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.fragment_new_character, container, false)
 
-        personagemOld = NewCharacterFragmentArgs.fromBundle(arguments).personagem
-        isNPC = NewCharacterFragmentArgs.fromBundle(arguments).isNpc
-
         etNome = view.findViewById(R.id.et_nome)
         etClasse = view.findViewById(R.id.et_classe)
         etDescricao = view.findViewById(R.id.et_descricao)
@@ -89,22 +87,26 @@ class NewCharacterFragment : Fragment() {
         storage = FirebaseStorage.getInstance()
         storageReference = storage.reference
 
+        isNPC = NewCharacterFragmentArgs.fromBundle(arguments).isNpc
+
         adapter = StatsListAdapter(arrayStats)
         rvStats.layoutManager = LinearLayoutManager(context)
         rvStats.setHasFixedSize(true)
         rvStats.adapter = adapter
 
+        if (NewCharacterFragmentArgs.fromBundle(arguments).personagem != null) {
+            personagemOld = NewCharacterFragmentArgs.fromBundle(arguments).personagem!!
+
+            editMode = true
+            completeFields()
+        }
+
         if (isNPC)
             etNome.hint = "Nome"
 
-        if (personagemOld.id.isNotEmpty())
-            completeFields()
-
-        view.btn_add_stat.setOnClickListener { newStat() }
-
-        view.btn_concluir.setOnClickListener { concluirCriacao() }
-
         view.iv_photo.setOnClickListener { chooseImage() }
+        view.btn_add_stat.setOnClickListener { newStat() }
+        view.btn_concluir.setOnClickListener { concluirCriacao() }
 
         return view
     }
@@ -189,19 +191,18 @@ class NewCharacterFragment : Fragment() {
 
         Log.d(TAG, "${personagem.nome}, ${personagem.classe}, ${personagem.descricao}, ${personagem.health_max}, ${personagem.atributos}")
 
-        if (personagemOld.id.isEmpty()) {
-            personagem.created_at = System.currentTimeMillis()
-            personagem.id = "${personagem.creator}_${personagem.created_at}"
-            personagem.ismaster = false
-            personagem.health = personagem.health_max
-            createCharacter(personagem, false)
-
-        } else {
+        if (editMode) {
             personagem.ismaster = personagemOld.ismaster
             personagem.id = personagemOld.id
             personagem.created_at = personagemOld.created_at
             personagem.health = personagemOld.health
             createCharacter(personagem, true)
+        } else {
+            personagem.created_at = System.currentTimeMillis()
+            personagem.id = "${personagem.creator}_${personagem.created_at}"
+            personagem.ismaster = false
+            personagem.health = personagem.health_max
+            createCharacter(personagem, false)
         }
     }
 

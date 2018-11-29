@@ -153,8 +153,7 @@ class CharacterProfileFragment : Fragment() {
             btnCreateItem.visibility = View.VISIBLE
 
             btnCreateItem.setOnClickListener {
-                val action = CharacterProfileFragmentDirections.ActionCharacterProfileFragmentToNewItemFragment(Item(), character.nome)
-                action.setItem(Item())
+                val action = CharacterProfileFragmentDirections.ActionCharacterProfileFragmentToNewItemFragment(character.nome)
                 action.setNewOwner(character.nome)
                 NavHostFragment.findNavController(this).navigate(action)
             }
@@ -196,7 +195,7 @@ class CharacterProfileFragment : Fragment() {
 
         when (menuItem.itemId) {
             R.id.menu_editar -> {
-                val action = NavGraphDirections.ActionGlobalNewCharacterFragment(character)
+                val action = NavGraphDirections.ActionGlobalNewCharacterFragment()
                 action.setPersonagem(character)
                 action.setIsNpc(character.isnpc)
                 NavHostFragment.findNavController(this).navigate(action)

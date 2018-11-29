@@ -139,7 +139,7 @@ class SessionFragment : Fragment() {
 
         when (menuItem.itemId) {
             R.id.menu_editar -> {
-                val action = SessionFragmentDirections.ActionSessionFragmentToNewSession(session)
+                val action = SessionFragmentDirections.ActionSessionFragmentToNewSession()
                 action.setSession(session)
                 NavHostFragment.findNavController(this).navigate(action)
             }

@@ -75,7 +75,9 @@
         tools:layout="@layout/fragment_new_adventure">
         <argument
             android:name="aventura"
-            app:argType="com.example.hal_9000.igor.model.Aventura" />
+            android:defaultValue="@null"
+            app:argType="com.example.hal_9000.igor.model.Aventura"
+            app:nullable="true" />
         <action
             android:id="@+id/action_newAdventure_to_homeFragment"
             app:destination="@id/homeFragment"
@@ -114,7 +116,9 @@
         tools:layout="@layout/fragment_new_session">
         <argument
             android:name="session"
-            app:argType="com.example.hal_9000.igor.model.Session" />
+            android:defaultValue="@null"
+            app:argType="com.example.hal_9000.igor.model.Session"
+            app:nullable="true" />
         <action
             android:id="@+id/action_newSession_to_adventureFragment"
             app:destination="@id/adventureFragment" />
@@ -146,7 +150,9 @@
         tools:layout="@layout/fragment_new_character">
         <argument
             android:name="personagem"
-            app:argType="com.example.hal_9000.igor.model.Personagem" />
+            android:defaultValue="@null"
+            app:argType="com.example.hal_9000.igor.model.Personagem"
+            app:nullable="true" />
         <argument
             android:name="isNpc"
             android:defaultValue="false"
@@ -183,7 +189,9 @@
         tools:layout="@layout/fragment_new_item">
         <argument
             android:name="item"
-            app:argType="com.example.hal_9000.igor.model.Item" />
+            android:defaultValue="@null"
+            app:argType="com.example.hal_9000.igor.model.Item"
+            app:nullable="true" />
         <argument
             android:name="newOwner"
             app:argType="string" />
