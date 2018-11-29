@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
                     navController.navigate(R.id.booksFragment, null, navOptions)
                 }
                 2 -> {
-                    navController.navigate(R.id.contaFragment, null, navOptions)
+                    navController.navigate(R.id.accountFragment, null, navOptions)
                 }
                 3 -> {
                     navController.navigate(R.id.notificacoesFragment, null, navOptions)

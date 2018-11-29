@@ -25,7 +25,7 @@
         android:id="@+id/signUpFragment"
         android:name="com.example.hal_9000.igor.fragment.SignUpFragment"
         android:label="signup_fragment"
-        tools:layout="@layout/signup_fragment" >
+        tools:layout="@layout/signup_fragment">
         <action
             android:id="@+id/action_signupFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
@@ -35,7 +35,7 @@
         android:id="@+id/loginFragment"
         android:name="com.example.hal_9000.igor.fragment.LoginFragment"
         android:label="login_fragment"
-        tools:layout="@layout/login_fragment" >
+        tools:layout="@layout/login_fragment">
         <action
             android:id="@+id/action_loginFragment_to_signupFragment"
             app:destination="@id/signUpFragment" />
@@ -51,10 +51,10 @@
         tools:layout="@layout/fragment_books" />
 
     <fragment
-        android:id="@+id/contaFragment"
-        android:name="com.example.hal_9000.igor.fragment.ContaFragment"
-        android:label="fragment_conta"
-        tools:layout="@layout/fragment_conta" />
+        android:id="@+id/accountFragment"
+        android:name="com.example.hal_9000.igor.fragment.AccountFragment"
+        android:label="fragment_account"
+        tools:layout="@layout/fragment_account" />
 
     <fragment
         android:id="@+id/notificacoesFragment"
@@ -211,13 +211,13 @@
 
     <action
         android:id="@+id/action_global_newCharacterFragment"
-        app:destination="@id/newCharacterFragment"/>
+        app:destination="@id/newCharacterFragment" />
     <action
         android:id="@+id/action_global_newItemFragment"
-        app:destination="@id/newItemFragment"/>
+        app:destination="@id/newItemFragment" />
     <action
         android:id="@+id/action_global_characterProfileFragment"
-        app:destination="@id/characterProfileFragment"/>
+        app:destination="@id/characterProfileFragment" />
 
     <include app:graph="@navigation/sub_nav_graph" />
 

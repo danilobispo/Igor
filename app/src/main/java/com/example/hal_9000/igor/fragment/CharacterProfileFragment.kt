@@ -18,7 +18,6 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
-import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.example.hal_9000.igor.NavGraphDirections
 import com.example.hal_9000.igor.R
 import com.example.hal_9000.igor.adapters.ItemsListAdapter
@@ -26,6 +25,7 @@ import com.example.hal_9000.igor.adapters.StatsListAdapter
 import com.example.hal_9000.igor.model.Atributo
 import com.example.hal_9000.igor.model.Item
 import com.example.hal_9000.igor.model.Personagem
+import com.example.hal_9000.igor.viewmodel.MainViewModel
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -132,7 +132,7 @@ class CharacterProfileFragment : Fragment() {
 
         val queryItems = db
                 .collection("adventures")
-                .document(model.getAdventure()!!.id)
+                .document(character.aventura_id)
                 .collection("items")
                 .whereEqualTo("owner", character.nome)
 
