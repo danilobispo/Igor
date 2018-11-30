@@ -172,10 +172,7 @@ class NewAdventure : Fragment() {
     }
 
     private fun exitFragment() {
-        if (editMode)
-            NavHostFragment.findNavController(this).popBackStack(R.id.adventureFragment, false)
-        else
-            NavHostFragment.findNavController(this).navigate(R.id.action_newAdventure_to_homeFragment)
+        NavHostFragment.findNavController(this).popBackStack()
     }
 
     private fun clearOthersRadioButtons(rb: Int) {

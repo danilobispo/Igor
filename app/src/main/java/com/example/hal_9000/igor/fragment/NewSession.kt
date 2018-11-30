@@ -96,7 +96,9 @@ class NewSession : Fragment() {
         if (sessionOld.date != 0L) {
             val calendar = Calendar.getInstance()
             calendar.timeInMillis = sessionOld.date
-            btnDate.text = "${calendar.get(Calendar.DAY_OF_MONTH)}/${calendar.get(Calendar.MONTH)}"
+            val dateText = calendar.get(Calendar.DAY_OF_MONTH).toString() + "/" + (calendar.get(Calendar.MONTH) + 1).toString()
+            btnDate.text = dateText
+            date = sessionOld.date
         }
     }
 

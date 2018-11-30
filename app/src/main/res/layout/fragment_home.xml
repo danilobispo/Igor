@@ -43,4 +43,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="30dp" />
 
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/rv_adventures_list"
+        app:layout_constraintStart_toStartOf="@+id/rv_adventures_list"
+        app:layout_constraintTop_toTopOf="@+id/rv_adventures_list" />
+
 </android.support.constraint.ConstraintLayout>

@@ -14,7 +14,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SessionsListAdapter(options: FirestoreRecyclerOptions<Session>, private val itemClickListener: (Session) -> Unit) : FirestoreRecyclerAdapter<Session, SessionsListAdapter.SessionsViewHolder>(options) {
+class SessionsListAdapter(options: FirestoreRecyclerOptions<Session>, private val itemClickListener: (Session) -> Unit, private val itemLongClickListener: (Session, View) -> Unit) : FirestoreRecyclerAdapter<Session, SessionsListAdapter.SessionsViewHolder>(options) {
     private val TAG = "SessionsListAdapter"
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SessionsViewHolder {
@@ -26,6 +26,7 @@ class SessionsListAdapter(options: FirestoreRecyclerOptions<Session>, private va
         holder.setSessionData(model.date)
         holder.setSessionTexto(model.title)
         holder.setClickListener(model, itemClickListener)
+        holder.setLongClickListener(model, itemLongClickListener)
     }
 
     override fun onError(e: FirebaseFirestoreException) {
@@ -47,8 +48,15 @@ class SessionsListAdapter(options: FirestoreRecyclerOptions<Session>, private va
             tvText.text = textSession
         }
 
-        fun setClickListener(Session: Session, clickListener: (Session) -> Unit) {
-            itemView.setOnClickListener { clickListener(Session) }
+        fun setClickListener(session: Session, clickListener: (Session) -> Unit) {
+            itemView.setOnClickListener { clickListener(session) }
+        }
+
+        fun setLongClickListener(session: Session, longClickListener: (Session, View) -> Unit) {
+            itemView.setOnLongClickListener {
+                longClickListener(session, itemView)
+                true
+            }
         }
     }
 }

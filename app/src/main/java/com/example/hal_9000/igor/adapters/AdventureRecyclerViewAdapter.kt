@@ -16,9 +16,9 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, private val username: String, private val itemClickListener: (Aventura) -> Unit, private val deleteClickListener: (Aventura) -> Unit) : FirestoreRecyclerAdapter<Aventura, AdventureRecyclerViewAdapter.AdventureViewHolder>(options) {
-
+class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, private val username: String, private val itemClickListener: (Aventura) -> Unit, private val itemLongClickListener: (Aventura, View) -> Unit, private val deleteClickListener: (Aventura) -> Unit) : FirestoreRecyclerAdapter<Aventura, AdventureRecyclerViewAdapter.AdventureViewHolder>(options) {
     private val TAG = "AdventureRecyclrAdapter"
+
     var editMode = false
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AdventureViewHolder {
@@ -31,6 +31,7 @@ class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, 
         holder.setAdventureNextSession(model.next_session)
         holder.setAdventureTheme(model.theme)
         holder.setClickListener(model, editMode, itemClickListener)
+        holder.setLongClickListener(model, editMode, itemLongClickListener)
         holder.setEditMode(model, editMode, username, deleteClickListener)
     }
 
@@ -88,6 +89,16 @@ class AdventureRecyclerViewAdapter(options: FirestoreRecyclerOptions<Aventura>, 
                 itemView.setOnClickListener {}
             else
                 itemView.setOnClickListener { clickListener(aventura) }
+        }
+
+        fun setLongClickListener(aventura: Aventura, editMode: Boolean, longClickListener: (Aventura, View) -> Unit) {
+            if (editMode)
+                itemView.setOnLongClickListener { false }
+            else
+                itemView.setOnLongClickListener {
+                    longClickListener(aventura, itemView)
+                    true
+                }
         }
 
         fun setEditMode(aventura: Aventura, editMode: Boolean, username: String, clickListener: (Aventura) -> Unit) {
