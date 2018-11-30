@@ -250,17 +250,14 @@ class CombatFragment : Fragment() {
             else -> arrayListOf()
         }
 
-        if (stats.size == 0) {
-            Toast.makeText(context, "Personagem sem atributos", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         val statsNames: ArrayList<String?> = arrayListOf()
-        for (stat in stats)
-            statsNames.add(stat.nome)
+        for (stat in stats) statsNames.add(stat.nome)
 
-        if (action == "change")
+        if (action == "change") {
             statsNames.add("Novo atributo")
+        } else {
+            statsNames.add("Vida máxima")
+        }
 
         val array = arrayOfNulls<String>(statsNames.size)
         statsNames.toArray(array)
@@ -327,17 +324,36 @@ class CombatFragment : Fragment() {
             if (statIdx < char.atributos.size)
                 oldValue = char.atributos[statIdx].valor
 
-            when (action) {
-                "up" -> char.statUp(stat, value.toInt())
-                "down" -> char.statDown(stat, value.toInt())
-                "change" -> char.statChange(stat, value)
-                else -> return
+            if (stat == "Vida máxima") {
+                oldValue = char.health_max.toString()
+                when (action) {
+                    "up" -> char.maxHealthUp(value.toInt())
+                    "down" -> char.maxHealthDown(value.toInt())
+                    else -> return
+                }
+            } else {
+                when (action) {
+                    "up" -> char.statUp(stat, value.toInt())
+                    "down" -> char.statDown(stat, value.toInt())
+                    "change" -> char.statChange(stat, value)
+                    else -> return
+                }
             }
+
             batch.set(db!!.collection("characters").document(char.id), char)
-            when (action) {
-                "up" -> logEvent(batch, "stat", "${char.nome} aumentou seu $stat em $value ($oldValue➡${char.atributos[statIdx].valor})")
-                "down" -> logEvent(batch, "stat", "${char.nome} diminuiu seu $stat em $value ($oldValue➡${char.atributos[statIdx].valor})")
-                "change" -> logEvent(batch, "stat", "${char.nome} alterou seu atributo $stat para ${char.atributos[statIdx].valor}")
+
+            if (stat == "Vida máxima") {
+                when (action) {
+                    "up" -> logEvent(batch, "stat", "${char.nome} aumentou sua vida máxima em $value ($oldValue➡${char.health_max})")
+                    "down" -> logEvent(batch, "stat", "${char.nome} diminuiu sua vida máxima em $value ($oldValue➡${char.health_max})")
+                    "change" -> logEvent(batch, "stat", "${char.nome} alterou sua vida máxima para ${char.health_max}")
+                }
+            } else {
+                when (action) {
+                    "up" -> logEvent(batch, "stat", "${char.nome} aumentou seu $stat em $value ($oldValue➡${char.atributos[statIdx].valor})")
+                    "down" -> logEvent(batch, "stat", "${char.nome} diminuiu seu $stat em $value ($oldValue➡${char.atributos[statIdx].valor})")
+                    "change" -> logEvent(batch, "stat", "${char.nome} alterou seu atributo $stat para ${char.atributos[statIdx].valor}")
+                }
             }
         }
 

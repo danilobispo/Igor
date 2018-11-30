@@ -102,7 +102,10 @@ class CharactersCombatListAdapter(options: FirestoreRecyclerOptions<Personagem>,
 
             val progressBarHealth: ProgressBar = itemView.findViewById(R.id.progress_bar_health)
 
-            val healthPercentage = 100 * health / healthMax
+            var healthPercentage = 0
+
+            if (healthMax != 0) healthPercentage = 100 * health / healthMax
+
             progressBarHealth.progress = healthPercentage
 
 //            val progressAnimator = ObjectAnimator.ofInt(progressBarHealth, "progress", 0, healthPercentage)

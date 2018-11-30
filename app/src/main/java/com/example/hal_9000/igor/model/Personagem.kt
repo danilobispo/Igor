@@ -23,14 +23,16 @@ data class Personagem(
 
     fun hit(value: Int) {
         health -= value
-        if (health < 0)
-            health = 0
+        if (health < 0) health = 0
     }
 
     fun heal(value: Int) {
         health += value
         if (health > health_max)
-            health = health_max
+            health = if (health_max > 0)
+                health_max
+            else
+                0
     }
 
     private fun statCreate(statName: String, value: String) {
@@ -86,5 +88,10 @@ data class Personagem(
 
     fun maxHealthDown(value: Int) {
         health_max -= value
+        if (health > health_max)
+            health = if (health_max < 0)
+                0
+            else
+                health_max
     }
 }
